@@ -1,0 +1,11 @@
+apiVersion: devops.kubesphere.io/v1alpha1
+kind: S2iBuilderTemplate
+metadata:
+  labels:
+    controller-tools.k8s.io: "1.0"
+  name: s2ibuildertemplate-python
+spec:
+  # Add fields here
+  baseImage: centos/python-35-centos7
+  codeFramework: python
+  version: 0.0.1

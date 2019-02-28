@@ -1,0 +1,52 @@
+
+# Image URL to use all building/pushing image targets
+IMG ?= controller:latest
+
+all: test manager
+
+# Run tests
+test: fmt vet
+	go test -v ./pkg/... ./cmd/... -cover
+
+# Build manager binary
+manager: generate fmt vet
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-w" -o bin/manager github.com/kubesphere/s2ioperator/cmd/manager
+
+# Run against the configured Kubernetes cluster in ~/.kube/config
+run: generate fmt vet
+	go run ./cmd/manager/main.go
+
+# Install CRDs into a cluster
+install: manifests
+	kubectl apply -f config/crds
+
+# Deploy controller in the configured Kubernetes cluster in ~/.kube/config
+deploy: manifests
+	kubectl apply -f config/crds
+	kustomize build config/default | kubectl apply -f -
+
+# Generate manifests e.g. CRD, RBAC etc.
+manifests:
+	go run vendor/sigs.k8s.io/controller-tools/cmd/controller-gen/main.go all
+
+# Run go fmt against code
+fmt:
+	go fmt ./pkg/... ./cmd/...
+
+# Run go vet against code
+vet:
+	go vet ./pkg/... ./cmd/...
+
+# Generate code
+generate:
+	go run vendor/k8s.io/code-generator/cmd/deepcopy-gen/main.go -O zz_generated.deepcopy -i github.com/kubesphere/s2ioperator/pkg/apis/... -h hack/boilerplate.go.txt
+
+debug: manager
+	./hack/build-image.sh
+
+release:
+	kustomize build config/default -o deploy/s2ioperator.yaml
+
+install-travis:
+	chmod +x ./hack/*.sh
+	./hack/install_tools.sh

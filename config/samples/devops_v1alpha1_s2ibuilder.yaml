@@ -1,0 +1,15 @@
+apiVersion: devops.kubesphere.io/v1alpha1
+kind: S2iBuilder
+metadata:
+  labels:
+    controller-tools.k8s.io: "1.0"
+  name: s2ibuilder-sample
+spec:
+  # Add fields here
+   config:
+    displayName: "For Test"
+    sourceUrl: "https://github.com/sclorg/django-ex"
+    builderImage: centos/python-35-centos7
+    imageName: kubesphere/hello-python
+    tag: latest
+    builderPullPolicy: if-not-present

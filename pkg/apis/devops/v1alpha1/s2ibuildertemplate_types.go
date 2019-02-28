@@ -1,0 +1,77 @@
+/*
+Copyright 2019 The Kubesphere Authors.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+package v1alpha1
+
+import (
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+)
+
+type Parameter struct {
+	Description  string   `json:"description,omitempty"`
+	Key          string   `json:"key,omitempty"`
+	Type         string   `json:"type,omitempty"`
+	OptValues    []string `json:"optValues,omitempty"`
+	Required     bool     `json:"required,omitempty"`
+	DefaultValue string   `json:"defaultValue,omitempty"`
+}
+
+// S2iBuilderTemplateSpec defines the desired state of S2iBuilderTemplate
+type S2iBuilderTemplateSpec struct {
+	//BaseImage is the image this template will use, it does not have tags because a template can have multiple tags like JDK6,JDK7
+	BaseImage string `json:"baseImage,omitempty"`
+	//Tags includes all variants in this template
+	Tags []string `json:"tags,omitempty"`
+	//CodeFramework means which language this template is designed for and which framework is using if has framework. Like Java, NodeJS etc
+	CodeFramework CodeFramework `json:"codeFramework,omitempty"`
+	// Parameters is a set of environment variables to be passed to the image.
+	Parameters []Parameter `json:"environment,omitempty"`
+	Version    string      `json:"version,omitempty"`
+}
+
+// S2iBuilderTemplateStatus defines the observed state of S2iBuilderTemplate
+type S2iBuilderTemplateStatus struct {
+}
+
+// +genclient
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+// S2iBuilderTemplate is the Schema for the s2ibuildertemplates API
+// +k8s:openapi-gen=true
+// +kubebuilder:printcolumn:name="Framework",type="string",JSONPath=".spec.codeFramework"
+// +kubebuilder:printcolumn:name="BaseImage",type="string",JSONPath=".spec.baseImage"
+// +kubebuilder:printcolumn:name="Version",type="string",JSONPath=".spec.version"
+// +kubebuilder:resource:shortName=s2ibt
+type S2iBuilderTemplate struct {
+	metav1.TypeMeta   `json:",inline"`
+	metav1.ObjectMeta `json:"metadata,omitempty"`
+
+	Spec   S2iBuilderTemplateSpec   `json:"spec,omitempty"`
+	Status S2iBuilderTemplateStatus `json:"status,omitempty"`
+}
+
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+// S2iBuilderTemplateList contains a list of S2iBuilderTemplate
+type S2iBuilderTemplateList struct {
+	metav1.TypeMeta `json:",inline"`
+	metav1.ListMeta `json:"metadata,omitempty"`
+	Items           []S2iBuilderTemplate `json:"items"`
+}
+
+func init() {
+	SchemeBuilder.Register(&S2iBuilderTemplate{}, &S2iBuilderTemplateList{})
+}
