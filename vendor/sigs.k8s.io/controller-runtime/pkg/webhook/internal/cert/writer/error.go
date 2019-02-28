@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Kubesphere Authors.
+Copyright 2018 The Kubernetes Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -13,10 +13,31 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package main
 
-import "flag"
+package writer
 
-func main() {
-	flag.Parse()
+type notFoundError struct {
+	err error
+}
+
+func (e notFoundError) Error() string {
+	return e.err.Error()
+}
+
+func isNotFound(err error) bool {
+	_, ok := err.(notFoundError)
+	return ok
+}
+
+type alreadyExistError struct {
+	err error
+}
+
+func (e alreadyExistError) Error() string {
+	return e.err.Error()
+}
+
+func isAlreadyExists(err error) bool {
+	_, ok := err.(alreadyExistError)
+	return ok
 }
