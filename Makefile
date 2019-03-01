@@ -1,6 +1,6 @@
 
 # Image URL to use all building/pushing image targets
-IMG ?= controller:latest
+IMG ?= kubespheredev/s2ioperator:v0.0.1
 
 all: test manager
 
@@ -41,12 +41,21 @@ vet:
 generate:
 	go run vendor/k8s.io/code-generator/cmd/deepcopy-gen/main.go -O zz_generated.deepcopy -i github.com/kubesphere/s2ioperator/pkg/apis/... -h hack/boilerplate.go.txt
 
+# Build the docker image
+docker-build: 
+	docker build -f deploy/Dockerfile -t $(IMG) bin/
+	@echo "updating kustomize image patch file for manager resource"
+	sed -i'' -e 's@image: .*@image: '"${IMG}"'@' ./config/default/manager_image_patch.yaml
+
 debug: manager
 	./hack/build-image.sh
 
-release:
+release: manager test docker-build
 	kustomize build config/default -o deploy/s2ioperator.yaml
 
 install-travis:
 	chmod +x ./hack/*.sh
 	./hack/install_tools.sh
+
+release-no-test: manager docker-build
+	kustomize build config/default -o deploy/s2ioperator.yaml

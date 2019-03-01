@@ -447,6 +447,9 @@ spec:
                 for and which framework is using if has framework. Like Java, NodeJS
                 etc
               type: string
+            description:
+              description: Description illustrate the purpose of this template
+              type: string
             environment:
               description: Parameters is a set of environment variables to be passed
                 to the image.
@@ -468,12 +471,16 @@ spec:
                     type: string
                 type: object
               type: array
+            iconPath:
+              description: IconPath is used for frontend display
+              type: string
             tags:
               description: Tags includes all variants in this template
               items:
                 type: string
               type: array
             version:
+              description: Version of template
               type: string
           type: object
         status:
@@ -825,7 +832,7 @@ spec:
           value: webhook-server-secret
         - name: S2IIMAGENAME
           value: magicsong/s2irun:19d9c4b
-        image: kubespheredev/s2ioperator:6b27e90
+        image: kubespheredev/s2ioperator:v0.0.1
         imagePullPolicy: Always
         name: manager
         ports:
