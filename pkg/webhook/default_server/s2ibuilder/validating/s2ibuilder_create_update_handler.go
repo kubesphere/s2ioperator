@@ -51,7 +51,7 @@ func (h *S2iBuilderCreateUpdateHandler) validatingS2iBuilderFn(ctx context.Conte
 	fromTemplate := false
 	if obj.Spec.FromTemplate != nil {
 		t := &devopsv1alpha1.S2iBuilderTemplate{}
-		err := h.Client.Get(context.TODO(), k8stypes.NamespacedName{Namespace: obj.Namespace, Name: obj.Spec.FromTemplate.Name}, t)
+		err := h.Client.Get(context.TODO(), k8stypes.NamespacedName{Name: obj.Spec.FromTemplate.Name}, t)
 		if err != nil {
 			if k8serror.IsNotFound(err) {
 				return false, "validate failed", fmt.Errorf("Template not found, pls check the template name  [%s] or create a template", obj.Spec.FromTemplate.Name)

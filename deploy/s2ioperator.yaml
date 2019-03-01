@@ -420,7 +420,7 @@ spec:
     plural: s2ibuildertemplates
     shortNames:
     - s2ibt
-  scope: Namespaced
+  scope: Cluster
   validation:
     openAPIV3Schema:
       properties:
@@ -447,6 +447,9 @@ spec:
                 for and which framework is using if has framework. Like Java, NodeJS
                 etc
               type: string
+            description:
+              description: Description illustrate the purpose of this template
+              type: string
             environment:
               description: Parameters is a set of environment variables to be passed
                 to the image.
@@ -468,12 +471,16 @@ spec:
                     type: string
                 type: object
               type: array
+            iconPath:
+              description: IconPath is used for frontend display
+              type: string
             tags:
               description: Tags includes all variants in this template
               items:
                 type: string
               type: array
             version:
+              description: Version of template
               type: string
           type: object
         status:
@@ -824,8 +831,8 @@ spec:
         - name: SECRET_NAME
           value: webhook-server-secret
         - name: S2IIMAGENAME
-          value: kubesphere/s2irun:19d9c4b
-        image: dockerhub.qingcloud.com/kubesphere/s2ioperator:9b98628
+          value: magicsong/s2irun:19d9c4b
+        image: kubespheredev/s2ioperator:v0.0.1
         imagePullPolicy: Always
         name: manager
         ports:
