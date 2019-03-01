@@ -505,6 +505,9 @@ spec:
   - JSONPath: .status.runState
     name: State
     type: string
+  - JSONPath: .status.startTime
+    name: StartTime
+    type: date
   - JSONPath: .status.completionTime
     name: CompletionTime
     type: date
