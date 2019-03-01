@@ -56,6 +56,7 @@ type S2iRunStatus struct {
 // +kubebuilder:subresource:status
 // +kubebuilder:resource:shortName=s2ir
 // +kubebuilder:printcolumn:name="State",type="string",JSONPath=".status.runState"
+// +kubebuilder:printcolumn:name="StartTime",type="date",JSONPath=".status.startTime"
 // +kubebuilder:printcolumn:name="CompletionTime",type="date",JSONPath=".status.completionTime"
 type S2iRun struct {
 	metav1.TypeMeta   `json:",inline"`
