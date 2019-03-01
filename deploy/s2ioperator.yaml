@@ -420,7 +420,7 @@ spec:
     plural: s2ibuildertemplates
     shortNames:
     - s2ibt
-  scope: Namespaced
+  scope: Cluster
   validation:
     openAPIV3Schema:
       properties:
@@ -824,8 +824,8 @@ spec:
         - name: SECRET_NAME
           value: webhook-server-secret
         - name: S2IIMAGENAME
-          value: kubesphere/s2irun:19d9c4b
-        image: dockerhub.qingcloud.com/kubesphere/s2ioperator:9b98628
+          value: magicsong/s2irun:19d9c4b
+        image: kubespheredev/s2ioperator:6b27e90
         imagePullPolicy: Always
         name: manager
         ports:

@@ -6,7 +6,7 @@ all: test manager
 
 # Run tests
 test: fmt vet
-	go test -v ./pkg/... ./cmd/... -cover
+	go test -v ./pkg/...  -cover
 
 # Build manager binary
 manager: generate fmt vet

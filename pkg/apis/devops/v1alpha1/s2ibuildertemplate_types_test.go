@@ -27,13 +27,11 @@ import (
 
 func TestStorageS2iBuilderTemplate(t *testing.T) {
 	key := types.NamespacedName{
-		Name:      "foo",
-		Namespace: "default",
+		Name: "foo",
 	}
 	created := &S2iBuilderTemplate{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      "foo",
-			Namespace: "default",
+			Name: "foo",
 		}}
 	g := gomega.NewGomegaWithT(t)
 

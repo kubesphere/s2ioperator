@@ -39,14 +39,19 @@ type S2iBuilderTemplateSpec struct {
 	CodeFramework CodeFramework `json:"codeFramework,omitempty"`
 	// Parameters is a set of environment variables to be passed to the image.
 	Parameters []Parameter `json:"environment,omitempty"`
-	Version    string      `json:"version,omitempty"`
+	// Version of template
+	Version string `json:"version,omitempty"`
+	// Description illustrate the purpose of this template
+	Description string `json:"description,omitempty"`
+	// IconPath is used for frontend display
+	IconPath string `json:"iconPath,omitempty"`
 }
 
 // S2iBuilderTemplateStatus defines the observed state of S2iBuilderTemplate
 type S2iBuilderTemplateStatus struct {
 }
 
-// +genclient
+// +genclient:nonNamespaced
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 // S2iBuilderTemplate is the Schema for the s2ibuildertemplates API

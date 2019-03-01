@@ -20,7 +20,7 @@ const (
 func (r *ReconcileS2iRun) NewConfigMap(instance *devopsv1alpha1.S2iRun, config *devopsv1alpha1.S2iConfig, template *devopsv1alpha1.UserDefineTemplate) (*corev1.ConfigMap, error) {
 	if template != nil {
 		t := &devopsv1alpha1.S2iBuilderTemplate{}
-		err := r.Get(context.TODO(), types.NamespacedName{Name: template.Name, Namespace: instance.Namespace}, t)
+		err := r.Get(context.TODO(), types.NamespacedName{Name: template.Name}, t)
 		if err != nil {
 			return nil, err
 		}
