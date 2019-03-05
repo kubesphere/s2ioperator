@@ -45,7 +45,10 @@ type S2iRunStatus struct {
 	// It is represented in RFC3339 form and is in UTC.
 	// +optional
 	CompletionTime *metav1.Time `json:"completionTime,omitempty" protobuf:"bytes,3,opt,name=completionTime"`
-	RunState       RunState     `json:"runState,omitempty"`
+	// RunState  indicates whether this job is done or failed
+	RunState RunState `json:"runState,omitempty"`
+	//LogURL is uesd for external log handler to let user know where is log located in
+	LogURL string `json:"logURL,omitempty"`
 }
 
 // +genclient

@@ -18,10 +18,12 @@ package s2irun
 
 import (
 	"context"
+	"fmt"
 	"reflect"
 	"time"
 
 	devopsv1alpha1 "github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1"
+	loghandler "github.com/kubesphere/s2ioperator/pkg/handler/log"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -205,4 +207,20 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 		}
 	}
 	return reconcile.Result{}, nil
+}
+
+func (r *ReconcileS2iRun) GetLogURL(job *batchv1.Job) (string, error) {
+	pods := &corev1.PodList{}
+	listOption := &client.ListOptions{}
+	listOption.SetLabelSelector("job-name=" + job.Name)
+	listOption.InNamespace(job.Namespace)
+	err := r.List(context.TODO(), listOption, pods)
+	if err != nil {
+		log.Error(nil, "Error in get pod of job")
+		return "", nil
+	}
+	if len(pods.Items) == 0 {
+		return "", fmt.Errorf("cannot find any pod of the job %s", job.Name)
+	}
+	return loghandler.GetKubesphereLogger().GetURLOfPodLog(pods.Items[0].Namespace, pods.Items[0].Name)
 }
