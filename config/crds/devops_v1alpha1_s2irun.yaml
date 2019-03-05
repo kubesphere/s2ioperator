@@ -71,7 +71,12 @@ spec:
                 represented in RFC3339 form and is in UTC.
               format: date-time
               type: string
+            logURL:
+              description: LogURL is uesd for external log handler to let user know
+                where is log located in
+              type: string
             runState:
+              description: RunState  indicates whether this job is done or failed
               type: string
             startTime:
               description: StartTime represent when this run began

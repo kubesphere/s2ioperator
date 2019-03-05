@@ -57,5 +57,3 @@ install-travis:
 	chmod +x ./hack/*.sh
 	./hack/install_tools.sh
 
-release-no-test: manager docker-build
-	kustomize build config/default -o deploy/s2ioperator.yaml

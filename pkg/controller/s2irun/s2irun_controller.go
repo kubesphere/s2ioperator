@@ -107,6 +107,7 @@ type ReconcileS2iRun struct {
 // +kubebuilder:rbac:groups=devops.kubesphere.io,resources=s2iruns,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=devops.kubesphere.io,resources=s2iruns/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=devops.kubesphere.io,resources=s2ibuildertemplates,verbs=get;list;watch
+// +kubebuilder:rbac:groups=core,resources=pods,verbs=get;list;watch
 func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result, error) {
 	// Fetch the S2iRun instance
 	log.Info("Reconciler of s2irun called", "Name", request.Name)
@@ -195,6 +196,11 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 			log.Info("Job completed", "time", found.Status.CompletionTime)
 			instance.Status.RunState = devopsv1alpha1.Successful
 			instance.Status.CompletionTime = found.Status.CompletionTime
+			logURL, err := r.GetLogURL(found)
+			if err != nil {
+				return reconcile.Result{}, err
+			}
+			instance.Status.LogURL = logURL
 		} else {
 			instance.Status.RunState = devopsv1alpha1.Unknown
 		}
