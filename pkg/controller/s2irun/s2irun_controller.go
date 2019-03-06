@@ -18,10 +18,12 @@ package s2irun
 
 import (
 	"context"
+	"fmt"
 	"reflect"
 	"time"
 
 	devopsv1alpha1 "github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1"
+	loghandler "github.com/kubesphere/s2ioperator/pkg/handler/log"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -38,6 +40,10 @@ import (
 )
 
 var log = logf.Log.WithName("s2irun-controller")
+
+const (
+	S2iRunBuilderLabel = "labels.devops.kubesphere.io/builder-name"
+)
 
 /**
 * USER ACTION REQUIRED: This is a scaffold file intended for the user to modify with their own Controller
@@ -97,14 +103,13 @@ type ReconcileS2iRun struct {
 
 // Reconcile reads that state of the cluster for a S2iRun object and makes changes based on the state read
 // and what is in the S2iRun.Spec
-// TODO(user): Modify this Reconcile function to implement your Controller logic.  The scaffolding writes
-// a Deployment as an example
 
 // +kubebuilder:rbac:groups=core,resources=configmaps,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=batch,resources=jobs,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=devops.kubesphere.io,resources=s2iruns,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=devops.kubesphere.io,resources=s2iruns/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=devops.kubesphere.io,resources=s2ibuildertemplates,verbs=get;list;watch
+// +kubebuilder:rbac:groups=core,resources=pods,verbs=get;list;watch
 func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result, error) {
 	// Fetch the S2iRun instance
 	log.Info("Reconciler of s2irun called", "Name", request.Name)
@@ -113,7 +118,6 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 	if err != nil {
 		if errors.IsNotFound(err) {
 			// Object not found, return.  Created objects are automatically garbage collected.
-			// For additional cleanup logic use finalizers.
 			return reconcile.Result{}, nil
 		}
 		// Error reading the object - requeue the request.
@@ -128,6 +132,17 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 			return reconcile.Result{RequeueAfter: time.Second * 15}, nil
 		}
 		return reconcile.Result{}, err
+	}
+	if instance.Labels == nil {
+		instance.Labels = make(map[string]string)
+	}
+	if v, ok := instance.Labels[S2iRunBuilderLabel]; !ok || v != builder.Name {
+		instance.Labels[S2iRunBuilderLabel] = builder.Name
+		err = r.Update(context.TODO(), instance)
+		if err != nil {
+			log.Error(nil, "Failed to add labels to s2irun")
+			return reconcile.Result{}, err
+		}
 	}
 	configmap, err := r.NewConfigMap(instance, builder.Spec.Config, builder.Spec.FromTemplate)
 	if err != nil {
@@ -181,6 +196,7 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 	} else if err != nil {
 		return reconcile.Result{}, err
 	} else {
+		instance.Status.KubernetesJobName = found.Name
 		instance.Status.StartTime = found.Status.StartTime
 		if found.Status.Active == 1 {
 			log.Info("Job is running", "start time", found.Status.StartTime)
@@ -193,6 +209,11 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 			log.Info("Job completed", "time", found.Status.CompletionTime)
 			instance.Status.RunState = devopsv1alpha1.Successful
 			instance.Status.CompletionTime = found.Status.CompletionTime
+			logURL, err := r.GetLogURL(found)
+			if err != nil {
+				return reconcile.Result{}, err
+			}
+			instance.Status.LogURL = logURL
 		} else {
 			instance.Status.RunState = devopsv1alpha1.Unknown
 		}
@@ -200,9 +221,25 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 	if !reflect.DeepEqual(instance.Status, origin.Status) {
 		err = r.Status().Update(context.Background(), instance)
 		if err != nil {
-			log.Error(nil, "Failed to update s2irun", "Namespace", instance.Namespace, "Name", instance.Name)
+			log.Error(nil, "Failed to update s2irun status", "Namespace", instance.Namespace, "Name", instance.Name)
 			return reconcile.Result{}, err
 		}
 	}
 	return reconcile.Result{}, nil
+}
+
+func (r *ReconcileS2iRun) GetLogURL(job *batchv1.Job) (string, error) {
+	pods := &corev1.PodList{}
+	listOption := &client.ListOptions{}
+	listOption.SetLabelSelector("job-name=" + job.Name)
+	listOption.InNamespace(job.Namespace)
+	err := r.List(context.TODO(), listOption, pods)
+	if err != nil {
+		log.Error(nil, "Error in get pod of job")
+		return "", nil
+	}
+	if len(pods.Items) == 0 {
+		return "", fmt.Errorf("cannot find any pod of the job %s", job.Name)
+	}
+	return loghandler.GetKubesphereLogger().GetURLOfPodLog(pods.Items[0].Namespace, pods.Items[0].Name)
 }

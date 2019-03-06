@@ -10,12 +10,18 @@ spec:
   - JSONPath: .status.runState
     name: State
     type: string
+  - JSONPath: .status.kubernetesJobName
+    name: K8sJobName
+    type: string
   - JSONPath: .status.startTime
     name: StartTime
     type: date
   - JSONPath: .status.completionTime
     name: CompletionTime
     type: date
+  - JSONPath: .status.logURL
+    name: LogURL
+    type: string
   group: devops.kubesphere.io
   names:
     kind: S2iRun
@@ -71,7 +77,15 @@ spec:
                 represented in RFC3339 form and is in UTC.
               format: date-time
               type: string
+            kubernetesJobName:
+              description: KubernetesJobName is the job name in k8s
+              type: string
+            logURL:
+              description: LogURL is uesd for external log handler to let user know
+                where is log located in
+              type: string
             runState:
+              description: RunState  indicates whether this job is done or failed
               type: string
             startTime:
               description: StartTime represent when this run began

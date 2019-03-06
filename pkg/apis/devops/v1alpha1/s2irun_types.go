@@ -45,7 +45,12 @@ type S2iRunStatus struct {
 	// It is represented in RFC3339 form and is in UTC.
 	// +optional
 	CompletionTime *metav1.Time `json:"completionTime,omitempty" protobuf:"bytes,3,opt,name=completionTime"`
-	RunState       RunState     `json:"runState,omitempty"`
+	// RunState  indicates whether this job is done or failed
+	RunState RunState `json:"runState,omitempty"`
+	//LogURL is uesd for external log handler to let user know where is log located in
+	LogURL string `json:"logURL,omitempty"`
+	//KubernetesJobName is the job name in k8s
+	KubernetesJobName string `json:"kubernetesJobName,omitempty"`
 }
 
 // +genclient
@@ -56,8 +61,10 @@ type S2iRunStatus struct {
 // +kubebuilder:subresource:status
 // +kubebuilder:resource:shortName=s2ir
 // +kubebuilder:printcolumn:name="State",type="string",JSONPath=".status.runState"
+// +kubebuilder:printcolumn:name="K8sJobName",type="string",JSONPath=".status.kubernetesJobName"
 // +kubebuilder:printcolumn:name="StartTime",type="date",JSONPath=".status.startTime"
 // +kubebuilder:printcolumn:name="CompletionTime",type="date",JSONPath=".status.completionTime"
+// +kubebuilder:printcolumn:name="LogURL",type="string",JSONPath=".status.logURL"
 type S2iRun struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`

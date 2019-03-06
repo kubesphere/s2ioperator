@@ -9,7 +9,7 @@ test: fmt vet
 	go test -v ./pkg/...  -cover
 
 # Build manager binary
-manager: generate fmt vet
+manager: generate fmt manifests vet
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-w" -o bin/manager github.com/kubesphere/s2ioperator/cmd/manager
 
 # Run against the configured Kubernetes cluster in ~/.kube/config
@@ -44,6 +44,7 @@ generate:
 # Build the docker image
 docker-build: 
 	docker build -f deploy/Dockerfile -t $(IMG) bin/
+	docker push $(IMG)
 	@echo "updating kustomize image patch file for manager resource"
 	sed -i'' -e 's@image: .*@image: '"${IMG}"'@' ./config/default/manager_image_patch.yaml
 
@@ -57,5 +58,3 @@ install-travis:
 	chmod +x ./hack/*.sh
 	./hack/install_tools.sh
 
-release-no-test: manager docker-build
-	kustomize build config/default -o deploy/s2ioperator.yaml

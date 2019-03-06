@@ -22,4 +22,5 @@ __*
 *.swp
 *.swo
 *~
-
+*.out
+*.coverprofile
