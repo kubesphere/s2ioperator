@@ -22,7 +22,7 @@ wget https://raw.githubusercontent.com/kubesphere/s2ioperator/master/hack/certs.
 chmod +x certs.sh
 ./certs.sh --service webhook-server-service --namespace devops --secret webhook-server-secret
 ```
-执行最下面一句命令，需要系统安装`openssl`，并且拥有正确配置了k8s集群config的`kubectl`。需要有k8s的管理员权限。
+执行最下面一句命令，需要系统安装`openssl`，`jq`，并且拥有正确配置了k8s集群config的`kubectl`。需要有k8s的管理员权限。
 ## 快速开始
 
 1. 新建一个s2ibuilder，s2ibuilder存储了所有需要的配置信息。每一次生成Docker镜像可以复用这些信息，也可以覆盖一些信息。

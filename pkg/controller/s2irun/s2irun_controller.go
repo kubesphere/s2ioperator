@@ -41,6 +41,10 @@ import (
 
 var log = logf.Log.WithName("s2irun-controller")
 
+const (
+	S2iRunBuilderLabel = "labels.devops.kubesphere.io/builder-name"
+)
+
 /**
 * USER ACTION REQUIRED: This is a scaffold file intended for the user to modify with their own Controller
 * business logic.  Delete these comments after modifying this file.*
@@ -99,8 +103,6 @@ type ReconcileS2iRun struct {
 
 // Reconcile reads that state of the cluster for a S2iRun object and makes changes based on the state read
 // and what is in the S2iRun.Spec
-// TODO(user): Modify this Reconcile function to implement your Controller logic.  The scaffolding writes
-// a Deployment as an example
 
 // +kubebuilder:rbac:groups=core,resources=configmaps,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=batch,resources=jobs,verbs=get;list;watch;create;update;patch;delete
@@ -116,7 +118,6 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 	if err != nil {
 		if errors.IsNotFound(err) {
 			// Object not found, return.  Created objects are automatically garbage collected.
-			// For additional cleanup logic use finalizers.
 			return reconcile.Result{}, nil
 		}
 		// Error reading the object - requeue the request.
@@ -131,6 +132,17 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 			return reconcile.Result{RequeueAfter: time.Second * 15}, nil
 		}
 		return reconcile.Result{}, err
+	}
+	if instance.Labels == nil {
+		instance.Labels = make(map[string]string)
+	}
+	if v, ok := instance.Labels[S2iRunBuilderLabel]; !ok || v != builder.Name {
+		instance.Labels[S2iRunBuilderLabel] = builder.Name
+		err = r.Update(context.TODO(), instance)
+		if err != nil {
+			log.Error(nil, "Failed to add labels to s2irun")
+			return reconcile.Result{}, err
+		}
 	}
 	configmap, err := r.NewConfigMap(instance, builder.Spec.Config, builder.Spec.FromTemplate)
 	if err != nil {
@@ -184,6 +196,7 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 	} else if err != nil {
 		return reconcile.Result{}, err
 	} else {
+		instance.Status.KubernetesJobName = found.Name
 		instance.Status.StartTime = found.Status.StartTime
 		if found.Status.Active == 1 {
 			log.Info("Job is running", "start time", found.Status.StartTime)
@@ -208,7 +221,7 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 	if !reflect.DeepEqual(instance.Status, origin.Status) {
 		err = r.Status().Update(context.Background(), instance)
 		if err != nil {
-			log.Error(nil, "Failed to update s2irun", "Namespace", instance.Namespace, "Name", instance.Name)
+			log.Error(nil, "Failed to update s2irun status", "Namespace", instance.Namespace, "Name", instance.Name)
 			return reconcile.Result{}, err
 		}
 	}
