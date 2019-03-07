@@ -60,3 +60,22 @@ func validateDockerNetworkMode(mode api.DockerNetworkMode) bool {
 	}
 	return false
 }
+
+func ValidateParameter(user, tmpt []api.Parameter) []error {
+	findParameter := func(name string, ps []api.Parameter) int {
+		for index, v := range ps {
+			if v.Key == name {
+				return index
+			}
+		}
+		return -1
+	}
+	allErrs := make([]error, 0)
+	for _, v := range tmpt {
+		index := findParameter(v.Key, user)
+		if v.Required && (index == -1 || user[index].Value == "") {
+			allErrs = append(allErrs, errors.NewFieldRequired("Parameter:"+v.Key))
+		}
+	}
+	return allErrs
+}

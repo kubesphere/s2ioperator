@@ -24,3 +24,4 @@ __*
 *~
 *.out
 *.coverprofile
+.DS_Store
