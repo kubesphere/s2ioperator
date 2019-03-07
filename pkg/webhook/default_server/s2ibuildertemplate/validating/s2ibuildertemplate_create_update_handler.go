@@ -24,7 +24,6 @@ import (
 	"net/http"
 
 	devopsv1alpha1 "github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1"
-	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/runtime/inject"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission/types"
@@ -40,7 +39,6 @@ func init() {
 
 // S2iBuilderTemplateCreateUpdateHandler handles S2iBuilder
 type S2iBuilderTemplateCreateUpdateHandler struct {
-	Client client.Client
 	// Decoder decodes objects
 	Decoder types.Decoder
 }
