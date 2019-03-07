@@ -57,7 +57,6 @@ type S2iBuilderTemplateStatus struct {
 // S2iBuilderTemplate is the Schema for the s2ibuildertemplates API
 // +k8s:openapi-gen=true
 // +kubebuilder:printcolumn:name="Framework",type="string",JSONPath=".spec.codeFramework"
-// +kubebuilder:printcolumn:name="BaseImages",type="string",JSONPath=".spec.baseImages"
 // +kubebuilder:printcolumn:name="DefaultBaseImage",type="string",JSONPath=".spec.defaultBaseImage"
 // +kubebuilder:printcolumn:name="Version",type="string",JSONPath=".spec.version"
 // +kubebuilder:resource:shortName=s2ibt

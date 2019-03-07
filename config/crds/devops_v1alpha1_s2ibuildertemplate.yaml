@@ -10,9 +10,6 @@ spec:
   - JSONPath: .spec.codeFramework
     name: Framework
     type: string
-  - JSONPath: .spec.baseImages
-    name: BaseImages
-    type: string
   - JSONPath: .spec.defaultBaseImage
     name: DefaultBaseImage
     type: string

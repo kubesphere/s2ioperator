@@ -56,7 +56,8 @@ func (h *S2iBuilderTemplateCreateUpdateHandler) validatingS2iBuilderTemplateFn(c
 	}
 
 	if !reflectutils.Contains(obj.Spec.DefaultBaseImage, obj.Spec.BaseImages) {
-		return false, "validate failed", fmt.Errorf("defaultBaseImage [%s] should in [%v]", obj.Spec.DefaultBaseImage, obj.Spec.BaseImages)
+		return false, "validate failed", errors.NewFieldInvalidValueWithReason("defaultBaseImage",
+			fmt.Sprintf("defaultBaseImage [%s] should in [%v]", obj.Spec.DefaultBaseImage, obj.Spec.BaseImages))
 	}
 
 	for _, baseImage := range obj.Spec.BaseImages {
@@ -86,14 +87,6 @@ func (h *S2iBuilderTemplateCreateUpdateHandler) Handle(ctx context.Context, req 
 		return admission.ErrorResponse(http.StatusBadRequest, err)
 	}
 	return admission.ValidationResponse(allowed, reason)
-}
-
-var _ inject.Client = &S2iBuilderTemplateCreateUpdateHandler{}
-
-// InjectClient injects the client into the S2iBuilderTemplateCreateUpdateHandler
-func (h *S2iBuilderTemplateCreateUpdateHandler) InjectClient(c client.Client) error {
-	h.Client = c
-	return nil
 }
 
 var _ inject.Decoder = &S2iBuilderTemplateCreateUpdateHandler{}
