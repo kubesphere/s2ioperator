@@ -24,10 +24,10 @@ func (r *ReconcileS2iRun) NewConfigMap(instance *devopsv1alpha1.S2iRun, config *
 		if err != nil {
 			return nil, err
 		}
-		if template.Tag != "" {
-			config.BuilderImage = t.Spec.BaseImage + ":" + template.Tag
+		if template.BaseImage != "" {
+			config.BuilderImage = template.BaseImage
 		} else {
-			config.BuilderImage = t.Spec.BaseImage
+			config.BuilderImage = t.Spec.DefaultBaseImage
 		}
 	}
 

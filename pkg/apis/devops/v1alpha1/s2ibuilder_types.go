@@ -387,8 +387,8 @@ type UserDefineTemplate struct {
 	Name string `json:"name,omitempty"`
 	//Parameters must use with `template`, fill some parameters which template will use
 	Parameters []Parameter `json:"parameters,omitempty"`
-	//Tag specify which version of this template to use
-	Tag string `json:"tag,omitempty"`
+	//BaseImage specify which version of this template to use
+	BaseImage string `json:"baseImage,omitempty"`
 }
 
 // S2iBuilderSpec defines the desired state of S2iBuilder

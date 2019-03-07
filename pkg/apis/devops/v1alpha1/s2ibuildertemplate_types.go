@@ -31,10 +31,10 @@ type Parameter struct {
 
 // S2iBuilderTemplateSpec defines the desired state of S2iBuilderTemplate
 type S2iBuilderTemplateSpec struct {
-	//BaseImage is the image this template will use, it does not have tags because a template can have multiple tags like JDK6,JDK7
-	BaseImage string `json:"baseImage,omitempty"`
-	//Tags includes all variants in this template
-	Tags []string `json:"tags,omitempty"`
+	//DefaultBaseImage is the image that will be used by default
+	DefaultBaseImage string `json:"defaultBaseImage,omitempty"`
+	//BaseImages are the images this template will use.
+	BaseImages []string `json:"baseImages,omitempty"`
 	//CodeFramework means which language this template is designed for and which framework is using if has framework. Like Java, NodeJS etc
 	CodeFramework CodeFramework `json:"codeFramework,omitempty"`
 	// Parameters is a set of environment variables to be passed to the image.
@@ -57,7 +57,7 @@ type S2iBuilderTemplateStatus struct {
 // S2iBuilderTemplate is the Schema for the s2ibuildertemplates API
 // +k8s:openapi-gen=true
 // +kubebuilder:printcolumn:name="Framework",type="string",JSONPath=".spec.codeFramework"
-// +kubebuilder:printcolumn:name="BaseImage",type="string",JSONPath=".spec.baseImage"
+// +kubebuilder:printcolumn:name="DefaultBaseImage",type="string",JSONPath=".spec.defaultBaseImage"
 // +kubebuilder:printcolumn:name="Version",type="string",JSONPath=".spec.version"
 // +kubebuilder:resource:shortName=s2ibt
 type S2iBuilderTemplate struct {
