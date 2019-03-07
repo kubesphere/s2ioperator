@@ -31,10 +31,8 @@ type Parameter struct {
 
 // S2iBuilderTemplateSpec defines the desired state of S2iBuilderTemplate
 type S2iBuilderTemplateSpec struct {
-	//BaseImage is the image this template will use, it does not have tags because a template can have multiple tags like JDK6,JDK7
-	BaseImage string `json:"baseImage,omitempty"`
-	//Tags includes all variants in this template
-	Tags []string `json:"tags,omitempty"`
+	//BaseImages is the image this template will use, it does not have tags because a template can have multiple tags like JDK6,JDK7
+	BaseImages []string `json:"baseImages,omitempty"`
 	//CodeFramework means which language this template is designed for and which framework is using if has framework. Like Java, NodeJS etc
 	CodeFramework CodeFramework `json:"codeFramework,omitempty"`
 	// Parameters is a set of environment variables to be passed to the image.
