@@ -22,6 +22,7 @@ import (
 	"net/http"
 
 	devopsv1alpha1 "github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1"
+	"github.com/kubesphere/s2ioperator/pkg/util/reflectutils"
 	k8serror "k8s.io/apimachinery/pkg/api/errors"
 	k8stypes "k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/errors"
@@ -57,6 +58,12 @@ func (h *S2iBuilderCreateUpdateHandler) validatingS2iBuilderFn(ctx context.Conte
 				return false, "validate failed", fmt.Errorf("Template not found, pls check the template name  [%s] or create a template", obj.Spec.FromTemplate.Name)
 			}
 			return false, "Unhandle error", err
+		}
+		if obj.Spec.FromTemplate.BaseImage != "" {
+			if !reflectutils.Contains(obj.Spec.FromTemplate.BaseImage, t.Spec.BaseImages) {
+				return false, "validate failed", fmt.Errorf("builder's baseImage [%s] not in builder baseImages [%v]",
+					obj.Spec.FromTemplate.BaseImage, t.Spec.BaseImages)
+			}
 		}
 		fromTemplate = true
 	}
