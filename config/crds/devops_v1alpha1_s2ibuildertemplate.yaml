@@ -10,8 +10,11 @@ spec:
   - JSONPath: .spec.codeFramework
     name: Framework
     type: string
-  - JSONPath: .spec.baseImage
-    name: BaseImage
+  - JSONPath: .spec.baseImages
+    name: BaseImages
+    type: string
+  - JSONPath: .spec.defaultBaseImage
+    name: DefaultBaseImage
     type: string
   - JSONPath: .spec.version
     name: Version
@@ -50,6 +53,9 @@ spec:
               description: CodeFramework means which language this template is designed
                 for and which framework is using if has framework. Like Java, NodeJS
                 etc
+              type: string
+            defaultBaseImage:
+              description: DefaultBaseImage is the image that will be used by default
               type: string
             description:
               description: Description illustrate the purpose of this template
