@@ -88,7 +88,7 @@ func (h *S2iBuilderCreateUpdateHandler) Handle(ctx context.Context, req types.Re
 
 	allowed, reason, err := h.validatingS2iBuilderFn(ctx, obj)
 	if err != nil {
-		return admission.ErrorResponse(http.StatusInternalServerError, err)
+		return admission.ErrorResponse(http.StatusBadRequest, err)
 	}
 	return admission.ValidationResponse(allowed, reason)
 }

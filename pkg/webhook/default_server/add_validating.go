@@ -19,11 +19,12 @@ package defaultserver
 import (
 	"fmt"
 
-	"github.com/kubesphere/s2ioperator/pkg/webhook/default_server/s2ibuilder/validating"
+	s2iBuilderValidating "github.com/kubesphere/s2ioperator/pkg/webhook/default_server/s2ibuilder/validating"
+	s2iBuilderTemplateValidating "github.com/kubesphere/s2ioperator/pkg/webhook/default_server/s2ibuildertemplate/validating"
 )
 
 func init() {
-	for k, v := range validating.Builders {
+	for k, v := range s2iBuilderValidating.Builders {
 		_, found := builderMap[k]
 		if found {
 			log.V(1).Info(fmt.Sprintf(
@@ -31,7 +32,30 @@ func init() {
 		}
 		builderMap[k] = v
 	}
-	for k, v := range validating.HandlerMap {
+	for k, v := range s2iBuilderValidating.HandlerMap {
+		_, found := HandlerMap[k]
+		if found {
+			log.V(1).Info(fmt.Sprintf(
+				"conflicting webhook builder names in handler map: %v", k))
+		}
+		_, found = builderMap[k]
+		if !found {
+			log.V(1).Info(fmt.Sprintf(
+				"can't find webhook builder name %q in builder map", k))
+			continue
+		}
+		HandlerMap[k] = v
+	}
+	for k, v := range s2iBuilderTemplateValidating.Builders {
+		_, found := builderMap[k]
+		if found {
+			log.V(1).Info(fmt.Sprintf(
+				"conflicting webhook builder names in builder map: %v", k))
+		}
+		builderMap[k] = v
+	}
+
+	for k, v := range s2iBuilderTemplateValidating.HandlerMap {
 		_, found := HandlerMap[k]
 		if found {
 			log.V(1).Info(fmt.Sprintf(

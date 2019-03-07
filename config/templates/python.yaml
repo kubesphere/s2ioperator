@@ -4,9 +4,10 @@ metadata:
   labels:
     controller-tools.k8s.io: "1.0"
   name: s2ibuildertemplate-python
-spec:
-  # Add fields here
-  baseImage:
-    - kubespheredev/python-35-centos7
-  codeFramework: python
-  version: 0.0.1
+  spec:
+    baseImages:
+      - kubespheredev/python-35-centos7
+      - kubespheredev/python-34-centos7
+    codeFramework: python
+    defaultBaseImage: kubespheredev/python-34-centos7
+    version: 0.0.1
