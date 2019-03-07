@@ -33,7 +33,7 @@ type Parameter struct {
 type S2iBuilderTemplateSpec struct {
 	//DefaultBaseImage is the image that will be used by default
 	DefaultBaseImage string `json:"defaultBaseImage,omitempty"`
-	//BaseImages is the image this template will use, it does not have tags because a template can have multiple tags like JDK6,JDK7
+	//BaseImages are the images this template will use.
 	BaseImages []string `json:"baseImages,omitempty"`
 	//CodeFramework means which language this template is designed for and which framework is using if has framework. Like Java, NodeJS etc
 	CodeFramework CodeFramework `json:"codeFramework,omitempty"`

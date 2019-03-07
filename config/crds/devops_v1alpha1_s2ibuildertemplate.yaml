@@ -44,8 +44,7 @@ spec:
         spec:
           properties:
             baseImages:
-              description: BaseImages is the image this template will use, it does
-                not have tags because a template can have multiple tags like JDK6,JDK7
+              description: BaseImages are the images this template will use.
               items:
                 type: string
               type: array
