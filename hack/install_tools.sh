@@ -23,6 +23,6 @@ export PATH=$PATH:/usr/local/kubebuilder/bin
 # chmod u+x kustomize_1.0.11_linux_amd64
 # mv kustomize_1.0.11_linux_amd64 /home/travis/bin/kustomize
 echo "install test tools"
-go install github.com/onsi/ginkgo/ginkgo
+go get -u  github.com/onsi/ginkgo/ginkgo
 
 echo "Tools install done"
