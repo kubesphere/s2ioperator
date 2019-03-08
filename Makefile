@@ -6,7 +6,7 @@ all: test manager
 
 # Run tests
 test: fmt vet
-	go test -v ./pkg/...  -cover
+	ginkgo -v -cover -p ./pkg/...  
 
 # Build manager binary
 manager: generate fmt manifests vet

@@ -1,19 +1,3 @@
-/*
-Copyright 2019 The Kubesphere Authors.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
 package s2irun
 
 import (
@@ -24,17 +8,32 @@ import (
 	"testing"
 
 	"github.com/kubesphere/s2ioperator/pkg/apis"
-	"github.com/onsi/gomega"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 )
 
-var cfg *rest.Config
+var (
+	cfg        *rest.Config
+	mgr        manager.Manager
+	c          client.Client
+	recFn      reconcile.Reconciler
+	requests   chan reconcile.Request
+	stopMgr    chan struct{}
+	mgrStopped *sync.WaitGroup
+)
 
-func TestMain(m *testing.M) {
+func TestS2irun(t *testing.T) {
+	RegisterFailHandler(Fail)
+	RunSpecs(t, "S2irun Suite")
+}
+
+var _ = BeforeSuite(func() {
 	t := &envtest.Environment{
 		CRDDirectoryPaths: []string{filepath.Join("..", "..", "..", "config", "crds")},
 	}
@@ -44,11 +43,23 @@ func TestMain(m *testing.M) {
 	if cfg, err = t.Start(); err != nil {
 		stdlog.Fatal(err)
 	}
+	mgr, err = manager.New(cfg, manager.Options{})
+	Expect(err).NotTo(HaveOccurred())
+	c = mgr.GetClient()
+	os.Setenv("S2IIMAGENAME", "S2IIMAGENAME/S2IIMAGENAME")
 
-	code := m.Run()
-	t.Stop()
-	os.Exit(code)
-}
+	// Setup the Manager and Controller.  Wrap the Controller Reconcile function so it writes each request to a
+	// channel when it is finished.
+	recFn, requests = SetupTestReconcile(newReconciler(mgr))
+	Expect(add(mgr, recFn)).NotTo(HaveOccurred())
+	stopMgr, mgrStopped = StartTestManager(mgr)
+})
+
+var _ = AfterSuite(func() {
+	os.Unsetenv("S2IIMAGENAME")
+	close(stopMgr)
+	mgrStopped.Wait()
+})
 
 // SetupTestReconcile returns a reconcile.Reconcile implementation that delegates to inner and
 // writes the request to requests after Reconcile is finished.
@@ -63,12 +74,12 @@ func SetupTestReconcile(inner reconcile.Reconciler) (reconcile.Reconciler, chan 
 }
 
 // StartTestManager adds recFn
-func StartTestManager(mgr manager.Manager, g *gomega.GomegaWithT) (chan struct{}, *sync.WaitGroup) {
+func StartTestManager(mgr manager.Manager) (chan struct{}, *sync.WaitGroup) {
 	stop := make(chan struct{})
 	wg := &sync.WaitGroup{}
 	go func() {
 		wg.Add(1)
-		g.Expect(mgr.Start(stop)).NotTo(gomega.HaveOccurred())
+		Expect(mgr.Start(stop)).NotTo(HaveOccurred())
 		wg.Done()
 	}()
 	return stop, wg

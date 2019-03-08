@@ -22,5 +22,7 @@ export PATH=$PATH:/usr/local/kubebuilder/bin
 # wget https://github.com/kubernetes-sigs/kustomize/releases/download/v1.0.11/kustomize_1.0.11_linux_amd64 
 # chmod u+x kustomize_1.0.11_linux_amd64
 # mv kustomize_1.0.11_linux_amd64 /home/travis/bin/kustomize
+echo "install test tools"
+go get -u  github.com/onsi/ginkgo/ginkgo
 
 echo "Tools install done"

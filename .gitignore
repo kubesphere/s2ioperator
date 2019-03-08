@@ -23,4 +23,5 @@ __*
 *.swo
 *~
 *.out
-*.coverprofile
+*.coverprofile*
+.DS_Store

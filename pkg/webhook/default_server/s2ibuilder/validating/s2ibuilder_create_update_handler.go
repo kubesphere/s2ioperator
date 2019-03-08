@@ -52,12 +52,17 @@ func (h *S2iBuilderCreateUpdateHandler) validatingS2iBuilderFn(ctx context.Conte
 	fromTemplate := false
 	if obj.Spec.FromTemplate != nil {
 		t := &devopsv1alpha1.S2iBuilderTemplate{}
-		err := h.Client.Get(context.TODO(), k8stypes.NamespacedName{Name: obj.Spec.FromTemplate.Name}, t)
+		err := h.Client.Get(ctx, k8stypes.NamespacedName{Name: obj.Spec.FromTemplate.Name}, t)
 		if err != nil {
 			if k8serror.IsNotFound(err) {
 				return false, "validate failed", fmt.Errorf("Template not found, pls check the template name  [%s] or create a template", obj.Spec.FromTemplate.Name)
 			}
 			return false, "Unhandle error", err
+		}
+
+		errs := ValidateParameter(obj.Spec.FromTemplate.Parameters, t.Spec.Parameters)
+		if len(errs) != 0 {
+			return false, "validate template parameters failed", errors.NewAggregate(errs)
 		}
 		if obj.Spec.FromTemplate.BaseImage != "" {
 			if !reflectutils.Contains(obj.Spec.FromTemplate.BaseImage, t.Spec.BaseImages) {
@@ -67,7 +72,6 @@ func (h *S2iBuilderCreateUpdateHandler) validatingS2iBuilderFn(ctx context.Conte
 		}
 		fromTemplate = true
 	}
-
 	if errs := ValidateConfig(obj.Spec.Config, fromTemplate); len(errs) == 0 {
 		return true, "allowed to be admitted", nil
 	} else {
@@ -80,7 +84,6 @@ var _ admission.Handler = &S2iBuilderCreateUpdateHandler{}
 // Handle handles admission requests.
 func (h *S2iBuilderCreateUpdateHandler) Handle(ctx context.Context, req types.Request) types.Response {
 	obj := &devopsv1alpha1.S2iBuilder{}
-
 	err := h.Decoder.Decode(req, obj)
 	if err != nil {
 		return admission.ErrorResponse(http.StatusBadRequest, err)

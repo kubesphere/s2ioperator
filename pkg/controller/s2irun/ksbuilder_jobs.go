@@ -29,6 +29,14 @@ func (r *ReconcileS2iRun) NewConfigMap(instance *devopsv1alpha1.S2iRun, config *
 		} else {
 			config.BuilderImage = t.Spec.DefaultBaseImage
 		}
+		if len(template.Parameters) > 0 {
+			for _, p := range template.Parameters {
+				e := p.ToEnvonment()
+				if e != nil {
+					config.Environment = append(config.Environment, *e)
+				}
+			}
+		}
 	}
 
 	if instance.Spec.NewTag != "" {

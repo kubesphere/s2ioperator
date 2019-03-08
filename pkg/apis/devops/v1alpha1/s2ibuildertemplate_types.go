@@ -27,6 +27,22 @@ type Parameter struct {
 	OptValues    []string `json:"optValues,omitempty"`
 	Required     bool     `json:"required,omitempty"`
 	DefaultValue string   `json:"defaultValue,omitempty"`
+	Value        string   `json:"value,omitempty"`
+}
+
+func (p *Parameter) ToEnvonment() *EnvironmentSpec {
+	var v string
+	if p.Value == "" && p.DefaultValue != "" {
+		v = p.DefaultValue
+	} else if p.Value != "" {
+		v = p.Value
+	} else {
+		return nil
+	}
+	return &EnvironmentSpec{
+		Name:  p.Key,
+		Value: v,
+	}
 }
 
 // S2iBuilderTemplateSpec defines the desired state of S2iBuilderTemplate
