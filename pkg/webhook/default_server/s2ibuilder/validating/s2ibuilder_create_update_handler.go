@@ -22,6 +22,7 @@ import (
 	"net/http"
 
 	devopsv1alpha1 "github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1"
+	"github.com/kubesphere/s2ioperator/pkg/util/reflectutils"
 	k8serror "k8s.io/apimachinery/pkg/api/errors"
 	k8stypes "k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/errors"
@@ -58,9 +59,16 @@ func (h *S2iBuilderCreateUpdateHandler) validatingS2iBuilderFn(ctx context.Conte
 			}
 			return false, "Unhandle error", err
 		}
+    
 		errs := ValidateParameter(obj.Spec.FromTemplate.Parameters, t.Spec.Parameters)
 		if len(errs) != 0 {
 			return false, "validate template parameters failed", errors.NewAggregate(errs)
+      
+		if obj.Spec.FromTemplate.BaseImage != "" {
+			if !reflectutils.Contains(obj.Spec.FromTemplate.BaseImage, t.Spec.BaseImages) {
+				return false, "validate failed", fmt.Errorf("builder's baseImage [%s] not in builder baseImages [%v]",
+					obj.Spec.FromTemplate.BaseImage, t.Spec.BaseImages)
+			}
 		}
 		fromTemplate = true
 	}
@@ -85,7 +93,7 @@ func (h *S2iBuilderCreateUpdateHandler) Handle(ctx context.Context, req types.Re
 
 	allowed, reason, err := h.validatingS2iBuilderFn(ctx, obj)
 	if err != nil {
-		return admission.ErrorResponse(http.StatusInternalServerError, err)
+		return admission.ErrorResponse(http.StatusBadRequest, err)
 	}
 	return admission.ValidationResponse(allowed, reason)
 }
