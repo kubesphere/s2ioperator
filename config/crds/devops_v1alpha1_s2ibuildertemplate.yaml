@@ -10,8 +10,8 @@ spec:
   - JSONPath: .spec.codeFramework
     name: Framework
     type: string
-  - JSONPath: .spec.baseImage
-    name: BaseImage
+  - JSONPath: .spec.defaultBaseImage
+    name: DefaultBaseImage
     type: string
   - JSONPath: .spec.version
     name: Version
@@ -40,14 +40,18 @@ spec:
           type: object
         spec:
           properties:
-            baseImage:
-              description: BaseImage is the image this template will use, it does
-                not have tags because a template can have multiple tags like JDK6,JDK7
-              type: string
+            baseImages:
+              description: BaseImages are the images this template will use.
+              items:
+                type: string
+              type: array
             codeFramework:
               description: CodeFramework means which language this template is designed
                 for and which framework is using if has framework. Like Java, NodeJS
                 etc
+              type: string
+            defaultBaseImage:
+              description: DefaultBaseImage is the image that will be used by default
               type: string
             description:
               description: Description illustrate the purpose of this template
@@ -76,11 +80,6 @@ spec:
             iconPath:
               description: IconPath is used for frontend display
               type: string
-            tags:
-              description: Tags includes all variants in this template
-              items:
-                type: string
-              type: array
             version:
               description: Version of template
               type: string

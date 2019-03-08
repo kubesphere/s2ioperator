@@ -335,6 +335,10 @@ spec:
             fromTemplate:
               description: FromTemplate define some inputs from user
               properties:
+                baseImage:
+                  description: BaseImage specify which version of this template to
+                    use
+                  type: string
                 name:
                   description: Name specify a template to use, so many fields in Config
                     can left empty
@@ -360,9 +364,6 @@ spec:
                         type: string
                     type: object
                   type: array
-                tag:
-                  description: Tag specify which version of this template to use
-                  type: string
               type: object
           type: object
         status:
