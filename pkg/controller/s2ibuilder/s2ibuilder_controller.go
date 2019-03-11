@@ -84,8 +84,6 @@ func add(mgr manager.Manager, r reconcile.Reconciler) error {
 	// what we want. If that is true, the event will be processed by the reconciler.
 	p := predicate.Funcs{
 		UpdateFunc: func(e event.UpdateEvent) bool {
-			// The object doesn't contain label "foo", so the event will be
-			// ignored.
 			run := e.ObjectOld.(*devopsv1alpha1.S2iRun)
 			if run.Spec.BuilderName == "" {
 				return false
@@ -121,8 +119,6 @@ type ReconcileS2iBuilder struct {
 
 // Reconcile reads that state of the cluster for a S2iBuilder object and makes changes based on the state read
 // and what is in the S2iBuilder.Spec
-// TODO(user): Modify this Reconcile function to implement your Controller logic.  The scaffolding writes
-// a Deployment as an example
 // +kubebuilder:rbac:groups=devops.kubesphere.io,resources=s2ibuilders,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=devops.kubesphere.io,resources=s2ibuilders/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups="",resources=events,verbs=create;patch
