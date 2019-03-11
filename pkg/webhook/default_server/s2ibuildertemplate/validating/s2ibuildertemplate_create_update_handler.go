@@ -18,6 +18,7 @@ package validating
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/kubesphere/s2ioperator/pkg/errors"
 	"github.com/kubesphere/s2ioperator/pkg/util/reflectutils"
@@ -66,6 +67,11 @@ func (h *S2iBuilderTemplateCreateUpdateHandler) validatingS2iBuilderTemplateFn(c
 	if err := validateDockerReference(obj.Spec.DefaultBaseImage); err != nil {
 		return false, "validate failed", errors.NewFieldInvalidValueWithReason("defaultBaseImage", err.Error())
 	}
+	if anno, ok := obj.Annotations[devopsv1alpha1.AutoScaleAnnotations]; ok {
+		if err := validatingS2iBuilderAutoScale(anno); err != nil {
+			return false, "validate failed", errors.NewFieldInvalidValueWithReason(devopsv1alpha1.AutoScaleAnnotations, err.Error())
+		}
+	}
 	return true, "", nil
 }
 
@@ -92,5 +98,24 @@ var _ inject.Decoder = &S2iBuilderTemplateCreateUpdateHandler{}
 // InjectDecoder injects the decoder into the S2iBuilderTemplateCreateUpdateHandler
 func (h *S2iBuilderTemplateCreateUpdateHandler) InjectDecoder(d types.Decoder) error {
 	h.Decoder = d
+	return nil
+}
+
+func validatingS2iBuilderAutoScale(anno string) error {
+
+	s2iAutoScale := make([]devopsv1alpha1.S2iAutoScale, 0)
+	if err := json.Unmarshal([]byte(anno), &s2iAutoScale); err != nil {
+		return err
+	}
+	for _, scale := range s2iAutoScale {
+		switch scale.Kind {
+		case devopsv1alpha1.KindStatefulSet:
+			return nil
+		case devopsv1alpha1.KindDeployment:
+			return nil
+		default:
+			return fmt.Errorf("unsupport workload type [%s], name [%s]", scale.Kind, scale.Name)
+		}
+	}
 	return nil
 }
