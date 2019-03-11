@@ -154,7 +154,7 @@ func (r *ReconcileS2iBuilder) Reconcile(request reconcile.Request) (reconcile.Re
 			if item.Status.StartTime != nil && item.Status.StartTime.After(last.Time) {
 				*last = *(item.Status.StartTime)
 				instance.Status.LastRunState = item.Status.RunState
-				instance.Status.LastRunName = &item.Name
+				*(instance.Status.LastRunName) = item.Name
 			}
 		}
 	}
