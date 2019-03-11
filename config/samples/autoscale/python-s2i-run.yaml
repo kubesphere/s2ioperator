@@ -1,0 +1,12 @@
+apiVersion: devops.kubesphere.io/v1alpha1
+kind: S2iRun
+metadata:
+  labels:
+    controller-tools.k8s.io: "1.0"
+  name: s2irun-sample7
+  namespace: test
+spec:
+  # Add fields here
+  builderName: s2ibuilder-autoscale-python
+  newTag: v0.1.2
+

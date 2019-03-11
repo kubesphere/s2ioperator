@@ -18,17 +18,21 @@ package s2irun
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"time"
 
 	devopsv1alpha1 "github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1"
 	loghandler "github.com/kubesphere/s2ioperator/pkg/handler/log"
+	"github.com/kubesphere/s2ioperator/pkg/util/reflectutils"
+	"k8s.io/api/apps/v1"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/api/errors"
+	k8serror "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/apimachinery/pkg/util/errors"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
@@ -110,13 +114,17 @@ type ReconcileS2iRun struct {
 // +kubebuilder:rbac:groups=devops.kubesphere.io,resources=s2iruns/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=devops.kubesphere.io,resources=s2ibuildertemplates,verbs=get;list;watch
 // +kubebuilder:rbac:groups=core,resources=pods,verbs=get;list;watch
+// +kubebuilder:rbac:groups=apps,resources=statefulsets,verbs=get;list;watch;create;update;patch
+// +kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;list;watch;create;update;patch
+// +kubebuilder:rbac:groups=core,resources=deployments,verbs=get;list;watch;create;update;patch
+// +kubebuilder:rbac:groups=extensions,resources=deployments,verbs=get;list;watch;create;update;patch
 func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result, error) {
 	// Fetch the S2iRun instance
 	log.Info("Reconciler of s2irun called", "Name", request.Name)
 	instance := &devopsv1alpha1.S2iRun{}
 	err := r.Get(context.TODO(), request.NamespacedName, instance)
 	if err != nil {
-		if errors.IsNotFound(err) {
+		if k8serror.IsNotFound(err) {
 			// Object not found, return.  Created objects are automatically garbage collected.
 			return reconcile.Result{}, nil
 		}
@@ -127,7 +135,7 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 	//configmap setup
 	builder := &devopsv1alpha1.S2iBuilder{}
 	if err = r.Get(context.TODO(), types.NamespacedName{Name: instance.Spec.BuilderName, Namespace: instance.Namespace}, builder); err != nil {
-		if errors.IsNotFound(err) {
+		if k8serror.IsNotFound(err) {
 			log.Info("Waiting for creating s2ibuilder", "Name", instance.Spec.BuilderName)
 			return reconcile.Result{RequeueAfter: time.Second * 15}, nil
 		}
@@ -151,7 +159,7 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 	}
 	foundcm := &corev1.ConfigMap{}
 	err = r.Get(context.TODO(), types.NamespacedName{Name: configmap.Name, Namespace: configmap.Namespace}, foundcm)
-	if err != nil && errors.IsNotFound(err) {
+	if err != nil && k8serror.IsNotFound(err) {
 		log.Info("Creating ConfigMap", "Namespace", configmap.Namespace, "name", configmap.Name)
 		if err := controllerutil.SetControllerReference(instance, configmap, r.scheme); err != nil {
 			return reconcile.Result{}, err
@@ -182,7 +190,7 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 	}
 	found := &batchv1.Job{}
 	err = r.Get(context.TODO(), types.NamespacedName{Name: job.Name, Namespace: job.Namespace}, found)
-	if err != nil && errors.IsNotFound(err) {
+	if err != nil && k8serror.IsNotFound(err) {
 		log.Info("Creating Job", "Namespace", job.Namespace, "Name", job.Name)
 		if err := controllerutil.SetControllerReference(instance, job, r.scheme); err != nil {
 			return reconcile.Result{}, err
@@ -214,6 +222,7 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 				return reconcile.Result{}, err
 			}
 			instance.Status.LogURL = logURL
+
 		} else {
 			instance.Status.RunState = devopsv1alpha1.Unknown
 		}
@@ -224,7 +233,126 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 			log.Error(nil, "Failed to update s2irun status", "Namespace", instance.Namespace, "Name", instance.Name)
 			return reconcile.Result{}, err
 		}
+	} else if instance.Status.RunState == devopsv1alpha1.Successful {
+		if annotation, ok := builder.Annotations[devopsv1alpha1.AutoScaleAnnotations]; ok {
+			log.Info("Start AutoScale Workloads")
+			s2iAutoScale := make([]devopsv1alpha1.S2iAutoScale, 0)
+			completedScaleWorkloads := make([]devopsv1alpha1.S2iAutoScale, 0)
+			if err := json.Unmarshal([]byte(annotation), &s2iAutoScale); err != nil {
+				return reconcile.Result{}, err
+			}
+			errs := make([]error, 0)
+			if completedScaleAnnotations, ok := instance.Annotations[devopsv1alpha1.S2irCompletedScaleAnnotations]; ok {
+				if err := json.Unmarshal([]byte(completedScaleAnnotations), &completedScaleWorkloads); err != nil {
+					return reconcile.Result{}, err
+				}
+			}
+			for _, scale := range s2iAutoScale {
+				hasScaled := false
+				for _, completedScale := range completedScaleWorkloads {
+					if reflect.DeepEqual(scale, completedScale) {
+						hasScaled = true
+						break
+					}
+				}
+				if hasScaled {
+					continue
+				}
+				switch scale.Kind {
+
+				case devopsv1alpha1.KindDeployment:
+					deploy := &v1.Deployment{}
+					err := r.Get(context.TODO(), types.NamespacedName{Namespace: instance.Namespace, Name: scale.Name}, deploy)
+					if err != nil {
+						errs = append(errs, err)
+						continue
+					}
+					log.Info("Autoscale Deployment", "ns", instance.Namespace, "statefulSet", deploy.Name)
+					if len(deploy.Spec.Template.Spec.Containers) == 1 {
+						if deploy.Spec.Template.Spec.Containers[0].Image == builder.Spec.Config.Tag {
+							deploy.Spec.Template.Spec.Containers[0].ImagePullPolicy = corev1.PullAlways
+						} else {
+							deploy.Spec.Template.Spec.Containers[0].Image = builder.Spec.Config.Tag
+						}
+					} else {
+						for _, container := range deploy.Spec.Template.Spec.Containers {
+							if reflectutils.Contains(container.Name, scale.Containers) {
+								if deploy.Spec.Template.Spec.Containers[0].Image == builder.Spec.Config.Tag {
+									deploy.Spec.Template.Spec.Containers[0].ImagePullPolicy = corev1.PullAlways
+								} else {
+									deploy.Spec.Template.Spec.Containers[0].Image = builder.Spec.Config.Tag
+								}
+							}
+						}
+					}
+					if deploy.Spec.Template.Labels == nil {
+						deploy.Spec.Template.Labels = make(map[string]string)
+					}
+
+					deploy.Spec.Template.Labels[devopsv1alpha1.WorkloadLatestS2iRunTemplateLabel] = instance.Name
+
+					log.Info("Update deployment", "ns", deploy.Namespace, "statefulSet", deploy.Name)
+					if err := r.Update(context.TODO(), deploy); err != nil {
+						errs = append(errs, err)
+						continue
+					}
+					completedScaleWorkloads = append(completedScaleWorkloads, scale)
+
+				case devopsv1alpha1.KindStatefulSet:
+					statefulSet := &v1.StatefulSet{}
+					err := r.Get(context.TODO(), types.NamespacedName{Namespace: instance.Namespace, Name: scale.Name}, statefulSet)
+					if err != nil {
+						errs = append(errs, err)
+						continue
+					}
+					log.Info("Autoscale StatefulSet", "ns", instance.Namespace, "statefulSet", statefulSet.Name)
+					if len(statefulSet.Spec.Template.Spec.Containers) == 1 {
+						if statefulSet.Spec.Template.Spec.Containers[0].Image == builder.Spec.Config.Tag {
+							statefulSet.Spec.Template.Spec.Containers[0].ImagePullPolicy = corev1.PullAlways
+						} else {
+							statefulSet.Spec.Template.Spec.Containers[0].Image = builder.Spec.Config.Tag
+						}
+					} else {
+						for _, container := range statefulSet.Spec.Template.Spec.Containers {
+							if reflectutils.Contains(container.Name, scale.Containers) {
+								if statefulSet.Spec.Template.Spec.Containers[0].Image == builder.Spec.Config.Tag {
+									statefulSet.Spec.Template.Spec.Containers[0].ImagePullPolicy = corev1.PullAlways
+								} else {
+									statefulSet.Spec.Template.Spec.Containers[0].Image = builder.Spec.Config.Tag
+								}
+							}
+						}
+					}
+					if statefulSet.Spec.Template.Labels == nil {
+						statefulSet.Spec.Template.Labels = make(map[string]string)
+					}
+
+					statefulSet.Spec.Template.Labels[devopsv1alpha1.WorkloadLatestS2iRunTemplateLabel] = instance.Name
+
+					log.Info("Update statefusSet", "ns", statefulSet.Namespace, "statefulSet", statefulSet.Name)
+					if err := r.Update(context.TODO(), statefulSet); err != nil {
+						errs = append(errs, err)
+						continue
+					}
+					completedScaleWorkloads = append(completedScaleWorkloads, scale)
+				default:
+					errs = append(errs, fmt.Errorf("unsupport workload Kind [%s], name [%s]", scale.Kind, scale.Name))
+				}
+			}
+			if completedScaleAnnotation, err := json.Marshal(completedScaleWorkloads); err != nil {
+				return reconcile.Result{}, err
+			} else {
+				origin.Annotations[devopsv1alpha1.S2irCompletedScaleAnnotations] = string(completedScaleAnnotation)
+			}
+			if err := r.Update(context.TODO(), origin); err != nil {
+				return reconcile.Result{}, err
+			}
+			if len(errs) != 0 {
+				return reconcile.Result{}, errors.NewAggregate(errs)
+			}
+		}
 	}
+
 	return reconcile.Result{}, nil
 }
 

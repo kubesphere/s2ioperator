@@ -27,6 +27,7 @@ var AddToManagerFuncs []func(manager.Manager) error
 // +kubebuilder:rbac:groups=admissionregistration.k8s.io,resources=mutatingwebhookconfigurations;validatingwebhookconfigurations,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups="",resources=secrets,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups="",resources=services,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups="",resources=deployments,verbs=get;list;watch
 // +kubebuilder:webhook:groups=apps,versions=v1,resources=deployments,verbs=create,update
 // +kubebuilder:webhook:name=validate.devops.kubesphere.io
 // +kubebuilder:webhook:type=validating,failure-policy=fail
