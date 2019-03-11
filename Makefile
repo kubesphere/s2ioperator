@@ -58,4 +58,4 @@ install-travis:
 	./hack/install_tools.sh
 
 e2e-test: debug
-	ginkgo -v -p ./e2e/
+	ginkgo -v  ./e2e/

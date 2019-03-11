@@ -2,7 +2,6 @@ package e2e_test
 
 import (
 	"fmt"
-	"log"
 	"os/exec"
 	"path"
 	"runtime"
@@ -32,6 +31,7 @@ func TestE2e(t *testing.T) {
 
 var _ = BeforeSuite(func() {
 	//install deploy
+	//install operator is writing in the `make debug`, maybe we should write here to decouple
 	workspace = getWorkspace() + "/.."
 	cfg, err := config.GetConfig()
 	Expect(err).ShouldNot(HaveOccurred(), "Error reading kubeconfig")
@@ -39,11 +39,6 @@ var _ = BeforeSuite(func() {
 	c, err := client.New(cfg, client.Options{})
 	Expect(err).NotTo(HaveOccurred(), "Error in creating client")
 	testClient = c
-	//install deployment
-	cmd := exec.Command("kubectl", "apply", "-f", workspace+"/deploy/s2ioperator.yaml")
-	bytes, err := cmd.CombinedOutput()
-	Expect(err).ShouldNot(HaveOccurred())
-	log.Println(string(bytes))
 	//waiting for controller up
 	err = e2eutil.WaitForController(c, "devops-test", "controller-manager", 15*time.Second, 2*time.Minute)
 	Expect(err).ShouldNot(HaveOccurred(), "timeout waiting for controller up: %s\n", err)
