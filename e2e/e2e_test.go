@@ -24,37 +24,37 @@ var _ = Describe("", func() {
 		Expect(err).NotTo(HaveOccurred(), "Cannot read sample yamls")
 		err = yaml.NewYAMLOrJSONDecoder(reader, 10).Decode(s2ibuilder)
 		Expect(err).NotTo(HaveOccurred(), "Cannot unmarshal yamls")
-		err = c.Create(context.TODO(), s2ibuilder)
+		err = testClient.Create(context.TODO(), s2ibuilder)
 		Expect(err).NotTo(HaveOccurred())
-		defer c.Delete(context.TODO(), s2ibuilder)
+		defer testClient.Delete(context.TODO(), s2ibuilder)
 		// Create the S2iRun object and expect the Reconcile and Deployment to be created
 		s2irun := &devopsv1alpha1.S2iRun{}
 		reader, err = os.Open(workspace + "/config/samples/devops_v1alpha1_s2irun.yaml")
 		Expect(err).NotTo(HaveOccurred(), "Cannot read sample yamls")
 		err = yaml.NewYAMLOrJSONDecoder(reader, 10).Decode(s2irun)
 		Expect(err).NotTo(HaveOccurred(), "Cannot unmarshal yamls")
-		err = c.Create(context.TODO(), s2irun)
+		err = testClient.Create(context.TODO(), s2irun)
 		Expect(err).NotTo(HaveOccurred())
-		defer c.Delete(context.TODO(), s2irun)
+		defer testClient.Delete(context.TODO(), s2irun)
 
 		var depKey = types.NamespacedName{Name: s2irun.Name + "-job", Namespace: s2irun.Namespace}
 		var cmKey = types.NamespacedName{Name: s2irun.Name + "-configmap", Namespace: s2irun.Namespace}
 		//configmap
 		cm := &corev1.ConfigMap{}
-		Eventually(func() error { return c.Get(context.TODO(), cmKey, cm) }, timeout).
+		Eventually(func() error { return testClient.Get(context.TODO(), cmKey, cm) }, timeout).
 			Should(Succeed())
-		Expect(c.Delete(context.TODO(), cm)).NotTo(HaveOccurred())
-		Eventually(func() error { return c.Get(context.TODO(), cmKey, cm) }, timeout).
+		Expect(testClient.Delete(context.TODO(), cm)).NotTo(HaveOccurred())
+		Eventually(func() error { return testClient.Get(context.TODO(), cmKey, cm) }, timeout).
 			Should(Succeed())
-		defer c.Delete(context.TODO(), cm)
+		defer testClient.Delete(context.TODO(), cm)
 
 		job := &batchv1.Job{}
-		Eventually(func() error { return c.Get(context.TODO(), depKey, job) }, timeout).
+		Eventually(func() error { return testClient.Get(context.TODO(), depKey, job) }, timeout).
 			Should(Succeed())
 
 		// Delete the Deployment and expect Reconcile to be called for Deployment deletion
-		Expect(c.Delete(context.TODO(), job)).NotTo(HaveOccurred())
-		Eventually(func() error { return c.Get(context.TODO(), depKey, job) }, timeout).
+		Expect(testClient.Delete(context.TODO(), job)).NotTo(HaveOccurred())
+		Eventually(func() error { return testClient.Get(context.TODO(), depKey, job) }, timeout).
 			Should(Succeed())
 	})
 })

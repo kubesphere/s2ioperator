@@ -20,9 +20,9 @@ import (
 )
 
 var (
-	c         client.Client
-	cfg       *rest.Config
-	workspace string
+	testClient client.Client
+	cfg        *rest.Config
+	workspace  string
 )
 
 func TestE2e(t *testing.T) {
@@ -37,6 +37,7 @@ var _ = BeforeSuite(func() {
 	apis.AddToScheme(scheme.Scheme)
 	c, err := client.New(cfg, client.Options{})
 	Expect(err).NotTo(HaveOccurred())
+	testClient = c
 	//install deployment
 	cmd := exec.Command("kubectl", "apply", "-f", workspace+"/deploy/s2ioperator.yaml")
 	bytes, err := cmd.CombinedOutput()
