@@ -34,9 +34,10 @@ var _ = BeforeSuite(func() {
 	//install deploy
 	workspace = getWorkspace() + "/.."
 	cfg, err := config.GetConfig()
+	Expect(err).ShouldNot(HaveOccurred(), "Error reading kubeconfig")
 	apis.AddToScheme(scheme.Scheme)
 	c, err := client.New(cfg, client.Options{})
-	Expect(err).NotTo(HaveOccurred())
+	Expect(err).NotTo(HaveOccurred(), "Error in creating client")
 	testClient = c
 	//install deployment
 	cmd := exec.Command("kubectl", "apply", "-f", workspace+"/deploy/s2ioperator.yaml")

@@ -2,6 +2,7 @@ package e2e_test
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"time"
 
@@ -17,7 +18,7 @@ import (
 var _ = Describe("", func() {
 
 	const timeout = time.Second * 25
-	It("Should work well", func() {
+	It("Should work well when using exactly the example yamls", func() {
 		//create a s2ibuilder
 		s2ibuilder := &devopsv1alpha1.S2iBuilder{}
 		reader, err := os.Open(workspace + "/config/samples/devops_v1alpha1_s2ibuilder.yaml")
@@ -49,8 +50,28 @@ var _ = Describe("", func() {
 		defer testClient.Delete(context.TODO(), cm)
 
 		job := &batchv1.Job{}
-		Eventually(func() error { return testClient.Get(context.TODO(), depKey, job) }, timeout).
+		Eventually(func() error { return testClient.Get(context.TODO(), depKey, job) }, timeout, time.Second).
 			Should(Succeed())
+
+		//for our example, the status must be successful
+		Eventually(func() error {
+			err = testClient.Get(context.TODO(), depKey, job)
+			if err != nil {
+				return err
+			}
+			if job.Status.Succeeded == 1 {
+				//Status of s2ibuilder should update too
+				tempBuilder := &devopsv1alpha1.S2iBuilder{}
+				err = testClient.Get(context.TODO(), types.NamespacedName{Name: s2ibuilder.Name, Namespace: s2ibuilder.Namespace}, tempBuilder)
+				if err != nil {
+					return err
+				}
+				if *tempBuilder.Status.LastRunName == s2irun.Name && tempBuilder.Status.LastRunState == devopsv1alpha1.Successful && tempBuilder.Status.RunCount == 1 {
+					return nil
+				}
+			}
+			return fmt.Errorf("Failed")
+		}, time.Minute*5, time.Second*10).Should(Succeed())
 
 		// Delete the Deployment and expect Reconcile to be called for Deployment deletion
 		Expect(testClient.Delete(context.TODO(), job)).NotTo(HaveOccurred())
