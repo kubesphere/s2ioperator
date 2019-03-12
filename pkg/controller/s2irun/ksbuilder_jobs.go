@@ -39,7 +39,7 @@ func (r *ReconcileS2iRun) NewConfigMap(instance *devopsv1alpha1.S2iRun, config d
 		}
 	}
 
-	config.Tag = GetNewImangeName(instance, config)
+	config.Tag = GetNewImageName(instance, config)
 
 	data, err := json.Marshal(config)
 	if err != nil {

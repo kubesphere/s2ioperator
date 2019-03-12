@@ -232,7 +232,9 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 			log.Error(nil, "Failed to update s2irun status", "Namespace", instance.Namespace, "Name", instance.Name)
 			return reconcile.Result{}, err
 		}
-	} else if instance.Status.RunState == devopsv1alpha1.Successful {
+	}
+	// if job finished, scale workloads
+	if instance.Status.RunState == devopsv1alpha1.Successful {
 		err := r.ScaleWorkLoads(instance, builder)
 		return reconcile.Result{}, err
 	}
@@ -256,7 +258,7 @@ func (r *ReconcileS2iRun) GetLogURL(job *batchv1.Job) (string, error) {
 	return loghandler.GetKubesphereLogger().GetURLOfPodLog(pods.Items[0].Namespace, pods.Items[0].Name)
 }
 
-func GetNewImangeName(instance *devopsv1alpha1.S2iRun, config devopsv1alpha1.S2iConfig) string {
+func GetNewImageName(instance *devopsv1alpha1.S2iRun, config devopsv1alpha1.S2iConfig) string {
 	if instance.Spec.NewTag != "" {
 		return config.ImageName + ":" + instance.Spec.NewTag
 	} else {
@@ -304,7 +306,7 @@ func (r *ReconcileS2iRun) ScaleWorkLoads(instance *devopsv1alpha1.S2iRun, builde
 				}
 
 				log.Info("Autoscale Deployment", "ns", instance.Namespace, "statefulSet", deploy.Name)
-				newImageName := GetNewImangeName(instance, *builder.Spec.Config)
+				newImageName := GetNewImageName(instance, *builder.Spec.Config)
 				// if only one container update containers image config
 				if len(deploy.Spec.Template.Spec.Containers) == 1 {
 					if deploy.Spec.Template.Spec.Containers[0].Image == newImageName {
@@ -347,7 +349,7 @@ func (r *ReconcileS2iRun) ScaleWorkLoads(instance *devopsv1alpha1.S2iRun, builde
 					continue
 				}
 				log.Info("Autoscale StatefulSet", "ns", instance.Namespace, "statefulSet", statefulSet.Name)
-				newImageName := GetNewImangeName(instance, *builder.Spec.Config)
+				newImageName := GetNewImageName(instance, *builder.Spec.Config)
 				if len(statefulSet.Spec.Template.Spec.Containers) == 1 {
 					if statefulSet.Spec.Template.Spec.Containers[0].Image == newImageName {
 						statefulSet.Spec.Template.Spec.Containers[0].ImagePullPolicy = corev1.PullAlways
