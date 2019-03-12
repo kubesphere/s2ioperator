@@ -343,6 +343,10 @@ spec:
             fromTemplate:
               description: FromTemplate define some inputs from user
               properties:
+                baseImage:
+                  description: BaseImage specify which version of this template to
+                    use
+                  type: string
                 name:
                   description: Name specify a template to use, so many fields in Config
                     can left empty
@@ -366,11 +370,10 @@ spec:
                         type: boolean
                       type:
                         type: string
+                      value:
+                        type: string
                     type: object
                   type: array
-                tag:
-                  description: Tag specify which version of this template to use
-                  type: string
               type: object
           type: object
         status:
@@ -408,8 +411,8 @@ spec:
   - JSONPath: .spec.codeFramework
     name: Framework
     type: string
-  - JSONPath: .spec.baseImage
-    name: BaseImage
+  - JSONPath: .spec.defaultBaseImage
+    name: DefaultBaseImage
     type: string
   - JSONPath: .spec.version
     name: Version
@@ -438,14 +441,18 @@ spec:
           type: object
         spec:
           properties:
-            baseImage:
-              description: BaseImage is the image this template will use, it does
-                not have tags because a template can have multiple tags like JDK6,JDK7
-              type: string
+            baseImages:
+              description: BaseImages are the images this template will use.
+              items:
+                type: string
+              type: array
             codeFramework:
               description: CodeFramework means which language this template is designed
                 for and which framework is using if has framework. Like Java, NodeJS
                 etc
+              type: string
+            defaultBaseImage:
+              description: DefaultBaseImage is the image that will be used by default
               type: string
             description:
               description: Description illustrate the purpose of this template
@@ -469,16 +476,13 @@ spec:
                     type: boolean
                   type:
                     type: string
+                  value:
+                    type: string
                 type: object
               type: array
             iconPath:
               description: IconPath is used for frontend display
               type: string
-            tags:
-              description: Tags includes all variants in this template
-              items:
-                type: string
-              type: array
             version:
               description: Version of template
               type: string
@@ -756,7 +760,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: default
-  namespace: devops
+  namespace: devops-test
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -769,13 +773,13 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: default
-  namespace: devops
+  namespace: devops-test
 ---
 apiVersion: v1
 kind: Secret
 metadata:
   name: webhook-server-secret
-  namespace: devops
+  namespace: devops-test
 ---
 apiVersion: v1
 kind: Service
@@ -788,7 +792,7 @@ metadata:
     control-plane: controller-manager
     controller-tools.k8s.io: "1.0"
   name: controller-manager-metrics-service
-  namespace: devops
+  namespace: devops-test
 spec:
   ports:
   - name: https
@@ -805,7 +809,7 @@ metadata:
     control-plane: controller-manager
     controller-tools.k8s.io: "1.0"
   name: controller-manager-service
-  namespace: devops
+  namespace: devops-test
 spec:
   ports:
   - port: 443
@@ -820,7 +824,7 @@ metadata:
     control-plane: controller-manager
     controller-tools.k8s.io: "1.0"
   name: controller-manager
-  namespace: devops
+  namespace: devops-test
 spec:
   selector:
     matchLabels:
@@ -857,7 +861,7 @@ spec:
           value: webhook-server-secret
         - name: S2IIMAGENAME
           value: magicsong/s2irun:19d9c4b
-        image: kubespheredev/s2ioperator:v0.0.1
+        image: kubespheredev/s2ioperator:0a3b48b9
         imagePullPolicy: Always
         name: manager
         ports:
