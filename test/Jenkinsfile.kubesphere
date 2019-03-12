@@ -1,0 +1,59 @@
+pipeline {
+   environment {
+      KUBECONFIG = '/root/.kube/config'
+    }
+  agent {
+    kubernetes {
+      label 's2i'
+      yaml '''apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: s2ioperator
+    image: magicsong/golang1.11-s2ioperator:latest
+    command: [\'cat\']
+    tty: true
+    volumeMounts:
+    - name: dockersock
+      mountPath: /var/run/docker.sock
+    - name: dockerbin
+      mountPath: /usr/bin/docker
+  volumes:
+  - name: dockersock
+    hostPath:
+      path: /var/run/docker.sock
+  - name: dockerbin
+    hostPath:
+      path: /usr/bin/docker
+      '''
+      defaultContainer 's2ioperator'
+    }
+
+  }
+  stages {
+    stage('set kubeconfig'){
+      sh 'mkdir -p ~/.kube'
+      withCredentials([kubeconfigContent(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_CONTENT')]) {
+         sh 'echo "$KUBECONFIG_CONTENT" > ~/.kube/config'
+      }
+    }
+    stage('checkout scm') {
+      steps {
+        git(url: 'https://github.com/kubesphere/s2ioperator/', changelog: true, poll: false)
+      }
+    }
+    stage('test') {
+      steps {
+
+       withCredentials([usernamePassword(passwordVariable : 'DOCKER_PASSWORD' ,usernameVariable : 'DOCKER_USERNAME' ,credentialsId : "dockerhub-id" ,)]) {
+          sh 'echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin'
+       }
+        sh '''
+        mkdir -p /go/src/github.com/kubesphere
+ln -s `pwd` /go/src/github.com/kubesphere/s2ioperator
+cd /go/src/github.com/kubesphere/s2ioperator
+make e2e-test'''
+      }
+    }
+  }
+}
