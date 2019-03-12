@@ -32,14 +32,11 @@ spec:
   }
   stages {
     stage('set kubeconfig'){
-      sh 'mkdir -p ~/.kube'
-      withCredentials([kubeconfigContent(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_CONTENT')]) {
-         sh 'echo "$KUBECONFIG_CONTENT" > ~/.kube/config'
-      }
-    }
-    stage('checkout scm') {
-      steps {
-        git(url: 'https://github.com/kubesphere/s2ioperator/', changelog: true, poll: false)
+     steps{
+        sh 'mkdir -p ~/.kube'
+        withCredentials([kubeconfigContent(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_CONTENT')]) {
+           sh 'echo "$KUBECONFIG_CONTENT" > ~/.kube/config'
+        }
       }
     }
     stage('test') {
