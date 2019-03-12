@@ -66,7 +66,7 @@ var _ = Describe("", func() {
 				if err != nil {
 					return err
 				}
-				if *tempBuilder.Status.LastRunName == s2irun.Name && tempBuilder.Status.LastRunState == devopsv1alpha1.Successful && tempBuilder.Status.RunCount == 1 {
+				if tempBuilder.Status.LastRunName != nil && *tempBuilder.Status.LastRunName == s2irun.Name && tempBuilder.Status.LastRunState == devopsv1alpha1.Successful && tempBuilder.Status.RunCount == 1 {
 					return nil
 				}
 			}

@@ -6,7 +6,7 @@ all: test manager
 
 # Run tests
 test: fmt vet
-	KUBEBUILDER_CONTROLPLANE_START_TIMEOUT=1m; ginkgo -v -cover ./pkg/...  
+	export KUBEBUILDER_CONTROLPLANE_START_TIMEOUT=1m; ginkgo -v -cover ./pkg/...  
 
 # Build manager binary
 manager: generate fmt manifests vet
