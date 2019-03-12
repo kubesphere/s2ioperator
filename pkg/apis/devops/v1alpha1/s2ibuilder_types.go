@@ -34,6 +34,15 @@ const (
 	Failed              = "Failed"
 	Unknown             = "Unknown"
 )
+const (
+	AutoScaleAnnotations              = "devops.kubesphere.io/autoscale"
+	WorkloadLatestS2iRunTemplateLabel = "devops.kubesphere.io/s2ir"
+	S2irCompletedScaleAnnotations     = "devops.kubesphere.io/completedscale"
+)
+const (
+	KindDeployment  = "Deployment"
+	KindStatefulSet = "StatefulSet"
+)
 
 // EnvironmentSpec specifies a single environment variable.
 type EnvironmentSpec struct {
@@ -435,6 +444,12 @@ type S2iBuilderList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
 	Items           []S2iBuilder `json:"items"`
+}
+
+type S2iAutoScale struct {
+	Kind       string   `json:"kind"`
+	Name       string   `json:"name"`
+	Containers []string `json:"containers,omitempty"`
 }
 
 func init() {
