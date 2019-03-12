@@ -20,4 +20,6 @@ kubectl apply -f $dest
 set +e
 export TEST_NS
 go test -v ./test/e2e/
+result=$?
 kubectl delete ns $TEST_NS
+exit $result
