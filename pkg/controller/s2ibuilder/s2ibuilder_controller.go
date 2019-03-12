@@ -163,7 +163,9 @@ func (r *ReconcileS2iBuilder) Reconcile(request reconcile.Request) (reconcile.Re
 		instance.Status.LastRunState = ""
 	}
 	if !reflect.DeepEqual(instance.Status, origin.Status) {
-		r.Status().Update(context.Background(), instance)
+		if err := r.Status().Update(context.Background(), instance); err != nil {
+			return reconcile.Result{}, err
+		}
 	}
 	return reconcile.Result{}, nil
 }
