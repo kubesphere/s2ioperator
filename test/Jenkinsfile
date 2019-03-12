@@ -2,7 +2,7 @@ pipeline {
   agent {
     docker {
       image 'golang:1.11'
-      args '-v $HOME:/root'
+      args '-v $HOME:/root -v /usr/bin/kubectl:/usr/bin/kubectl'
     }
   }
   stages {
