@@ -6,7 +6,7 @@ all: test manager
 
 # Run tests
 test: fmt vet
-	KUBEBUILDER_CONTROLPLANE_START_TIMEOUT=1m; ginkgo -v -cover ./pkg/...  
+	export KUBEBUILDER_CONTROLPLANE_START_TIMEOUT=1m; ginkgo -v -cover ./pkg/...  
 
 # Build manager binary
 manager: generate fmt manifests vet
@@ -46,7 +46,7 @@ docker-build:
 	docker build -f deploy/Dockerfile -t $(IMG) bin/
 	docker push $(IMG)
 	@echo "updating kustomize image patch file for manager resource"
-	sed -i'' -e 's@image: .*@image: '"${IMG}"'@' ./config/default/manager_image_patch.yaml
+	sed -i -e 's@image: .*@image: '"${IMG}"'@' ./config/default/manager_image_patch.yaml
 
 debug: manager
 	./hack/build-image.sh
@@ -57,5 +57,5 @@ install-travis:
 	chmod +x ./hack/*.sh
 	./hack/install_tools.sh
 
-e2e-test: debug
-	go test -v  ./test/e2e/
+e2e-test: manager
+	./hack/e2etest.sh
