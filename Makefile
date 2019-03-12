@@ -6,7 +6,7 @@ all: test manager
 
 # Run tests
 test: fmt vet
-	ginkgo -v -cover -p ./pkg/...  
+	ginkgo -v -cover ./pkg/...  
 
 # Build manager binary
 manager: generate fmt manifests vet
@@ -50,7 +50,6 @@ docker-build:
 
 debug: manager
 	./hack/build-image.sh
-
 release: manager test docker-build
 	kustomize build config/default -o deploy/s2ioperator.yaml
 
@@ -58,3 +57,5 @@ install-travis:
 	chmod +x ./hack/*.sh
 	./hack/install_tools.sh
 
+e2e-test: debug
+	ginkgo -v  ./e2e/
