@@ -25,3 +25,5 @@ __*
 *.out
 *.coverprofile*
 .DS_Store
+
+s2ioperator.yaml

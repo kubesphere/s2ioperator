@@ -2,6 +2,7 @@ package e2e_test
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 	"path"
 	"runtime"
@@ -19,9 +20,10 @@ import (
 )
 
 var (
-	testClient client.Client
-	cfg        *rest.Config
-	workspace  string
+	testClient    client.Client
+	cfg           *rest.Config
+	workspace     string
+	testNamespace string
 )
 
 func TestE2e(t *testing.T) {
@@ -32,6 +34,8 @@ func TestE2e(t *testing.T) {
 var _ = BeforeSuite(func() {
 	//install deploy
 	//install operator is writing in the `make debug`, maybe we should write here to decouple
+	testNamespace = os.Getenv("TEST_NS")
+	Expect(testNamespace).ShouldNot(BeEmpty())
 	workspace = getWorkspace() + "/../.."
 	cfg, err := config.GetConfig()
 	Expect(err).ShouldNot(HaveOccurred(), "Error reading kubeconfig")
@@ -40,7 +44,7 @@ var _ = BeforeSuite(func() {
 	Expect(err).NotTo(HaveOccurred(), "Error in creating client")
 	testClient = c
 	//waiting for controller up
-	err = e2eutil.WaitForController(c, "devops-test", "controller-manager", 15*time.Second, 2*time.Minute)
+	err = e2eutil.WaitForController(c, testNamespace, "controller-manager", 5*time.Second, 2*time.Minute)
 	Expect(err).ShouldNot(HaveOccurred(), "timeout waiting for controller up: %s\n", err)
 	fmt.Fprintf(GinkgoWriter, "Controller is up now")
 })
