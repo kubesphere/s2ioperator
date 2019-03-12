@@ -412,7 +412,7 @@ type S2iBuilderSpec struct {
 // S2iBuilderStatus defines the observed state of S2iBuilder
 type S2iBuilderStatus struct {
 	//RunCount represent the sum of s2irun of this builder
-	RunCount int `json:"runCount,omitempty"`
+	RunCount int `json:"runCount"`
 	//LastRunState return the state of the newest run of this builder
 	LastRunState RunState `json:"lastRunState,omitempty"`
 	//LastRunState return the name of the newest run of this builder

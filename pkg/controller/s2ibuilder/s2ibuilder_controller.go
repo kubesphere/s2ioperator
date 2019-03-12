@@ -138,7 +138,7 @@ func (r *ReconcileS2iBuilder) Reconcile(request reconcile.Request) (reconcile.Re
 	}
 	origin := instance.DeepCopy()
 	runList := new(devopsv1alpha1.S2iRunList)
-	err = r.Client.List(context.TODO(), nil, runList)
+	err = r.Client.List(context.TODO(), client.InNamespace(instance.Namespace), runList)
 	if err != nil {
 		if errors.IsNotFound(err) {
 			return reconcile.Result{}, nil
@@ -158,8 +158,14 @@ func (r *ReconcileS2iBuilder) Reconcile(request reconcile.Request) (reconcile.Re
 			}
 		}
 	}
+	if instance.Status.RunCount == 0 {
+		instance.Status.LastRunName = nil
+		instance.Status.LastRunState = ""
+	}
 	if !reflect.DeepEqual(instance.Status, origin.Status) {
-		r.Status().Update(context.Background(), instance)
+		if err := r.Status().Update(context.Background(), instance); err != nil {
+			return reconcile.Result{}, err
+		}
 	}
 	return reconcile.Result{}, nil
 }
