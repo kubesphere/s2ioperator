@@ -17,7 +17,7 @@ const (
 	ConfigDataKey = "data"
 )
 
-func (r *ReconcileS2iRun) NewConfigMap(instance *devopsv1alpha1.S2iRun, config *devopsv1alpha1.S2iConfig, template *devopsv1alpha1.UserDefineTemplate) (*corev1.ConfigMap, error) {
+func (r *ReconcileS2iRun) NewConfigMap(instance *devopsv1alpha1.S2iRun, config devopsv1alpha1.S2iConfig, template *devopsv1alpha1.UserDefineTemplate) (*corev1.ConfigMap, error) {
 	if template != nil {
 		t := &devopsv1alpha1.S2iBuilderTemplate{}
 		err := r.Get(context.TODO(), types.NamespacedName{Name: template.Name}, t)
@@ -39,11 +39,8 @@ func (r *ReconcileS2iRun) NewConfigMap(instance *devopsv1alpha1.S2iRun, config *
 		}
 	}
 
-	if instance.Spec.NewTag != "" {
-		config.Tag = config.ImageName + ":" + instance.Spec.NewTag
-	} else {
-		config.Tag = config.ImageName + ":" + config.Tag
-	}
+	config.Tag = GetNewImangeName(instance, config)
+
 	data, err := json.Marshal(config)
 	if err != nil {
 		return nil, err
