@@ -6,7 +6,7 @@ all: test manager
 
 # Run tests
 test: fmt vet
-	ginkgo -v -cover ./pkg/...  
+	KUBEBUILDER_CONTROLPLANE_START_TIMEOUT=1m; ginkgo -v -cover ./pkg/...  
 
 # Build manager binary
 manager: generate fmt manifests vet
@@ -58,4 +58,4 @@ install-travis:
 	./hack/install_tools.sh
 
 e2e-test: debug
-	ginkgo -v  ./e2e/
+	go test -v  ./test/e2e/

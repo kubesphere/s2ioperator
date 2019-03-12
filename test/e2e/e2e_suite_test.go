@@ -32,7 +32,7 @@ func TestE2e(t *testing.T) {
 var _ = BeforeSuite(func() {
 	//install deploy
 	//install operator is writing in the `make debug`, maybe we should write here to decouple
-	workspace = getWorkspace() + "/.."
+	workspace = getWorkspace() + "/../.."
 	cfg, err := config.GetConfig()
 	Expect(err).ShouldNot(HaveOccurred(), "Error reading kubeconfig")
 	apis.AddToScheme(scheme.Scheme)
