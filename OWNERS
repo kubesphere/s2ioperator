@@ -1,3 +1,7 @@
 approvers:
     - magicsong #oncall
     - runzexia #oncall
+
+reviewers:
+    - magicsong #oncall
+    - runzexia #oncall
