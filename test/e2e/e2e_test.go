@@ -6,11 +6,14 @@ import (
 	"os"
 	"time"
 
+	"sigs.k8s.io/controller-runtime/pkg/client"
+
 	devopsv1alpha1 "github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/yaml"
 )
@@ -20,6 +23,7 @@ var _ = Describe("", func() {
 	const timeout = time.Second * 25
 	It("Should work well when using exactly the example yamls", func() {
 		//create a s2ibuilder
+		cleanDelete := client.PropagationPolicy(metav1.DeletePropagationBackground)
 		s2ibuilder := &devopsv1alpha1.S2iBuilder{}
 		reader, err := os.Open(workspace + "/config/samples/devops_v1alpha1_s2ibuilder.yaml")
 		Expect(err).NotTo(HaveOccurred(), "Cannot read sample yamls")
@@ -36,7 +40,7 @@ var _ = Describe("", func() {
 		Expect(err).NotTo(HaveOccurred(), "Cannot unmarshal yamls")
 		err = testClient.Create(context.TODO(), s2irun)
 		Expect(err).NotTo(HaveOccurred())
-		defer testClient.Delete(context.TODO(), s2irun)
+		defer testClient.Delete(context.TODO(), s2irun, cleanDelete)
 
 		var depKey = types.NamespacedName{Name: s2irun.Name + "-job", Namespace: s2irun.Namespace}
 		var cmKey = types.NamespacedName{Name: s2irun.Name + "-configmap", Namespace: s2irun.Namespace}
@@ -72,10 +76,5 @@ var _ = Describe("", func() {
 			}
 			return fmt.Errorf("Failed")
 		}, time.Minute*5, time.Second*10).Should(Succeed())
-
-		// Delete the Deployment and expect Reconcile to be called for Deployment deletion
-		Expect(testClient.Delete(context.TODO(), job)).NotTo(HaveOccurred())
-		Eventually(func() error { return testClient.Get(context.TODO(), depKey, job) }, timeout).
-			Should(Succeed())
 	})
 })
