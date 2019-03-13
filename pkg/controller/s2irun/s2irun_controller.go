@@ -268,8 +268,12 @@ func GetNewImageName(instance *devopsv1alpha1.S2iRun, config devopsv1alpha1.S2iC
 
 // ScaleWorkLoads will auto scale workloads define in s2ibuilder's annotations
 func (r *ReconcileS2iRun) ScaleWorkLoads(instance *devopsv1alpha1.S2iRun, builder *devopsv1alpha1.S2iBuilder) error {
+
 	if annotation, ok := builder.Annotations[devopsv1alpha1.AutoScaleAnnotations]; ok {
 		log.Info("Start AutoScale Workloads")
+		if instance.Annotations == nil {
+			instance.Annotations = make(map[string]string)
+		}
 		origin := instance.DeepCopy()
 		s2iAutoScale := make([]devopsv1alpha1.S2iAutoScale, 0)
 		completedScaleWorkloads := make([]devopsv1alpha1.S2iAutoScale, 0)
