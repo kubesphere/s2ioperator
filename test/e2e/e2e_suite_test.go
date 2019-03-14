@@ -1,6 +1,7 @@
 package e2e_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/exec"
@@ -9,10 +10,13 @@ import (
 	"testing"
 	"time"
 
+	"k8s.io/apimachinery/pkg/types"
+
 	"github.com/kubesphere/s2ioperator/pkg/apis"
 	"github.com/kubesphere/s2ioperator/pkg/util/e2eutil"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	corev1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -46,6 +50,12 @@ var _ = BeforeSuite(func() {
 	//waiting for controller up
 	err = e2eutil.WaitForController(c, testNamespace, "controller-manager", 5*time.Second, 2*time.Minute)
 	Expect(err).ShouldNot(HaveOccurred(), "timeout waiting for controller up: %s\n", err)
+	//waiting for webhook
+	Eventually(func() error {
+		service := &corev1.Service{}
+		return c.Get(context.TODO(), types.NamespacedName{Namespace: testNamespace, Name: "webhook-server-service"}, service)
+	}, time.Minute*1, time.Second*2).Should(Succeed())
+
 	fmt.Fprintf(GinkgoWriter, "Controller is up now")
 })
 

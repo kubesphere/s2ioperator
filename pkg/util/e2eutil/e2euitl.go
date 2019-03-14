@@ -48,6 +48,7 @@ func WaitForController(c client.Client, namespace, name string, retryInterval, t
 	})
 	return err
 }
+
 func WaitForDeletion(t *testing.T, dynclient client.Client, obj runtime.Object, retryInterval, timeout time.Duration) error {
 	key, err := client.ObjectKeyFromObject(obj)
 	if err != nil {
