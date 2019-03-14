@@ -7,7 +7,7 @@ function cleanup(){
     kubectl delete ns $TEST_NS
     exit $result
 }
-dest="/tmp/s2ioperator.yaml"
+dest="./deploy/s2ioperator.yaml"
 tag=`git rev-parse --short HEAD`
 IMG=kubespheredev/s2ioperator:$tag
 TEST_NS=s2ioperator-test-$tag
