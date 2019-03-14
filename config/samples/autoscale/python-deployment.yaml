@@ -6,7 +6,7 @@ metadata:
   labels:
     app: python-s2i
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: python-s2i
