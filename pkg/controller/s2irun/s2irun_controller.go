@@ -321,7 +321,23 @@ func (r *ReconcileS2iRun) ScaleWorkLoads(instance *devopsv1alpha1.S2iRun, builde
 					return err
 				}
 
-				log.Info("Autoscale Deployment", "ns", instance.Namespace, "statefulSet", deploy.Name)
+				log.Info("Autoscale Deployment", "ns", instance.Namespace, "deploy", deploy.Name)
+
+				//Check if initialization is required
+				if deploy.Annotations == nil || deploy.Annotations[devopsv1alpha1.WorkLoadCompletedInitAnnotations] != devopsv1alpha1.Successful {
+					//If replicas == 0, set replicas to InitReplicas
+					if deploy.Annotations == nil {
+						deploy.Annotations = make(map[string]string)
+					}
+					if *deploy.Spec.Replicas == 0 {
+						if scale.InitReplicas != nil {
+							*deploy.Spec.Replicas = *scale.InitReplicas
+						} else {
+							*deploy.Spec.Replicas = 1
+						}
+					}
+					deploy.Annotations[devopsv1alpha1.WorkLoadCompletedInitAnnotations] = devopsv1alpha1.Successful
+				}
 				newImageName := GetNewImageName(instance, *builder.Spec.Config)
 				// if only one container update containers image config
 				if len(deploy.Spec.Template.Spec.Containers) == 1 {
@@ -347,7 +363,7 @@ func (r *ReconcileS2iRun) ScaleWorkLoads(instance *devopsv1alpha1.S2iRun, builde
 
 				deploy.Spec.Template.Labels[devopsv1alpha1.WorkloadLatestS2iRunTemplateLabel] = instance.Name
 
-				log.Info("Update deployment", "ns", deploy.Namespace, "statefulSet", deploy.Name)
+				log.Info("Update deployment", "ns", deploy.Namespace, "deploy", deploy.Name)
 				err = r.Update(context.TODO(), deploy)
 				if err != nil && k8serror.IsNotFound(err) {
 					errs = append(errs, err)
@@ -365,6 +381,23 @@ func (r *ReconcileS2iRun) ScaleWorkLoads(instance *devopsv1alpha1.S2iRun, builde
 					continue
 				}
 				log.Info("Autoscale StatefulSet", "ns", instance.Namespace, "statefulSet", statefulSet.Name)
+
+				//Check if initialization is required
+				if statefulSet.Annotations == nil || statefulSet.Annotations[devopsv1alpha1.WorkLoadCompletedInitAnnotations] != devopsv1alpha1.Successful {
+					if statefulSet.Annotations == nil {
+						statefulSet.Annotations = make(map[string]string)
+					}
+					//If replicas == 0, set replicas to InitReplicas
+					if *statefulSet.Spec.Replicas == 0 {
+						if scale.InitReplicas != nil {
+							*statefulSet.Spec.Replicas = *scale.InitReplicas
+						} else {
+							*statefulSet.Spec.Replicas = 1
+						}
+					}
+					statefulSet.Annotations[devopsv1alpha1.WorkLoadCompletedInitAnnotations] = devopsv1alpha1.Successful
+				}
+
 				newImageName := GetNewImageName(instance, *builder.Spec.Config)
 				if len(statefulSet.Spec.Template.Spec.Containers) == 1 {
 					if statefulSet.Spec.Template.Spec.Containers[0].Image == newImageName {
