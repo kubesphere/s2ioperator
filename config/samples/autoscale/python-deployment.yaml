@@ -2,7 +2,7 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: python-s2i
-  namespace: test
+  namespace: default
   labels:
     app: python-s2i
 spec:
