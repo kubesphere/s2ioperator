@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -42,8 +43,18 @@ var _ = Describe("", func() {
 		Expect(err).NotTo(HaveOccurred())
 		defer testClient.Delete(context.TODO(), s2irun, cleanDelete)
 
-		var depKey = types.NamespacedName{Name: s2irun.Name + "-job", Namespace: s2irun.Namespace}
-		var cmKey = types.NamespacedName{Name: s2irun.Name + "-configmap", Namespace: s2irun.Namespace}
+		createdInstance := &devopsv1alpha1.S2iRun{}
+		Eventually(func() error {
+			return testClient.Get(context.TODO(), types.NamespacedName{Name: s2irun.Name, Namespace: s2irun.Namespace}, createdInstance)
+		}, timeout).Should(Succeed())
+
+		instanceUidSlice := strings.Split(string(createdInstance.UID), "-")
+		var cmKey = types.NamespacedName{
+			Name:      s2irun.Name + fmt.Sprintf("-%s", instanceUidSlice[len(instanceUidSlice)-1]) + "-configmap",
+			Namespace: s2irun.Namespace}
+		var depKey = types.NamespacedName{
+			Name:      s2irun.Name + fmt.Sprintf("-%s", instanceUidSlice[len(instanceUidSlice)-1]) + "-job",
+			Namespace: s2irun.Namespace}
 		//configmap
 		cm := &corev1.ConfigMap{}
 		Eventually(func() error { return testClient.Get(context.TODO(), cmKey, cm) }, timeout).

@@ -19,6 +19,7 @@ package s2irun
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	devopsv1alpha1 "github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1"
@@ -35,8 +36,7 @@ import (
 var _ = Describe("Test reconcile", func() {
 
 	var expectedRequest = reconcile.Request{NamespacedName: types.NamespacedName{Name: "foo", Namespace: "default"}}
-	var depKey = types.NamespacedName{Name: "foo-job", Namespace: "default"}
-	var cmKey = types.NamespacedName{Name: "foo-configmap", Namespace: "default"}
+
 	const timeout = time.Second * 10
 
 	It("Should get job and configmap when everything is right", func() {
@@ -71,6 +71,14 @@ var _ = Describe("Test reconcile", func() {
 		defer c.Delete(context.TODO(), instance)
 		Eventually(requests, timeout).Should(Receive(Equal(expectedRequest)))
 
+		createdInstance := &devopsv1alpha1.S2iRun{}
+		Eventually(func() error {
+			return c.Get(context.TODO(), types.NamespacedName{Name: "foo", Namespace: "default"}, createdInstance)
+		}, timeout).Should(Succeed())
+		instanceUidSlice := strings.Split(string(createdInstance.UID), "-")
+
+		var depKey = types.NamespacedName{Name: instance.Name + fmt.Sprintf("-%s", instanceUidSlice[len(instanceUidSlice)-1]) + "-job", Namespace: "default"}
+		var cmKey = types.NamespacedName{Name: instance.Name + fmt.Sprintf("-%s", instanceUidSlice[len(instanceUidSlice)-1]) + "-configmap", Namespace: "default"}
 		//configmap
 		cm := &corev1.ConfigMap{}
 		Eventually(func() error { return c.Get(context.TODO(), cmKey, cm) }, timeout).
@@ -119,6 +127,15 @@ var _ = Describe("Test reconcile", func() {
 		err = c.Create(context.TODO(), instance)
 		Expect(err).NotTo(HaveOccurred())
 		defer c.Delete(context.TODO(), instance)
+
+		createdInstance := &devopsv1alpha1.S2iRun{}
+		Eventually(func() error {
+			return c.Get(context.TODO(), types.NamespacedName{Name: instance.Name, Namespace: instance.Namespace}, createdInstance)
+		}, timeout).Should(Succeed())
+
+		instanceUidSlice := strings.Split(string(createdInstance.UID), "-")
+		var cmKey = types.NamespacedName{Name: instance.Name + fmt.Sprintf("-%s", instanceUidSlice[len(instanceUidSlice)-1]) + "-configmap", Namespace: "default"}
+
 		//configmap
 		cm := &corev1.ConfigMap{}
 		Eventually(func() error { return c.Get(context.TODO(), cmKey, cm) }, timeout).
