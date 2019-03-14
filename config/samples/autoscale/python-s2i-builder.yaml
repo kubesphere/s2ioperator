@@ -4,9 +4,9 @@ metadata:
   labels:
     controller-tools.k8s.io: "1.0"
   name: s2ibuilder-autoscale-python
-  namespace: test
+  namespace: default
   annotations:
-    devops.kubesphere.io/autoscale: "[{\"Kind\": \"Deployment\", \"Namespace\": \"test\",\"Name\":\"python-s2i\"}]"
+    devops.kubesphere.io/autoscale: '[{"Kind": "Deployment","Name":"python-s2i","initReplicas":3},{"Kind":"StatefulSet","Name":"python-s2i"}]'
 spec:
   # Add fields here
   config:
@@ -18,6 +18,6 @@ spec:
     export: true
     contextDir: "examples/setup-test-app/"
     pushAuthentication:
-      username: xxx
-      password: xxxx
-    builderImage: centos/python-35-centos7
+      username: UserShouldEnterUserName
+      password: UserShouldEnterUserPassword
+    builderImage: kubespheredev/python-35-centos7

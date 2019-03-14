@@ -3,10 +3,9 @@ kind: S2iRun
 metadata:
   labels:
     controller-tools.k8s.io: "1.0"
-  name: s2irun-sample7
-  namespace: test
+  name: s2irun-sample
+  namespace: default
 spec:
-  # Add fields here
   builderName: s2ibuilder-autoscale-python
-  newTag: v0.1.2
+  newTag: v0.1.0
 
