@@ -38,6 +38,7 @@ const (
 	AutoScaleAnnotations              = "devops.kubesphere.io/autoscale"
 	WorkloadLatestS2iRunTemplateLabel = "devops.kubesphere.io/s2ir"
 	S2irCompletedScaleAnnotations     = "devops.kubesphere.io/completedscale"
+	WorkLoadCompletedInitAnnotations  = "devops.kubesphere.io/inithasbeencomplted"
 )
 const (
 	KindDeployment  = "Deployment"
@@ -447,9 +448,10 @@ type S2iBuilderList struct {
 }
 
 type S2iAutoScale struct {
-	Kind       string   `json:"kind"`
-	Name       string   `json:"name"`
-	Containers []string `json:"containers,omitempty"`
+	Kind         string   `json:"kind"`
+	Name         string   `json:"name"`
+	InitReplicas *int32   `json:"initReplicas,omitempty"`
+	Containers   []string `json:"containers,omitempty"`
 }
 
 func init() {
