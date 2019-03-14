@@ -166,6 +166,10 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 			}
 			err = r.Create(context.TODO(), configmap)
 			if err != nil {
+				if k8serror.IsAlreadyExists(err) {
+					log.Info("Skip creating 'Already-Exists' cm", "ConfigMap-Name", configmap.Name)
+					return reconcile.Result{RequeueAfter: time.Second * 5}, nil
+				}
 				log.Error(err, "Create configmap failed", "Namespace", configmap.Namespace, "name", configmap.Name)
 				return reconcile.Result{}, err
 			}
@@ -197,7 +201,7 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 			}
 			err = r.Create(context.TODO(), job)
 			if err != nil {
-				//in some situation we cannot find job in cache, however it does exsit in apiserver, in this case we just requeue
+				//in some situation we cannot find job in cache, however it does exist in apiserver, in this case we just requeue
 				if k8serror.IsAlreadyExists(err) {
 					log.Info("Skip creating 'Already-Exists' job", "Job-Name", job.Name)
 					return reconcile.Result{RequeueAfter: time.Second * 5}, nil
