@@ -201,7 +201,11 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 			}
 			err = r.Create(context.TODO(), job)
 			if err != nil {
+<<<<<<< HEAD
 				//in some situation we cannot find job in cache, however it does exist in apiserver, in this case we just requeue
+=======
+				//in some situation we cannot find job in cache, however it does exsit in apiserver, in this case we just requeue
+>>>>>>> 7833c77e386883e00b59266bf030ffd56eda1227
 				if k8serror.IsAlreadyExists(err) {
 					log.Info("Skip creating 'Already-Exists' job", "Job-Name", job.Name)
 					return reconcile.Result{RequeueAfter: time.Second * 5}, nil
