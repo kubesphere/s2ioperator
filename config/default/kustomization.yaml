@@ -1,5 +1,5 @@
 # Adds namespace to all resources.
-namespace: s2ioperator-test-0774c115
+namespace: s2ioperator-test-6161470f
 
 # Value of this field is prepended to the
 # names of all resources, e.g. a deployment named
