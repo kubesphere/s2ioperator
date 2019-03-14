@@ -9,8 +9,8 @@ metadata:
 apiVersion: v1
 kind: Service
 metadata:
-  name: controller-manager-service
-  namespace: devops
+  name: s2ioperator
+  namespace: kubesphere-devops-system
   labels:
     control-plane: controller-manager
     controller-tools.k8s.io: "1.0"
@@ -24,17 +24,17 @@ spec:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: controller-manager
-  namespace: devops
+  name: s2ioperator
+  namespace: kubesphere-devops-system
   labels:
-    control-plane: controller-manager
+    control-plane: s2ioperator
     controller-tools.k8s.io: "1.0"
 spec:
   selector:
     matchLabels:
       control-plane: controller-manager
       controller-tools.k8s.io: "1.0"
-  serviceName: controller-manager-service
+  serviceName: s2ioperator
   template:
     metadata:
       labels:

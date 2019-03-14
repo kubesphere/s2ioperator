@@ -803,7 +803,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: default
-  namespace: s2ioperator-test-5e902337
+  namespace: kubesphere-devops-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -816,13 +816,13 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: default
-  namespace: s2ioperator-test-5e902337
+  namespace: kubesphere-devops-system
 ---
 apiVersion: v1
 kind: Secret
 metadata:
   name: webhook-server-secret
-  namespace: s2ioperator-test-5e902337
+  namespace: kubesphere-devops-system
 ---
 apiVersion: v1
 kind: Service
@@ -835,7 +835,7 @@ metadata:
     control-plane: controller-manager
     controller-tools.k8s.io: "1.0"
   name: controller-manager-metrics-service
-  namespace: s2ioperator-test-5e902337
+  namespace: kubesphere-devops-system
 spec:
   ports:
   - name: https
@@ -851,8 +851,8 @@ metadata:
   labels:
     control-plane: controller-manager
     controller-tools.k8s.io: "1.0"
-  name: controller-manager-service
-  namespace: s2ioperator-test-5e902337
+  name: s2ioperator
+  namespace: kubesphere-devops-system
 spec:
   ports:
   - port: 443
@@ -864,16 +864,16 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
-    control-plane: controller-manager
+    control-plane: s2ioperator
     controller-tools.k8s.io: "1.0"
-  name: controller-manager
-  namespace: s2ioperator-test-5e902337
+  name: s2ioperator
+  namespace: kubesphere-devops-system
 spec:
   selector:
     matchLabels:
       control-plane: controller-manager
       controller-tools.k8s.io: "1.0"
-  serviceName: controller-manager-service
+  serviceName: s2ioperator
   template:
     metadata:
       labels:
@@ -904,7 +904,7 @@ spec:
           value: webhook-server-secret
         - name: S2IIMAGENAME
           value: magicsong/s2irun:v0.0.1
-        image: kubespheredev/s2ioperator:5e902337
+        image: kubespheredev/s2ioperator:v0.0.1
         imagePullPolicy: Always
         name: manager
         ports:
