@@ -59,3 +59,5 @@ install-travis:
 
 e2e-test: manager
 	./hack/e2etest.sh
+
+.PHONY : clean test
