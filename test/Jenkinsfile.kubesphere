@@ -44,6 +44,8 @@ spec:
 
        withCredentials([usernamePassword(passwordVariable : 'DOCKER_PASSWORD' ,usernameVariable : 'DOCKER_USERNAME' ,credentialsId : "dockerhub-id" ,)]) {
           sh 'echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin'
+       }
+       withCredentials([usernamePassword(passwordVariable : 'DOCKER_PASSWORD' ,usernameVariable : 'DOCKER_USERNAME' ,credentialsId : "sed-dockerhub-id" ,)]) {
           sh  "sed -i.bak 's#UserShouldEnterUserName#$DOCKER_USERNAME#' ./config/samples/autoscale/*.yaml"
           sh  "sed -i.bak 's#UserShouldEnterUserPassword#$DOCKER_PASSWORD#' ./config/samples/autoscale/*.yaml"
        }
