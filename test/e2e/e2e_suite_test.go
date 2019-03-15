@@ -48,7 +48,7 @@ var _ = BeforeSuite(func() {
 	Expect(err).NotTo(HaveOccurred(), "Error in creating client")
 	testClient = c
 	//waiting for controller up
-	err = e2eutil.WaitForController(c, testNamespace, "controller-manager", 5*time.Second, 2*time.Minute)
+	err = e2eutil.WaitForController(c, testNamespace, "s2ioperator", 5*time.Second, 2*time.Minute)
 	Expect(err).ShouldNot(HaveOccurred(), "timeout waiting for controller up: %s\n", err)
 	//waiting for webhook
 	Eventually(func() error {
