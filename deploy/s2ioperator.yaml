@@ -896,7 +896,7 @@ spec:
           value: webhook-server-secret
         - name: S2IIMAGENAME
           value: magicsong/s2irun:v0.0.1
-        image: kubespheredev/s2ioperator:v0.0.1
+        image: kubespheredev/s2ioperator:v0.0.2
         imagePullPolicy: Always
         name: manager
         ports:

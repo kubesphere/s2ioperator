@@ -1,6 +1,6 @@
 
 # Image URL to use all building/pushing image targets
-IMG ?= kubespheredev/s2ioperator:v0.0.1
+IMG ?= kubespheredev/s2ioperator:v0.0.2
 
 all: test manager
 
@@ -46,7 +46,7 @@ docker-build:
 	docker build -f deploy/Dockerfile -t $(IMG) bin/
 	docker push $(IMG)
 	@echo "updating kustomize image patch file for manager resource"
-	sed -i'' -e 's@image: .*@image: '"${IMG}"'@' ./config/default/manager_image_patch.yaml
+	sed -i '' -e 's@image: .*@image: '"${IMG}"'@' ./config/default/manager_image_patch.yaml
 
 debug: manager
 	./hack/build-image.sh
