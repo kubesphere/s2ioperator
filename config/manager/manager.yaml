@@ -4,7 +4,7 @@ metadata:
   labels:
     control-plane: controller-manager
     controller-tools.k8s.io: "1.0"
-  name: devops
+  name: kubesphere-devops-system
 ---
 apiVersion: v1
 kind: Service
@@ -84,4 +84,4 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: webhook-server-secret
-  namespace: devops
+  namespace: kubesphere-devops-system
