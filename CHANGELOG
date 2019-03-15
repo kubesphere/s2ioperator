@@ -1,1 +1,17 @@
-TEST Change Log
+# Changelog
+All notable changes to this project will be documented in this file.
+## [ 0.0.2 ] - 2019-03-15
+### Added
+ - Enable CI Test
+ - Add Kubesphere CI Robot
+ - Support deploy to workload after s2i done [@runzexia](https://github.com/kubesphere/s2ioperator/pull/30)
+ -  Add logurl to each s2irun [@magicsong](https://github.com/kubesphere/s2ioperator/pull/21)
+
+### Fixes
+ - Randomize container name to prevent concurrent-building failing [@magicsong](https://github.com/kubesphere/s2ioperator/pull/47)
+ - Fix the lastrunname in s2ibuilder [@magicsong](https://github.com/kubesphere/s2ioperator/pull/31)
+
+ 
+## [ 0.0.1 ]  - 2019-03-01
+### Added
+- release v0.0.1
