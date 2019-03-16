@@ -12,7 +12,8 @@
 ## 如何安装
 ```bash
 kubectl label nodes {nodexxx} s2ioperator=yes
-kubectl apply -f https://raw.githubusercontent.com/kubesphere/s2ioperator/master/deploy/s2ioperator.yaml
+kubectl create ns kubesphere-devops-system
+kubectl apply -f  https://github.com/kubesphere/s2ioperator/releases/download/v0.0.2/s2ioperator.yaml
 ```
 **注意事项**，Source2Image需要Docker的支持，需要确保S2IOperator安装的Node上有Docker，并且有足够的空间。目前的S2iOperator是固定在节点上的，通过上面的`kubectl label` 进行设置。这么做主要为了重复利用Docker Layer，同时方便日后清理。如果不想固定node，可以去掉上面yaml中的`nodeSelector`属性。
 
@@ -20,7 +21,7 @@ kubectl apply -f https://raw.githubusercontent.com/kubesphere/s2ioperator/master
 ```bash
 wget https://raw.githubusercontent.com/kubesphere/s2ioperator/master/hack/certs.sh
 chmod +x certs.sh
-./certs.sh --service webhook-server-service --namespace devops --secret webhook-server-secret
+./certs.sh --service webhook-server-service --namespace kubesphere-devops-system --secret webhook-server-secret
 ```
 执行最下面一句命令，需要系统安装`openssl`，`jq`，并且拥有正确配置了k8s集群config的`kubectl`。需要有k8s的管理员权限。
 ## 快速开始
