@@ -67,6 +67,7 @@ type S2iBuilderTemplateSpec struct {
 type S2iBuilderTemplateStatus struct {
 }
 
+// +genclient
 // +genclient:nonNamespaced
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 

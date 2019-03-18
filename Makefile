@@ -38,7 +38,7 @@ vet:
 	go vet ./pkg/... ./cmd/...
 
 client-gen:
-	./vendor/k8s.io/code-generator/generate-groups.sh all github.com/kubesphere/s2ioperator/pkg/client github.com/kubesphere/s2ioperator/pkg/apis "devops:v1alpha1"
+	./vendor/k8s.io/code-generator/generate-groups.sh all github.com/kubesphere/s2ioperator/pkg/client github.com/kubesphere/s2ioperator/pkg/apis "devops:v1alpha1" --go-header-file ./hack/boilerplate.go.txt
 
 # Generate code
 generate:
