@@ -821,8 +821,7 @@
   version = "kubernetes-1.13.1"
 
 [[projects]]
-  branch = "master"
-  digest = "1:7f50d2f8b847b3691445fb8914176149be9f47c0237684f8e2611ee92ccbcd78"
+  digest = "1:8f29fd4c578cae70e2e1673656e19e9bae4896c72b458f42b824dfe03d7ea3b2"
   name = "k8s.io/code-generator"
   packages = [
     "cmd/client-gen",
@@ -835,15 +834,21 @@
     "cmd/client-gen/types",
     "cmd/deepcopy-gen",
     "cmd/deepcopy-gen/args",
-    "pkg/namer",
+    "cmd/informer-gen",
+    "cmd/informer-gen/args",
+    "cmd/informer-gen/generators",
+    "cmd/lister-gen",
+    "cmd/lister-gen/args",
+    "cmd/lister-gen/generators",
     "pkg/util",
   ]
-  pruneopts = "NT"
-  revision = "3a2206dd6a78497deceb3ae058417fdeb2036c7e"
+  pruneopts = "T"
+  revision = "c2090bec4d9b1fb25de3812f868accc2bc9ecbae"
+  version = "kubernetes-1.13.1"
 
 [[projects]]
   branch = "master"
-  digest = "1:119f7bf10d0e315e815b08dceb2a3ca2539f655db0db1c7cb3f40b223164a879"
+  digest = "1:7789a2c7b7c023f2d700f00fa8eac186ea476969b2eba87b804dbea3ad9813f8"
   name = "k8s.io/gengo"
   packages = [
     "args",
@@ -854,7 +859,7 @@
     "parser",
     "types",
   ]
-  pruneopts = "NT"
+  pruneopts = "T"
   revision = "fd15ee9cc2f77baa4f31e59e6acbf21146455073"
 
 [[projects]]
@@ -986,6 +991,8 @@
     "k8s.io/client-go/rest",
     "k8s.io/code-generator/cmd/client-gen",
     "k8s.io/code-generator/cmd/deepcopy-gen",
+    "k8s.io/code-generator/cmd/informer-gen",
+    "k8s.io/code-generator/cmd/lister-gen",
     "sigs.k8s.io/controller-runtime/pkg/client",
     "sigs.k8s.io/controller-runtime/pkg/client/config",
     "sigs.k8s.io/controller-runtime/pkg/controller",
