@@ -4,7 +4,10 @@ required = [
     "github.com/onsi/gomega", # for test matchers
     "k8s.io/client-go/plugin/pkg/client/auth/gcp", # for development against gcp
     "k8s.io/code-generator/cmd/client-gen", # for go generate
-    "k8s.io/code-generator/cmd/deepcopy-gen", # for go generate
+    "k8s.io/code-generator/cmd/deepcopy-gen",# for go generate
+    "k8s.io/code-generator/cmd/client-gen",
+    "k8s.io/code-generator/cmd/lister-gen",
+    "k8s.io/code-generator/cmd/informer-gen",
     "sigs.k8s.io/controller-tools/cmd/controller-gen", # for crd/rbac generation
     "sigs.k8s.io/controller-runtime/pkg/client/config",
     "sigs.k8s.io/controller-runtime/pkg/controller",
@@ -19,7 +22,12 @@ required = [
 [prune]
   go-tests = true
   non-go = true
-
+  [[prune.project]]
+    name = "k8s.io/code-generator"
+    non-go = false
+  [[prune.project]]
+    name = "k8s.io/gengo"
+    non-go = false
 # STANZAS BELOW ARE GENERATED AND MAY BE WRITTEN - DO NOT MODIFY BELOW THIS LINE.
 
 [[constraint]]
@@ -30,8 +38,14 @@ required = [
   name="sigs.k8s.io/controller-tools"
   version="v0.1.9"
 
+[[constraint]]
+  name="k8s.io/code-generator"
+  version="kubernetes-1.13.1"
+
 # For dependency below: Refer to issue https://github.com/golang/dep/issues/1799
 [[override]]
 name = "gopkg.in/fsnotify.v1"
 source = "https://github.com/fsnotify/fsnotify.git"
 version="v1.4.7"
+
+
