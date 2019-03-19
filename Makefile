@@ -37,9 +37,6 @@ fmt:
 vet:
 	go vet ./pkg/... ./cmd/...
 
-client-gen:
-	./vendor/k8s.io/code-generator/generate-groups.sh all github.com/kubesphere/s2ioperator/pkg/client github.com/kubesphere/s2ioperator/pkg/apis "devops:v1alpha1" --go-header-file ./hack/boilerplate.go.txt
-
 # Generate code
 generate:
 	go run vendor/k8s.io/code-generator/cmd/deepcopy-gen/main.go -O zz_generated.deepcopy -i github.com/kubesphere/s2ioperator/pkg/apis/... -h hack/boilerplate.go.txt
