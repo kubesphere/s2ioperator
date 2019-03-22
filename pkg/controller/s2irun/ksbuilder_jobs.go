@@ -146,7 +146,7 @@ func (r *ReconcileS2iRun) GenerateNewJob(instance *devopsv1alpha1.S2iRun) (*batc
 
 //setDockerSecret setS2iConfig docker secret
 func (r *ReconcileS2iRun) setDockerSecret(instance *devopsv1alpha1.S2iRun, config *devopsv1alpha1.S2iConfig) error {
-	if config.PushAuthentication.SecretRef != nil {
+	if config.PushAuthentication != nil && config.PushAuthentication.SecretRef != nil {
 		secret := &corev1.Secret{}
 		err := r.Get(context.TODO(), types.NamespacedName{
 			Namespace: instance.Namespace, Name: config.PushAuthentication.SecretRef.Name}, secret)
@@ -163,7 +163,7 @@ func (r *ReconcileS2iRun) setDockerSecret(instance *devopsv1alpha1.S2iRun, confi
 		config.PushAuthentication.SecretRef = nil
 	}
 
-	if config.PullAuthentication.SecretRef != nil {
+	if config.PullAuthentication != nil && config.PullAuthentication.SecretRef != nil {
 		secret := &corev1.Secret{}
 		err := r.Get(context.TODO(), types.NamespacedName{
 			Namespace: instance.Namespace, Name: config.PullAuthentication.SecretRef.Name}, secret)
@@ -180,7 +180,7 @@ func (r *ReconcileS2iRun) setDockerSecret(instance *devopsv1alpha1.S2iRun, confi
 		config.PullAuthentication.SecretRef = nil
 	}
 
-	if config.IncrementalAuthentication.SecretRef != nil {
+	if config.IncrementalAuthentication != nil && config.IncrementalAuthentication.SecretRef != nil {
 		secret := &corev1.Secret{}
 		err := r.Get(context.TODO(), types.NamespacedName{
 			Namespace: instance.Namespace, Name: config.IncrementalAuthentication.SecretRef.Name}, secret)
@@ -197,7 +197,7 @@ func (r *ReconcileS2iRun) setDockerSecret(instance *devopsv1alpha1.S2iRun, confi
 		config.IncrementalAuthentication.SecretRef = nil
 	}
 
-	if config.RuntimeAuthentication.SecretRef != nil {
+	if config.RuntimeAuthentication != nil && config.RuntimeAuthentication.SecretRef != nil {
 		secret := &corev1.Secret{}
 		err := r.Get(context.TODO(), types.NamespacedName{
 			Namespace: instance.Namespace, Name: config.RuntimeAuthentication.SecretRef.Name}, secret)
