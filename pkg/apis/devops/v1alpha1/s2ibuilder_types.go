@@ -231,7 +231,7 @@ type S2iConfig struct {
 
 	// RuntimeAuthentication holds the authentication information for pulling the
 	// runtime Docker images from private repositories.
-	RuntimeAuthentication AuthConfig `json:"runtimeAuthentication,omitempty"`
+	RuntimeAuthentication *AuthConfig `json:"runtimeAuthentication,omitempty"`
 
 	// RuntimeArtifacts specifies a list of source/destination pairs that will
 	// be copied from builder to a runtime image. Source can be a file or
@@ -248,15 +248,15 @@ type S2iConfig struct {
 
 	// PullAuthentication holds the authentication information for pulling the
 	// Docker images from private repositories
-	PullAuthentication AuthConfig `json:"pullAuthentication,omitempty"`
+	PullAuthentication *AuthConfig `json:"pullAuthentication,omitempty"`
 
 	// PullAuthentication holds the authentication information for pulling the
 	// Docker images from private repositories
-	PushAuthentication AuthConfig `json:"pushAuthentication,omitempty"`
+	PushAuthentication *AuthConfig `json:"pushAuthentication,omitempty"`
 
 	// IncrementalAuthentication holds the authentication information for pulling the
 	// previous image from private repositories
-	IncrementalAuthentication AuthConfig `json:"incrementalAuthentication,omitempty"`
+	IncrementalAuthentication *AuthConfig `json:"incrementalAuthentication,omitempty"`
 
 	// DockerNetworkMode is used to set the docker network setting to --net=container:<id>
 	// when the builder is invoked from a container.
