@@ -2,7 +2,6 @@ package s2irun
 
 import (
 	"context"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -223,13 +222,9 @@ func getDockerEntryFromDockerSecret(instance *corev1.Secret) (dockerConfigEntry 
 		return nil, fmt.Errorf("secret %s in ns %s type should be %s",
 			instance.Namespace, instance.Name, corev1.SecretTypeDockerConfigJson)
 	}
-	encodeDockerConfig, ok := instance.Data[corev1.DockerConfigJsonKey]
+	dockerConfigBytes, ok := instance.Data[corev1.DockerConfigJsonKey]
 	if !ok {
 		return nil, fmt.Errorf("could not get data %s", corev1.DockerConfigJsonKey)
-	}
-	dockerConfigBytes, err := base64.StdEncoding.DecodeString(string(encodeDockerConfig))
-	if err != nil {
-		return nil, err
 	}
 	dockerConfig := &devopsv1alpha1.DockerConfigJson{}
 	err = json.Unmarshal(dockerConfigBytes, dockerConfig)
