@@ -49,6 +49,9 @@ spec:
           sh  "sed -i.bak 's#UserShouldEnterUserName#$DOCKER_USERNAME#' ./config/samples/autoscale/*.yaml"
           sh  "sed -i.bak 's#UserShouldEnterUserPassword#$DOCKER_PASSWORD#' ./config/samples/autoscale/*.yaml"
        }
+       withCredentials([string(credentialsId: 'dockerconfig',variable: 'DOCKERCONFIG')]){
+          sh  "sed -i.bak 's#UserShouldEnterBase64DockerConfig#$DOCKERCONFIG#' ./config/samples/secret/*.yaml"
+       }
         sh '''
         mkdir -p /go/src/github.com/kubesphere
 ln -s `pwd` /go/src/github.com/kubesphere/s2ioperator
