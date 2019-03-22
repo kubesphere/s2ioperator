@@ -41,7 +41,10 @@ func (r *ReconcileS2iRun) NewConfigMap(instance *devopsv1alpha1.S2iRun, config d
 	}
 
 	config.Tag = GetNewImageName(instance, config)
-
+	err := r.setDockerSecret(instance, &config)
+	if err != nil {
+		return nil, err
+	}
 	data, err := json.Marshal(config)
 	if err != nil {
 		return nil, err
@@ -139,4 +142,100 @@ func (r *ReconcileS2iRun) GenerateNewJob(instance *devopsv1alpha1.S2iRun) (*batc
 		job.Spec.TTLSecondsAfterFinished = &instance.Spec.SecondsAfterFinished
 	}
 	return job, nil
+}
+
+//setDockerSecret setS2iConfig docker secret
+func (r *ReconcileS2iRun) setDockerSecret(instance *devopsv1alpha1.S2iRun, config *devopsv1alpha1.S2iConfig) error {
+	if config.PushAuthentication != nil && config.PushAuthentication.SecretRef != nil {
+		secret := &corev1.Secret{}
+		err := r.Get(context.TODO(), types.NamespacedName{
+			Namespace: instance.Namespace, Name: config.PushAuthentication.SecretRef.Name}, secret)
+		if err != nil {
+			return err
+		}
+		entry, err := getDockerEntryFromDockerSecret(secret)
+		if err != nil {
+			return err
+		}
+		config.PushAuthentication.Username = entry.Username
+		config.PushAuthentication.Password = entry.Password
+		config.PushAuthentication.Email = entry.Email
+		config.PushAuthentication.SecretRef = nil
+	}
+
+	if config.PullAuthentication != nil && config.PullAuthentication.SecretRef != nil {
+		secret := &corev1.Secret{}
+		err := r.Get(context.TODO(), types.NamespacedName{
+			Namespace: instance.Namespace, Name: config.PullAuthentication.SecretRef.Name}, secret)
+		if err != nil {
+			return err
+		}
+		entry, err := getDockerEntryFromDockerSecret(secret)
+		if err != nil {
+			return err
+		}
+		config.PullAuthentication.Username = entry.Username
+		config.PullAuthentication.Password = entry.Password
+		config.PullAuthentication.Email = entry.Email
+		config.PullAuthentication.SecretRef = nil
+	}
+
+	if config.IncrementalAuthentication != nil && config.IncrementalAuthentication.SecretRef != nil {
+		secret := &corev1.Secret{}
+		err := r.Get(context.TODO(), types.NamespacedName{
+			Namespace: instance.Namespace, Name: config.IncrementalAuthentication.SecretRef.Name}, secret)
+		if err != nil {
+			return err
+		}
+		entry, err := getDockerEntryFromDockerSecret(secret)
+		if err != nil {
+			return err
+		}
+		config.IncrementalAuthentication.Username = entry.Username
+		config.IncrementalAuthentication.Password = entry.Password
+		config.IncrementalAuthentication.Email = entry.Email
+		config.IncrementalAuthentication.SecretRef = nil
+	}
+
+	if config.RuntimeAuthentication != nil && config.RuntimeAuthentication.SecretRef != nil {
+		secret := &corev1.Secret{}
+		err := r.Get(context.TODO(), types.NamespacedName{
+			Namespace: instance.Namespace, Name: config.RuntimeAuthentication.SecretRef.Name}, secret)
+		if err != nil {
+			return err
+		}
+		entry, err := getDockerEntryFromDockerSecret(secret)
+		if err != nil {
+			return err
+		}
+		config.RuntimeAuthentication.Username = entry.Username
+		config.RuntimeAuthentication.Password = entry.Password
+		config.RuntimeAuthentication.Email = entry.Email
+		config.RuntimeAuthentication.SecretRef = nil
+	}
+	return nil
+}
+
+func getDockerEntryFromDockerSecret(instance *corev1.Secret) (dockerConfigEntry *devopsv1alpha1.DockerConfigEntry, err error) {
+
+	if instance.Type != corev1.SecretTypeDockerConfigJson {
+		return nil, fmt.Errorf("secret %s in ns %s type should be %s",
+			instance.Namespace, instance.Name, corev1.SecretTypeDockerConfigJson)
+	}
+	dockerConfigBytes, ok := instance.Data[corev1.DockerConfigJsonKey]
+	if !ok {
+		return nil, fmt.Errorf("could not get data %s", corev1.DockerConfigJsonKey)
+	}
+	dockerConfig := &devopsv1alpha1.DockerConfigJson{}
+	err = json.Unmarshal(dockerConfigBytes, dockerConfig)
+	if err != nil {
+		return nil, err
+	}
+	if len(dockerConfig.Auths) == 0 {
+		return nil, fmt.Errorf("docker config auth len should not be 0")
+	}
+	for _, dockerConfigEntry := range dockerConfig.Auths {
+		return dockerConfigEntry.DeepCopy(), nil
+	}
+	return nil, nil
 }
