@@ -37,34 +37,6 @@ func ValidateConfig(config *api.S2iConfig, fromTemplate bool) []error {
 			allErrs = append(allErrs, errors.NewFieldInvalidValueWithReason("builderImage", err.Error()))
 		}
 	}
-	if config.RuntimeAuthentication != nil {
-		if config.RuntimeAuthentication.SecretRef == nil {
-			if config.RuntimeAuthentication.Username == "" && config.RuntimeAuthentication.Password == "" {
-				allErrs = append(allErrs, errors.NewFieldRequired("RuntimeAuthentication username|password / secretRef"))
-			}
-		}
-	}
-	if config.IncrementalAuthentication != nil {
-		if config.IncrementalAuthentication.SecretRef == nil {
-			if config.IncrementalAuthentication.Username == "" && config.IncrementalAuthentication.Password == "" {
-				allErrs = append(allErrs, errors.NewFieldRequired("IncrementalAuthentication username|password / secretRef"))
-			}
-		}
-	}
-	if config.PullAuthentication != nil {
-		if config.PullAuthentication.SecretRef == nil {
-			if config.PullAuthentication.Username == "" && config.PullAuthentication.Password == "" {
-				allErrs = append(allErrs, errors.NewFieldRequired("PullAuthentication username|password / secretRef"))
-			}
-		}
-	}
-	if config.PushAuthentication != nil {
-		if config.PushAuthentication.SecretRef == nil {
-			if config.PushAuthentication.Username == "" && config.PushAuthentication.Password == "" {
-				allErrs = append(allErrs, errors.NewFieldRequired("PushAuthentication username|password / secretRef"))
-			}
-		}
-	}
 	return allErrs
 }
 
