@@ -19,6 +19,7 @@ package v1alpha1
 import (
 	"fmt"
 
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -101,10 +102,11 @@ type DockerConfig struct {
 // AuthConfig is our abstraction of the Registry authorization information for whatever
 // docker client we happen to be based on
 type AuthConfig struct {
-	Username      string `json:"username"`
-	Password      string `json:"password"`
-	Email         string `json:"email,omitempty"`
-	ServerAddress string `json:"server_address,omitempty"`
+	Username      string                       `json:"username"`
+	Password      string                       `json:"password"`
+	Email         string                       `json:"email,omitempty"`
+	ServerAddress string                       `json:"server_address,omitempty"`
+	SecretRef     *corev1.LocalObjectReference `json:"secretRef,omitempty"`
 }
 
 // ContainerConfig is the abstraction of the docker client provider (formerly go-dockerclient, now either
@@ -452,6 +454,21 @@ type S2iAutoScale struct {
 	Name         string   `json:"name"`
 	InitReplicas *int32   `json:"initReplicas,omitempty"`
 	Containers   []string `json:"containers,omitempty"`
+}
+
+type DockerConfigJson struct {
+	Auths DockerConfigMap `json:"auths"`
+}
+
+// DockerConfig represents the config file used by the docker CLI.
+// This config that represents the credentials that should be used
+// when pulling images from specific image repositories.
+type DockerConfigMap map[string]DockerConfigEntry
+
+type DockerConfigEntry struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Email    string `json:"email"`
 }
 
 func init() {
