@@ -176,9 +176,6 @@ spec:
                       type: object
                     username:
                       type: string
-                  required:
-                  - username
-                  - password
                   type: object
                 incrementalFromTag:
                   description: IncrementalFromTag sets an alternative image tag to
@@ -234,9 +231,6 @@ spec:
                       type: object
                     username:
                       type: string
-                  required:
-                  - username
-                  - password
                   type: object
                 pushAuthentication:
                   description: PullAuthentication holds the authentication information
@@ -250,9 +244,6 @@ spec:
                       type: object
                     username:
                       type: string
-                  required:
-                  - username
-                  - password
                   type: object
                 removePreviousImage:
                   description: RemovePreviousImage describes if previous image should
@@ -288,9 +279,6 @@ spec:
                       type: object
                     username:
                       type: string
-                  required:
-                  - username
-                  - password
                   type: object
                 runtimeImage:
                   description: RuntimeImage specifies the image that will be a base
