@@ -1,5 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+## [ 0.0.7 ] - 2019-03-25
+ - add informer client [@runzexia](https://github.com/kubesphere/s2ioperator/pull/56)
+ - add docker secret support [@runzexia](https://github.com/kubesphere/s2ioperator/pull/61)
+ - add git secret support [@runzexia](https://github.com/kubesphere/s2ioperator/pull/62)
+
 ## [ 0.0.2 ] - 2019-03-15
 ### Added
  - Enable CI Test
