@@ -143,6 +143,9 @@ spec:
                   description: Export Push the result image to specify image registry
                     in tag
                   type: boolean
+                gitSecretRef:
+                  description: GitSecretRef is the BasicAuth Secret of Git Clone
+                  type: object
                 hasOnBuild:
                   description: HasOnBuild will be set to true if the builder image
                     contains ONBUILD instructions
@@ -172,11 +175,10 @@ spec:
                       type: string
                     password:
                       type: string
+                    secretRef:
+                      type: object
                     username:
                       type: string
-                  required:
-                  - username
-                  - password
                   type: object
                 incrementalFromTag:
                   description: IncrementalFromTag sets an alternative image tag to
@@ -228,11 +230,10 @@ spec:
                       type: string
                     password:
                       type: string
+                    secretRef:
+                      type: object
                     username:
                       type: string
-                  required:
-                  - username
-                  - password
                   type: object
                 pushAuthentication:
                   description: PullAuthentication holds the authentication information
@@ -242,11 +243,10 @@ spec:
                       type: string
                     password:
                       type: string
+                    secretRef:
+                      type: object
                     username:
                       type: string
-                  required:
-                  - username
-                  - password
                   type: object
                 removePreviousImage:
                   description: RemovePreviousImage describes if previous image should
@@ -278,11 +278,10 @@ spec:
                       type: string
                     password:
                       type: string
+                    secretRef:
+                      type: object
                     username:
                       type: string
-                  required:
-                  - username
-                  - password
                   type: object
                 runtimeImage:
                   description: RuntimeImage specifies the image that will be a base
@@ -720,6 +719,12 @@ rules:
   - update
   - patch
 - apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - get
+- apiGroups:
   - admissionregistration.k8s.io
   resources:
   - mutatingwebhookconfigurations
@@ -896,7 +901,7 @@ spec:
           value: webhook-server-secret
         - name: S2IIMAGENAME
           value: magicsong/s2irun:v0.0.1
-        image: kubespheredev/s2ioperator:v0.0.2
+        image: kubespheredev/s2ioperator:v0.0.7
         imagePullPolicy: Always
         name: manager
         ports:
