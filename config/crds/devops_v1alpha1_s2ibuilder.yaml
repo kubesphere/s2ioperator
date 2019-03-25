@@ -143,6 +143,9 @@ spec:
                   description: Export Push the result image to specify image registry
                     in tag
                   type: boolean
+                gitSecretRef:
+                  description: GitSecretRef is the BasicAuth Secret of Git Clone
+                  type: object
                 hasOnBuild:
                   description: HasOnBuild will be set to true if the builder image
                     contains ONBUILD instructions
@@ -327,6 +330,7 @@ spec:
               required:
               - imageName
               - sourceUrl
+              - gitSecretRef
               type: object
             fromTemplate:
               description: FromTemplate define some inputs from user

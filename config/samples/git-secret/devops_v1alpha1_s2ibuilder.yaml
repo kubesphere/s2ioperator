@@ -1,0 +1,17 @@
+apiVersion: devops.kubesphere.io/v1alpha1
+kind: S2iBuilder
+metadata:
+  labels:
+    controller-tools.k8s.io: "1.0"
+  name: s2ibuilder-sample
+  namespace: default
+spec:
+  # Add fields here
+   config:
+     builderImage: kubespheredev/python-35-centos7
+     sourceUrl: "https://github.com/runzexia/django-ex"
+     imageName: runzexia/hello-python
+     tag: latest
+     builderPullPolicy: if-not-present
+     gitSecretRef:
+       name: basic-auth
