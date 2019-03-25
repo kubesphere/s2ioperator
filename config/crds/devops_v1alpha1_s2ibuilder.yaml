@@ -330,7 +330,6 @@ spec:
               required:
               - imageName
               - sourceUrl
-              - gitSecretRef
               type: object
             fromTemplate:
               description: FromTemplate define some inputs from user

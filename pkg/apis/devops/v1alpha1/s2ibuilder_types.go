@@ -394,7 +394,7 @@ type S2iConfig struct {
 	SourceURL string `json:"sourceUrl"`
 
 	//GitSecretRef is the BasicAuth Secret of Git Clone
-	GitSecretRef *corev1.LocalObjectReference `json:"gitSecretRef"`
+	GitSecretRef *corev1.LocalObjectReference `json:"gitSecretRef,omitempty"`
 }
 
 type UserDefineTemplate struct {
