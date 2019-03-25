@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"os"
 	"strings"
 
@@ -42,6 +43,10 @@ func (r *ReconcileS2iRun) NewConfigMap(instance *devopsv1alpha1.S2iRun, config d
 
 	config.Tag = GetNewImageName(instance, config)
 	err := r.setDockerSecret(instance, &config)
+	if err != nil {
+		return nil, err
+	}
+	err = r.setGitSecret(instance, &config)
 	if err != nil {
 		return nil, err
 	}
@@ -212,6 +217,51 @@ func (r *ReconcileS2iRun) setDockerSecret(instance *devopsv1alpha1.S2iRun, confi
 		config.RuntimeAuthentication.Password = entry.Password
 		config.RuntimeAuthentication.Email = entry.Email
 		config.RuntimeAuthentication.SecretRef = nil
+	}
+	return nil
+}
+
+//setGitSecret set GitClone Secret
+func (r *ReconcileS2iRun) setGitSecret(instance *devopsv1alpha1.S2iRun, config *devopsv1alpha1.S2iConfig) error {
+	if config.GitSecretRef != nil {
+		secret := &corev1.Secret{}
+		err := r.Get(context.TODO(), types.NamespacedName{
+			Namespace: instance.Namespace, Name: config.GitSecretRef.Name}, secret)
+		if err != nil {
+			return err
+		}
+
+		switch secret.Type {
+		case corev1.SecretTypeBasicAuth:
+			username, ok := secret.Data[corev1.BasicAuthUsernameKey]
+			if !ok {
+				return fmt.Errorf("could not get username in secret %s", secret.Name)
+			}
+			password, ok := secret.Data[corev1.BasicAuthPasswordKey]
+			if !ok {
+				return fmt.Errorf("could not get password in secret %s", secret.Name)
+			}
+			sourceUrl, err := url.Parse(config.SourceURL)
+			if err != nil {
+				return err
+			}
+			config.SourceURL = fmt.Sprintf("%s://%s:%s@%s%s", sourceUrl.Scheme, url.QueryEscape(string(username)), url.QueryEscape(string(password)), sourceUrl.Host, sourceUrl.RequestURI())
+
+		default:
+			username, ok := secret.Data[corev1.BasicAuthUsernameKey]
+			if !ok {
+				return fmt.Errorf("could not get username in secret %s", secret.Name)
+			}
+			password, ok := secret.Data[corev1.BasicAuthPasswordKey]
+			if !ok {
+				return fmt.Errorf("could not get password in secret %s", secret.Name)
+			}
+			sourceUrl, err := url.Parse(config.SourceURL)
+			if err != nil {
+				return err
+			}
+			config.SourceURL = fmt.Sprintf("%s://%s:%s@%s%s", sourceUrl.Scheme, url.QueryEscape(string(username)), url.QueryEscape(string(password)), sourceUrl.Host, sourceUrl.RequestURI())
+		}
 	}
 	return nil
 }

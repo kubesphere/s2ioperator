@@ -538,6 +538,11 @@ func (in *S2iConfig) DeepCopyInto(out *S2iConfig) {
 		*out = make([]string, len(*in))
 		copy(*out, *in)
 	}
+	if in.GitSecretRef != nil {
+		in, out := &in.GitSecretRef, &out.GitSecretRef
+		*out = new(v1.LocalObjectReference)
+		**out = **in
+	}
 	return
 }
 
