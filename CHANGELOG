@@ -1,5 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+
+## [ 0.0.8 ] - *
+ - change s2ir status [@runzexia](https://github.com/kubesphere/s2ioperator/pull/65)
+ - fix s2ib validate, add s2ir validate [https://github.com/kubesphere/s2ioperator/pull/66]
+
 ## [ 0.0.7 ] - 2019-03-25
  - add informer client [@runzexia](https://github.com/kubesphere/s2ioperator/pull/56)
  - add docker secret support [@runzexia](https://github.com/kubesphere/s2ioperator/pull/61)
