@@ -18,14 +18,16 @@ package validating
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 
 	devopsv1alpha1 "github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1"
+	"github.com/kubesphere/s2ioperator/pkg/errors"
 	"github.com/kubesphere/s2ioperator/pkg/util/reflectutils"
 	k8serror "k8s.io/apimachinery/pkg/api/errors"
 	k8stypes "k8s.io/apimachinery/pkg/types"
-	"k8s.io/apimachinery/pkg/util/errors"
+	errorutil "k8s.io/apimachinery/pkg/util/errors"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/runtime/inject"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
@@ -62,7 +64,7 @@ func (h *S2iBuilderCreateUpdateHandler) validatingS2iBuilderFn(ctx context.Conte
 
 		errs := ValidateParameter(obj.Spec.FromTemplate.Parameters, t.Spec.Parameters)
 		if len(errs) != 0 {
-			return false, "validate template parameters failed", errors.NewAggregate(errs)
+			return false, "validate template parameters failed", errorutil.NewAggregate(errs)
 		}
 		if obj.Spec.FromTemplate.BaseImage != "" {
 			if !reflectutils.Contains(obj.Spec.FromTemplate.BaseImage, t.Spec.BaseImages) {
@@ -72,10 +74,15 @@ func (h *S2iBuilderCreateUpdateHandler) validatingS2iBuilderFn(ctx context.Conte
 		}
 		fromTemplate = true
 	}
+	if anno, ok := obj.Annotations[devopsv1alpha1.AutoScaleAnnotations]; ok {
+		if err := validatingS2iBuilderAutoScale(anno); err != nil {
+			return false, "validate failed", errors.NewFieldInvalidValueWithReason(devopsv1alpha1.AutoScaleAnnotations, err.Error())
+		}
+	}
 	if errs := ValidateConfig(obj.Spec.Config, fromTemplate); len(errs) == 0 {
 		return true, "allowed to be admitted", nil
 	} else {
-		return false, "validate failed", errors.NewAggregate(errs)
+		return false, "validate failed", errorutil.NewAggregate(errs)
 	}
 }
 
@@ -109,5 +116,24 @@ var _ inject.Decoder = &S2iBuilderCreateUpdateHandler{}
 // InjectDecoder injects the decoder into the S2iBuilderCreateUpdateHandler
 func (h *S2iBuilderCreateUpdateHandler) InjectDecoder(d types.Decoder) error {
 	h.Decoder = d
+	return nil
+}
+
+func validatingS2iBuilderAutoScale(anno string) error {
+
+	s2iAutoScale := make([]devopsv1alpha1.S2iAutoScale, 0)
+	if err := json.Unmarshal([]byte(anno), &s2iAutoScale); err != nil {
+		return err
+	}
+	for _, scale := range s2iAutoScale {
+		switch scale.Kind {
+		case devopsv1alpha1.KindStatefulSet:
+			return nil
+		case devopsv1alpha1.KindDeployment:
+			return nil
+		default:
+			return fmt.Errorf("unsupport workload type [%s], name [%s]", scale.Kind, scale.Name)
+		}
+	}
 	return nil
 }
