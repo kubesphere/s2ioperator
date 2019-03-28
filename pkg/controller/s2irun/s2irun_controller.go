@@ -220,7 +220,7 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 		if found.Status.Active == 1 {
 			log.Info("Job is running", "start time", found.Status.StartTime)
 			instance.Status.RunState = devopsv1alpha1.Running
-			
+
 			logURL, err := r.GetLogURL(found)
 			if err != nil {
 				return reconcile.Result{}, err
@@ -246,6 +246,7 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 			return reconcile.Result{}, err
 		}
 	}
+	instance.Status.ImageName = GetNewImageName(instance, *builder.Spec.Config)
 	if !reflect.DeepEqual(instance.Status, origin.Status) {
 		err = r.Status().Update(context.Background(), instance)
 		if err != nil {

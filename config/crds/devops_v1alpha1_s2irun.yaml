@@ -19,8 +19,8 @@ spec:
   - JSONPath: .status.completionTime
     name: CompletionTime
     type: date
-  - JSONPath: .status.logURL
-    name: LogURL
+  - JSONPath: .status.imageName
+    name: ImageName
     type: string
   group: devops.kubesphere.io
   names:
@@ -76,6 +76,9 @@ spec:
                 to be set in happens-before order across separate operations. It is
                 represented in RFC3339 form and is in UTC.
               format: date-time
+              type: string
+            imageName:
+              description: ImageName is the name of artifact
               type: string
             kubernetesJobName:
               description: KubernetesJobName is the job name in k8s
