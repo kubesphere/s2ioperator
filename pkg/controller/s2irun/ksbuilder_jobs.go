@@ -221,6 +221,53 @@ func (r *ReconcileS2iRun) setDockerSecret(instance *devopsv1alpha1.S2iRun, confi
 	return nil
 }
 
+func setJobLabelAnnotations(instance *devopsv1alpha1.S2iRun, config devopsv1alpha1.S2iConfig, template *devopsv1alpha1.UserDefineTemplate, job *batchv1.Job) {
+	description := ""
+	imageName := GetNewImageName(instance, config)
+	if template != nil {
+		description = fmt.Sprintf("image %s 's build job, use template %s, s2iName %s", imageName, template.Name, instance.Name)
+	} else {
+		description = fmt.Sprintf("image %s 's build job, s2iName %s", imageName, instance.Name)
+	}
+	if job.Labels == nil {
+		job.Labels = map[string]string{
+			devopsv1alpha1.S2iRunLabel: instance.Name,
+		}
+	} else {
+		job.Annotations[devopsv1alpha1.S2iRunLabel] = instance.Name
+	}
+	if job.Annotations == nil {
+		job.Annotations = map[string]string{
+			devopsv1alpha1.DescriptionAnnotations: description,
+		}
+	} else {
+		job.Annotations[devopsv1alpha1.DescriptionAnnotations] = description
+	}
+}
+func setConfigMapLabelAnnotations(instance *devopsv1alpha1.S2iRun, config devopsv1alpha1.S2iConfig, template *devopsv1alpha1.UserDefineTemplate, cm *corev1.ConfigMap) {
+	description := ""
+	imageName := GetNewImageName(instance, config)
+	if template != nil {
+		description = fmt.Sprintf("image %s 's build configmap, use template %s, s2iName %s", imageName, template.Name, instance.Name)
+	} else {
+		description = fmt.Sprintf("image %s 's build configmap, s2iName %s", imageName, instance.Name)
+	}
+	if cm.Labels == nil {
+		cm.Labels = map[string]string{
+			devopsv1alpha1.S2iRunLabel: instance.Name,
+		}
+	} else {
+		cm.Annotations[devopsv1alpha1.S2iRunLabel] = instance.Name
+	}
+	if cm.Annotations == nil {
+		cm.Annotations = map[string]string{
+			devopsv1alpha1.DescriptionAnnotations: description,
+		}
+	} else {
+		cm.Annotations[devopsv1alpha1.DescriptionAnnotations] = description
+	}
+}
+
 //setGitSecret set GitClone Secret
 func (r *ReconcileS2iRun) setGitSecret(instance *devopsv1alpha1.S2iRun, config *devopsv1alpha1.S2iConfig) error {
 	if config.GitSecretRef != nil {

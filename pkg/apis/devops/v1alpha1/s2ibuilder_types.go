@@ -36,10 +36,11 @@ const (
 	Unknown             = "Unknown"
 )
 const (
-	AutoScaleAnnotations              = "devops.kubesphere.io/autoscale"
-	WorkloadLatestS2iRunTemplateLabel = "devops.kubesphere.io/s2ir"
-	S2irCompletedScaleAnnotations     = "devops.kubesphere.io/completedscale"
-	WorkLoadCompletedInitAnnotations  = "devops.kubesphere.io/inithasbeencomplted"
+	AutoScaleAnnotations             = "devops.kubesphere.io/autoscale"
+	S2iRunLabel                      = "devops.kubesphere.io/s2ir"
+	S2irCompletedScaleAnnotations    = "devops.kubesphere.io/completedscale"
+	WorkLoadCompletedInitAnnotations = "devops.kubesphere.io/inithasbeencomplted"
+	DescriptionAnnotations           = "desc"
 )
 const (
 	KindDeployment  = "Deployment"
