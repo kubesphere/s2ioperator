@@ -158,6 +158,7 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 			log.Error(err, "Failed to initialize a configmap")
 			return reconcile.Result{}, err
 		}
+		setConfigMapLabelAnnotations(instance, *builder.Spec.Config, builder.Spec.FromTemplate, configmap)
 		foundcm := &corev1.ConfigMap{}
 		err = r.Get(context.TODO(), types.NamespacedName{Name: configmap.Name, Namespace: configmap.Namespace}, foundcm)
 		if err != nil && k8serror.IsNotFound(err) {
@@ -193,6 +194,7 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 			log.Error(err, "Failed to initialize a job")
 			return reconcile.Result{}, err
 		}
+		setJobLabelAnnotations(instance, *builder.Spec.Config, builder.Spec.FromTemplate, job)
 		found := &batchv1.Job{}
 		err = r.Get(context.TODO(), types.NamespacedName{Name: job.Name, Namespace: job.Namespace}, found)
 		if err != nil && k8serror.IsNotFound(err) {
@@ -364,7 +366,7 @@ func (r *ReconcileS2iRun) ScaleWorkLoads(instance *devopsv1alpha1.S2iRun, builde
 					deploy.Spec.Template.Labels = make(map[string]string)
 				}
 
-				deploy.Spec.Template.Labels[devopsv1alpha1.WorkloadLatestS2iRunTemplateLabel] = instance.Name
+				deploy.Spec.Template.Labels[devopsv1alpha1.S2iRunLabel] = instance.Name
 
 				log.Info("Update deployment", "ns", deploy.Namespace, "deploy", deploy.Name)
 				err = r.Update(context.TODO(), deploy)
@@ -423,7 +425,7 @@ func (r *ReconcileS2iRun) ScaleWorkLoads(instance *devopsv1alpha1.S2iRun, builde
 					statefulSet.Spec.Template.Labels = make(map[string]string)
 				}
 
-				statefulSet.Spec.Template.Labels[devopsv1alpha1.WorkloadLatestS2iRunTemplateLabel] = instance.Name
+				statefulSet.Spec.Template.Labels[devopsv1alpha1.S2iRunLabel] = instance.Name
 
 				log.Info("Update statefulSet", "ns", statefulSet.Namespace, "statefulSet", statefulSet.Name)
 				err = r.Update(context.TODO(), statefulSet)
