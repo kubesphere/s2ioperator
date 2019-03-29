@@ -132,6 +132,14 @@ spec:
                   description: Environment is a map of environment variables to be
                     passed to the image.
                   items:
+                    properties:
+                      name:
+                        type: string
+                      value:
+                        type: string
+                    required:
+                    - name
+                    - value
                     type: object
                   type: array
                 excludeRegExp:
@@ -296,6 +304,11 @@ spec:
                 scriptDownloadProxyConfig:
                   description: ScriptDownloadProxyConfig optionally specifies the
                     http and https proxy to use when downloading scripts
+                  properties:
+                    httpProxy:
+                      type: string
+                    httpsProxy:
+                      type: string
                   type: object
                 scriptsUrl:
                   description: ScriptsURL is a URL describing where to fetch the S2I
