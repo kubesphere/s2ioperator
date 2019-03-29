@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
  - add informer client [@runzexia](https://github.com/kubesphere/s2ioperator/pull/56)
  - add docker secret support [@runzexia](https://github.com/kubesphere/s2ioperator/pull/61)
  - add git secret support [@runzexia](https://github.com/kubesphere/s2ioperator/pull/62)
+ - add field json tag [@runzexia](https://github.com/kubesphere/s2ioperator/pull/67)
 
 ## [ 0.0.2 ] - 2019-03-15
 ### Added
