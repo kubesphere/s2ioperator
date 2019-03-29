@@ -48,14 +48,14 @@ const (
 
 // EnvironmentSpec specifies a single environment variable.
 type EnvironmentSpec struct {
-	Name  string
-	Value string
+	Name  string `json:"name"`
+	Value string `json:"value"`
 }
 
 // ProxyConfig holds proxy configuration.
 type ProxyConfig struct {
-	HTTPProxy  string
-	HTTPSProxy string
+	HTTPProxy  string `json:"httpProxy,omitempty"`
+	HTTPSProxy string `json:"httpsProxy,omitempty"`
 }
 
 // CGroupLimits holds limits used to constrain container resources.
