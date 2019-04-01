@@ -158,12 +158,17 @@ func (r *ReconcileS2iBuilder) Reconcile(request reconcile.Request) (reconcile.Re
 					instance.Status.LastRunName = new(string) //should use defaulting instead of creating here
 				}
 				*(instance.Status.LastRunName) = item.Name
+				if instance.Status.LastRunStartTime == nil {
+					instance.Status.LastRunStartTime = new(metav1.Time)
+				}
+				*(instance.Status.LastRunStartTime) = *item.Status.StartTime
 			}
 		}
 	}
 	if instance.Status.RunCount == 0 {
 		instance.Status.LastRunName = nil
 		instance.Status.LastRunState = ""
+		instance.Status.LastRunStartTime = nil
 	}
 	if !reflect.DeepEqual(instance.Status, origin.Status) {
 		if err := r.Status().Update(context.Background(), instance); err != nil {
