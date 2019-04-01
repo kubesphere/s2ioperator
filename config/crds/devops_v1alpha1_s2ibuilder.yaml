@@ -16,6 +16,9 @@ spec:
   - JSONPath: .status.lastRunName
     name: LastRunName
     type: string
+  - JSONPath: .status.lastRunStartTime
+    name: LastRunStartTime
+    type: date
   group: devops.kubesphere.io
   names:
     kind: S2iBuilder
@@ -385,6 +388,11 @@ spec:
             lastRunName:
               description: LastRunState return the name of the newest run of this
                 builder
+              type: string
+            lastRunStartTime:
+              description: LastRunStartTime return the startTime of the newest run
+                of this builder
+              format: date-time
               type: string
             lastRunState:
               description: LastRunState return the state of the newest run of this

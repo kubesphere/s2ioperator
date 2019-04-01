@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
  - change s2ir status [@runzexia](https://github.com/kubesphere/s2ioperator/pull/65)
  - fix s2ib validate, add s2ir validate [https://github.com/kubesphere/s2ioperator/pull/66]
  - add field json tag [@runzexia](https://github.com/kubesphere/s2ioperator/pull/67)
+ - add s2ib status lastRunStartTime [@runzexia]()
 
 ## [ 0.0.7 ] - 2019-03-25
  - add informer client [@runzexia](https://github.com/kubesphere/s2ioperator/pull/56)
