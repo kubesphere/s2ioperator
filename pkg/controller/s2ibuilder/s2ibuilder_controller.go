@@ -158,7 +158,7 @@ func (r *ReconcileS2iBuilder) Reconcile(request reconcile.Request) (reconcile.Re
 					instance.Status.LastRunName = new(string) //should use defaulting instead of creating here
 				}
 				*(instance.Status.LastRunName) = item.Name
-				if instance.Status.LastRunStartTime != nil {
+				if instance.Status.LastRunStartTime == nil {
 					instance.Status.LastRunStartTime = new(metav1.Time)
 				}
 				*(instance.Status.LastRunStartTime) = *item.Status.StartTime
