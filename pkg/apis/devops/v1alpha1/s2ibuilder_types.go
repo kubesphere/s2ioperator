@@ -40,6 +40,7 @@ const (
 	S2iRunLabel                      = "devops.kubesphere.io/s2ir"
 	S2irCompletedScaleAnnotations    = "devops.kubesphere.io/completedscale"
 	WorkLoadCompletedInitAnnotations = "devops.kubesphere.io/inithasbeencomplted"
+	S2iRunDoNotAutoScaleAnnotations  = "devops.kubesphere.io/donotautoscale"
 	DescriptionAnnotations           = "desc"
 )
 const (
