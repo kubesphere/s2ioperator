@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ## [ 0.0.9 ] - *
  - annotations do not autoscale
-
+ - manager do not need nodeSelector
 ## [ 0.0.8 ] - 2019-04-01
  - change s2ir status [@runzexia](https://github.com/kubesphere/s2ioperator/pull/65)
  - fix s2ib validate, add s2ir validate [https://github.com/kubesphere/s2ioperator/pull/66]
