@@ -33,8 +33,6 @@ spec:
         control-plane: controller-manager
         controller-tools.k8s.io: "1.0"
     spec:
-      nodeSelector:
-        s2ioperator: "yes"
       containers:
       - command:
         - /manager
