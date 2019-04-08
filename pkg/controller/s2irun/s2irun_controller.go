@@ -222,7 +222,6 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 		if found.Status.Active == 1 {
 			log.Info("Job is running", "start time", found.Status.StartTime)
 			instance.Status.RunState = devopsv1alpha1.Running
-
 			logURL, err := r.GetLogURL(found)
 			if err != nil {
 				return reconcile.Result{}, err
@@ -232,14 +231,25 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 			log.Info("Job failed")
 			instance.Status.RunState = devopsv1alpha1.Failed
 			instance.Status.CompletionTime = found.Status.CompletionTime
+			logURL, err := r.GetLogURL(found)
+			if err != nil {
+				return reconcile.Result{}, err
+			}
+			instance.Status.LogURL = logURL
 		} else if found.Status.Succeeded == 1 {
 			log.Info("Job completed", "time", found.Status.CompletionTime)
 			instance.Status.RunState = devopsv1alpha1.Successful
 			instance.Status.CompletionTime = found.Status.CompletionTime
+			logURL, err := r.GetLogURL(found)
+			if err != nil {
+				return reconcile.Result{}, err
+			}
+			instance.Status.LogURL = logURL
 		} else {
 			log.Error(nil, "Something wrong with job")
 			instance.Status.RunState = devopsv1alpha1.Unknown
 		}
+
 	}
 	// if job finished, scale workloads
 	if instance.Status.RunState == devopsv1alpha1.Successful {
