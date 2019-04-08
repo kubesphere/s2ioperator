@@ -152,95 +152,104 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 			return reconcile.Result{}, err
 		}
 	}
-	if instance.Status.RunState != devopsv1alpha1.Successful {
-		configmap, err := r.NewConfigMap(instance, *builder.Spec.Config, builder.Spec.FromTemplate)
+	
+	configmap, err := r.NewConfigMap(instance, *builder.Spec.Config, builder.Spec.FromTemplate)
+	if err != nil {
+		log.Error(err, "Failed to initialize a configmap")
+		return reconcile.Result{}, err
+	}
+	setConfigMapLabelAnnotations(instance, *builder.Spec.Config, builder.Spec.FromTemplate, configmap)
+	foundcm := &corev1.ConfigMap{}
+	err = r.Get(context.TODO(), types.NamespacedName{Name: configmap.Name, Namespace: configmap.Namespace}, foundcm)
+	if err != nil && k8serror.IsNotFound(err) {
+		log.Info("Creating ConfigMap", "Namespace", configmap.Namespace, "name", configmap.Name)
+		if err := controllerutil.SetControllerReference(instance, configmap, r.scheme); err != nil {
+			return reconcile.Result{}, err
+		}
+		err = r.Create(context.TODO(), configmap)
 		if err != nil {
-			log.Error(err, "Failed to initialize a configmap")
+			if k8serror.IsAlreadyExists(err) {
+				log.Info("Skip creating 'Already-Exists' cm", "ConfigMap-Name", configmap.Name)
+				return reconcile.Result{RequeueAfter: time.Second * 5}, nil
+			}
+			log.Error(err, "Create configmap failed", "Namespace", configmap.Namespace, "name", configmap.Name)
 			return reconcile.Result{}, err
 		}
-		setConfigMapLabelAnnotations(instance, *builder.Spec.Config, builder.Spec.FromTemplate, configmap)
-		foundcm := &corev1.ConfigMap{}
-		err = r.Get(context.TODO(), types.NamespacedName{Name: configmap.Name, Namespace: configmap.Namespace}, foundcm)
-		if err != nil && k8serror.IsNotFound(err) {
-			log.Info("Creating ConfigMap", "Namespace", configmap.Namespace, "name", configmap.Name)
-			if err := controllerutil.SetControllerReference(instance, configmap, r.scheme); err != nil {
-				return reconcile.Result{}, err
-			}
-			err = r.Create(context.TODO(), configmap)
+	} else if err != nil {
+		return reconcile.Result{}, err
+	} else {
+		if !reflect.DeepEqual(configmap.Data, foundcm.Data) {
+			foundcm.Data = configmap.Data
+			log.Info("Updating job config", "Namespace", foundcm.Namespace, "Name", foundcm.Name)
+			err = r.Update(context.TODO(), foundcm)
 			if err != nil {
-				if k8serror.IsAlreadyExists(err) {
-					log.Info("Skip creating 'Already-Exists' cm", "ConfigMap-Name", configmap.Name)
-					return reconcile.Result{RequeueAfter: time.Second * 5}, nil
-				}
-				log.Error(err, "Create configmap failed", "Namespace", configmap.Namespace, "name", configmap.Name)
+				log.Error(err, "Failed to updating job config", "Namespace", foundcm.Namespace, "Name", foundcm.Name)
 				return reconcile.Result{}, err
 			}
-		} else if err != nil {
-			return reconcile.Result{}, err
-		} else {
-			if !reflect.DeepEqual(configmap.Data, foundcm.Data) {
-				foundcm.Data = configmap.Data
-				log.Info("Updating job config", "Namespace", foundcm.Namespace, "Name", foundcm.Name)
-				err = r.Update(context.TODO(), foundcm)
-				if err != nil {
-					log.Error(err, "Failed to updating job config", "Namespace", foundcm.Namespace, "Name", foundcm.Name)
-					return reconcile.Result{}, err
-				}
-			}
-		}
-		//job set up
-		job, err := r.GenerateNewJob(instance)
-		if err != nil {
-			log.Error(err, "Failed to initialize a job")
-			return reconcile.Result{}, err
-		}
-		setJobLabelAnnotations(instance, *builder.Spec.Config, builder.Spec.FromTemplate, job)
-		found := &batchv1.Job{}
-		err = r.Get(context.TODO(), types.NamespacedName{Name: job.Name, Namespace: job.Namespace}, found)
-		if err != nil && k8serror.IsNotFound(err) {
-			log.Info("Creating Job", "Namespace", job.Namespace, "Name", job.Name)
-			if err := controllerutil.SetControllerReference(instance, job, r.scheme); err != nil {
-				return reconcile.Result{}, err
-			}
-			err = r.Create(context.TODO(), job)
-			if err != nil {
-				//in some situation we cannot find job in cache, however it does exist in apiserver, in this case we just requeue
-				if k8serror.IsAlreadyExists(err) {
-					log.Info("Skip creating 'Already-Exists' job", "Job-Name", job.Name)
-					return reconcile.Result{RequeueAfter: time.Second * 5}, nil
-				}
-				log.Error(err, "Failed to create Job", "Namespace", job.Namespace, "Name", job.Name)
-				return reconcile.Result{}, err
-			} else {
-				return reconcile.Result{}, nil
-			}
-		} else if err != nil {
-			return reconcile.Result{}, err
-		}
-		instance.Status.KubernetesJobName = found.Name
-		instance.Status.StartTime = found.Status.StartTime
-		if found.Status.Active == 1 {
-			log.Info("Job is running", "start time", found.Status.StartTime)
-			instance.Status.RunState = devopsv1alpha1.Running
-
-			logURL, err := r.GetLogURL(found)
-			if err != nil {
-				return reconcile.Result{}, err
-			}
-			instance.Status.LogURL = logURL
-		} else if found.Status.Failed == 1 {
-			log.Info("Job failed")
-			instance.Status.RunState = devopsv1alpha1.Failed
-			instance.Status.CompletionTime = found.Status.CompletionTime
-		} else if found.Status.Succeeded == 1 {
-			log.Info("Job completed", "time", found.Status.CompletionTime)
-			instance.Status.RunState = devopsv1alpha1.Successful
-			instance.Status.CompletionTime = found.Status.CompletionTime
-		} else {
-			log.Error(nil, "Something wrong with job")
-			instance.Status.RunState = devopsv1alpha1.Unknown
 		}
 	}
+	//job set up
+	job, err := r.GenerateNewJob(instance)
+	if err != nil {
+		log.Error(err, "Failed to initialize a job")
+		return reconcile.Result{}, err
+	}
+	setJobLabelAnnotations(instance, *builder.Spec.Config, builder.Spec.FromTemplate, job)
+	found := &batchv1.Job{}
+	err = r.Get(context.TODO(), types.NamespacedName{Name: job.Name, Namespace: job.Namespace}, found)
+	if err != nil && k8serror.IsNotFound(err) {
+		log.Info("Creating Job", "Namespace", job.Namespace, "Name", job.Name)
+		if err := controllerutil.SetControllerReference(instance, job, r.scheme); err != nil {
+			return reconcile.Result{}, err
+		}
+		err = r.Create(context.TODO(), job)
+		if err != nil {
+			//in some situation we cannot find job in cache, however it does exist in apiserver, in this case we just requeue
+			if k8serror.IsAlreadyExists(err) {
+				log.Info("Skip creating 'Already-Exists' job", "Job-Name", job.Name)
+				return reconcile.Result{RequeueAfter: time.Second * 5}, nil
+			}
+			log.Error(err, "Failed to create Job", "Namespace", job.Namespace, "Name", job.Name)
+			return reconcile.Result{}, err
+		} else {
+			return reconcile.Result{}, nil
+		}
+	} else if err != nil {
+		return reconcile.Result{}, err
+	}
+	instance.Status.KubernetesJobName = found.Name
+	instance.Status.StartTime = found.Status.StartTime
+	if found.Status.Active == 1 {
+		log.Info("Job is running", "start time", found.Status.StartTime)
+		instance.Status.RunState = devopsv1alpha1.Running
+		logURL, err := r.GetLogURL(found)
+		if err != nil {
+			return reconcile.Result{}, err
+		}
+		instance.Status.LogURL = logURL
+	} else if found.Status.Failed == 1 {
+		log.Info("Job failed")
+		instance.Status.RunState = devopsv1alpha1.Failed
+		instance.Status.CompletionTime = found.Status.CompletionTime
+		logURL, err := r.GetLogURL(found)
+		if err != nil {
+			return reconcile.Result{}, err
+		}
+		instance.Status.LogURL = logURL
+	} else if found.Status.Succeeded == 1 {
+		log.Info("Job completed", "time", found.Status.CompletionTime)
+		instance.Status.RunState = devopsv1alpha1.Successful
+		instance.Status.CompletionTime = found.Status.CompletionTime
+		logURL, err := r.GetLogURL(found)
+		if err != nil {
+			return reconcile.Result{}, err
+		}
+		instance.Status.LogURL = logURL
+	} else {
+		log.Error(nil, "Something wrong with job")
+		instance.Status.RunState = devopsv1alpha1.Unknown
+	}
+
 	// if job finished, scale workloads
 	if instance.Status.RunState == devopsv1alpha1.Successful {
 		err = r.ScaleWorkLoads(instance, builder)
