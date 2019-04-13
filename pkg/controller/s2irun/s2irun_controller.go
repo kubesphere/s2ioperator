@@ -152,7 +152,7 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 			return reconcile.Result{}, err
 		}
 	}
-	
+
 	configmap, err := r.NewConfigMap(instance, *builder.Spec.Config, builder.Spec.FromTemplate)
 	if err != nil {
 		log.Error(err, "Failed to initialize a configmap")
