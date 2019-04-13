@@ -872,7 +872,8 @@ metadata:
   labels:
     control-plane: controller-manager
     controller-tools.k8s.io: "1.0"
-  name: s2ioperator
+  name: 
+  
   namespace: kubesphere-devops-system
 spec:
   ports:
@@ -925,7 +926,7 @@ spec:
           value: webhook-server-secret
         - name: S2IIMAGENAME
           value: magicsong/s2irun:v0.0.1
-        image: kubespheredev/s2ioperator:v0.0.8
+        image: kubespheredev/s2ioperator:v0.0.9
         imagePullPolicy: Always
         name: manager
         ports:
