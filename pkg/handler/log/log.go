@@ -19,7 +19,7 @@ func (k kubesphereLogGetter) GetURLOfPodLog(namespace, pod string) (string, erro
 func GetKubesphereLogger() LogURLGetter {
 	return kubesphereLogGetter{
 		Version:  "v1alpha2",
-		URL:      "ks-apigateway.kubesphere-system.svc/apis/logging.kubesphere.io",
+		URL:      "ks-apigateway.kubesphere-system.svc/kapis/logging.kubesphere.io",
 		Protocol: "http",
 	}
 }
