@@ -56,9 +56,12 @@ spec:
           sh  "sed -i.bak 's#UserShouldEnterBase64Username#$GIT_USERNAME#' ./config/samples/git-secret/*.yaml"
           sh  "sed -i.bak 's#UserShouldEnterBase64Password#$GIT_PASSWORD#' ./config/samples/git-secret/*.yaml"
        }
+       sh '''
+           mkdir -p /go/src/github.com/kubesphere
+           ln -s `pwd` /go/src/github.com/kubesphere/s2ioperator
+       '''
+       input('xx')
         sh '''
-        mkdir -p /go/src/github.com/kubesphere
-ln -s `pwd` /go/src/github.com/kubesphere/s2ioperator
 cd /go/src/github.com/kubesphere/s2ioperator
 make e2e-test'''
       }
