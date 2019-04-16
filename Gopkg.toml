@@ -17,6 +17,7 @@ required = [
     "sigs.k8s.io/controller-runtime/pkg/source",
     "sigs.k8s.io/testing_frameworks/integration", # for integration testing
 	"k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1",
+	"k8s.io/kube-openapi/cmd/openapi-gen"
     ]
 
 [prune]
@@ -37,6 +38,10 @@ required = [
 [[constraint]]
   name="sigs.k8s.io/controller-tools"
   version="v0.1.9"
+
+[[constraint]]
+  name = "k8s.io/kube-openapi"
+  revision = "fd29a9f2f42946ceb3fbd87518e0f2f4343da168"
 
 [[constraint]]
   name="k8s.io/code-generator"

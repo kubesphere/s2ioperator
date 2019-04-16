@@ -29,6 +29,12 @@ import (
 type RunState string
 
 const (
+	ResourceKindS2iBuilder     = "S2iBuilder"
+	ResourceSingularS2iBuilder = "s2ibuilder"
+	ResourcePluralS2iBuilder   = "s2ibuilders"
+)
+
+const (
 	NotRunning RunState = "Not Running Yet"
 	Running    RunState = "Running"
 	Successful          = "Successful"
