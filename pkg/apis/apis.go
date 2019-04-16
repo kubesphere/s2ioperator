@@ -17,6 +17,8 @@ limitations under the License.
 // Generate deepcopy for apis
 //go:generate go run ../../vendor/k8s.io/code-generator/cmd/deepcopy-gen/main.go -O zz_generated.deepcopy -i ./... -h ../../hack/boilerplate.go.txt
 
+//go:generate go run ../../vendor/k8s.io/kube-openapi/cmd/openapi-gen/openapi-gen.go -O openapi_generated -i ../../vendor/k8s.io/api/core/v1,../../vendor/k8s.io/apimachinery/pkg/apis/meta/v1,../../vendor/k8s.io/apimachinery/pkg/api/resource,../../vendor/k8s.io/apimachinery/pkg/runtime,../../vendor/k8s.io/apimachinery/pkg/util/intstr,k8s.io/apimachinery/pkg/version,./devops/v1alpha1 -p github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1 -h ../../hack/boilerplate.go.txt --report-filename ../../api/api-rules/violation_exceptions.list
+
 // Package apis contains Kubernetes API groups.
 package apis
 
