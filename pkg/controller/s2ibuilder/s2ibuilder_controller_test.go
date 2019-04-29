@@ -81,6 +81,7 @@ func TestReconcile(t *testing.T) {
 	defer c.Delete(context.TODO(), s2irun1)
 	g.Eventually(requests, timeout).Should(gomega.Receive(gomega.Equal(expectedRequest)))
 
+	time.Sleep(timeout)
 	err = c.Get(context.TODO(), expectedRequest.NamespacedName, instance)
 	g.Expect(err).NotTo(gomega.HaveOccurred())
 	g.Expect(instance.Status.RunCount).To(gomega.Equal(1))
