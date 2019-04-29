@@ -434,6 +434,6 @@ var _ = Describe("", func() {
 
 		Eventually(func() bool {
 			return errors.IsNotFound(testClient.Get(context.TODO(), types.NamespacedName{Name: s2irun.Name, Namespace: s2irun.Namespace}, nil))
-		}, timeout, time.Second).Should(BeTrue())
+		}, timeout, time.Second*10).Should(BeTrue())
 	})
 })
