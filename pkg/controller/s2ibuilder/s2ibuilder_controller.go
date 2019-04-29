@@ -18,6 +18,7 @@ package s2ibuilder
 
 import (
 	"context"
+	"github.com/kubesphere/s2ioperator/pkg/util/sliceutil"
 	"reflect"
 
 	devopsv1alpha1 "github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1"
@@ -25,6 +26,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
+	errorutil "k8s.io/apimachinery/pkg/util/errors"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/event"
@@ -37,6 +39,8 @@ import (
 )
 
 var log = logf.Log.WithName("s2ibuilder-controller")
+
+const s2iBuilderFinalizerName = "s2ibuilders.finalizers.kubesphere.io"
 
 /**
 * USER ACTION REQUIRED: This is a scaffold file intended for the user to modify with their own Controller
@@ -136,7 +140,30 @@ func (r *ReconcileS2iBuilder) Reconcile(request reconcile.Request) (reconcile.Re
 		// Error reading the object - requeue the request.
 		return reconcile.Result{}, err
 	}
+
 	origin := instance.DeepCopy()
+
+	if instance.ObjectMeta.DeletionTimestamp.IsZero() {
+		// The object is not being deleted, so if it does not have our finalizer,
+		// then lets add the finalizer and update the object.
+		if !sliceutil.ContainsString(instance.ObjectMeta.Finalizers, s2iBuilderFinalizerName, nil) {
+			instance.ObjectMeta.Finalizers = append(instance.ObjectMeta.Finalizers, s2iBuilderFinalizerName)
+			if err := r.Update(context.Background(), instance); err != nil {
+				return reconcile.Result{}, err
+			}
+		}
+	} else {
+		if sliceutil.ContainsString(instance.ObjectMeta.Finalizers, s2iBuilderFinalizerName, nil) {
+			if err := r.DeleteS2iRuns(instance); err != nil {
+				return reconcile.Result{}, err
+			}
+			instance.ObjectMeta.Finalizers = sliceutil.RemoveString(instance.ObjectMeta.Finalizers, s2iBuilderFinalizerName, nil)
+			if err := r.Update(context.Background(), instance); err != nil {
+				return reconcile.Result{}, err
+			}
+		}
+		return reconcile.Result{}, nil
+	}
 	runList := new(devopsv1alpha1.S2iRunList)
 	err = r.Client.List(context.TODO(), client.InNamespace(instance.Namespace), runList)
 	if err != nil {
@@ -176,4 +203,30 @@ func (r *ReconcileS2iBuilder) Reconcile(request reconcile.Request) (reconcile.Re
 		}
 	}
 	return reconcile.Result{}, nil
+}
+
+func (r *ReconcileS2iBuilder) DeleteS2iRuns(instance *devopsv1alpha1.S2iBuilder) error {
+	runList := new(devopsv1alpha1.S2iRunList)
+	var errList []error
+	err := r.Client.List(context.TODO(), client.InNamespace(instance.Namespace), runList)
+	if err != nil {
+		if errors.IsNotFound(err) {
+			return nil
+		}
+		// Error reading the object - requeue the request.
+		return err
+	}
+	for _, item := range runList.Items {
+		if item.Spec.BuilderName == instance.Name {
+			err := r.Delete(context.TODO(), &item)
+			if err != nil {
+				errList = append(errList, err)
+			}
+		}
+	}
+	if len(errList) > 0 {
+		return errorutil.NewAggregate(errList)
+	}
+	return nil
+
 }
