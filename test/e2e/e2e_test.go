@@ -8,15 +8,12 @@ import (
 	"strings"
 	"time"
 
-	"sigs.k8s.io/controller-runtime/pkg/client"
-
 	devopsv1alpha1 "github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	appsv1 "k8s.io/api/apps/v1"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/yaml"
 )
@@ -26,7 +23,6 @@ var _ = Describe("", func() {
 	const timeout = time.Second * 25
 	It("Should work well when using exactly the example yamls", func() {
 		//create a s2ibuilder
-		cleanDelete := client.PropagationPolicy(metav1.DeletePropagationBackground)
 		s2ibuilder := &devopsv1alpha1.S2iBuilder{}
 		reader, err := os.Open(workspace + "/config/samples/devops_v1alpha1_s2ibuilder.yaml")
 		Expect(err).NotTo(HaveOccurred(), "Cannot read sample yamls")
@@ -43,7 +39,6 @@ var _ = Describe("", func() {
 		Expect(err).NotTo(HaveOccurred(), "Cannot unmarshal yamls")
 		err = testClient.Create(context.TODO(), s2irun)
 		Expect(err).NotTo(HaveOccurred())
-		defer testClient.Delete(context.TODO(), s2irun, cleanDelete)
 
 		createdInstance := &devopsv1alpha1.S2iRun{}
 		Eventually(func() error {
@@ -64,7 +59,6 @@ var _ = Describe("", func() {
 		Expect(testClient.Delete(context.TODO(), cm)).NotTo(HaveOccurred())
 		Eventually(func() error { return testClient.Get(context.TODO(), cmKey, cm) }, timeout).
 			Should(Succeed())
-		defer testClient.Delete(context.TODO(), cm)
 
 		job := &batchv1.Job{}
 		Eventually(func() error { return testClient.Get(context.TODO(), depKey, job) }, timeout, time.Second).
@@ -93,7 +87,6 @@ var _ = Describe("", func() {
 
 	It("Should autoScale work well well when using exactly the example yamls", func() {
 		//create a s2ibuilder
-		cleanDelete := client.PropagationPolicy(metav1.DeletePropagationBackground)
 		deploy := &appsv1.Deployment{}
 
 		reader, err := os.Open(workspace + "/config/samples/autoscale/python-deployment.yaml")
@@ -129,7 +122,6 @@ var _ = Describe("", func() {
 		Expect(err).NotTo(HaveOccurred(), "Cannot unmarshal yamls")
 		err = testClient.Create(context.TODO(), s2irun)
 		Expect(err).NotTo(HaveOccurred())
-		defer testClient.Delete(context.TODO(), s2irun, cleanDelete)
 
 		createdInstance := &devopsv1alpha1.S2iRun{}
 		Eventually(func() error {
@@ -217,7 +209,6 @@ var _ = Describe("", func() {
 
 	It("Should work well when using secrets", func() {
 		//create a s2ibuilder
-		cleanDelete := client.PropagationPolicy(metav1.DeletePropagationBackground)
 		secret := &corev1.Secret{}
 		reader, err := os.Open(workspace + "/config/samples/secret/secret.yaml")
 		Expect(err).NotTo(HaveOccurred(), "Cannot read sample yamls")
@@ -225,7 +216,6 @@ var _ = Describe("", func() {
 		Expect(err).NotTo(HaveOccurred(), "Cannot unmarshal yamls")
 		err = testClient.Create(context.TODO(), secret)
 		Expect(err).NotTo(HaveOccurred())
-		defer testClient.Delete(context.TODO(), secret)
 
 		s2ibuilder := &devopsv1alpha1.S2iBuilder{}
 		reader, err = os.Open(workspace + "/config/samples/secret/devops_v1alpha1_s2ibuilder.yaml")
@@ -243,7 +233,6 @@ var _ = Describe("", func() {
 		Expect(err).NotTo(HaveOccurred(), "Cannot unmarshal yamls")
 		err = testClient.Create(context.TODO(), s2irun)
 		Expect(err).NotTo(HaveOccurred())
-		defer testClient.Delete(context.TODO(), s2irun, cleanDelete)
 
 		createdInstance := &devopsv1alpha1.S2iRun{}
 		Eventually(func() error {
@@ -292,7 +281,6 @@ var _ = Describe("", func() {
 	})
 	It("Should work well when using git secrets", func() {
 		//create a s2ibuilder
-		cleanDelete := client.PropagationPolicy(metav1.DeletePropagationBackground)
 		secret := &corev1.Secret{}
 		reader, err := os.Open(workspace + "/config/samples/git-secret/secret.yaml")
 		Expect(err).NotTo(HaveOccurred(), "Cannot read sample yamls")
@@ -300,7 +288,6 @@ var _ = Describe("", func() {
 		Expect(err).NotTo(HaveOccurred(), "Cannot unmarshal yamls")
 		err = testClient.Create(context.TODO(), secret)
 		Expect(err).NotTo(HaveOccurred())
-		defer testClient.Delete(context.TODO(), secret)
 
 		s2ibuilder := &devopsv1alpha1.S2iBuilder{}
 		reader, err = os.Open(workspace + "/config/samples/git-secret/devops_v1alpha1_s2ibuilder.yaml")
@@ -318,7 +305,6 @@ var _ = Describe("", func() {
 		Expect(err).NotTo(HaveOccurred(), "Cannot unmarshal yamls")
 		err = testClient.Create(context.TODO(), s2irun)
 		Expect(err).NotTo(HaveOccurred())
-		defer testClient.Delete(context.TODO(), s2irun, cleanDelete)
 
 		createdInstance := &devopsv1alpha1.S2iRun{}
 		Eventually(func() error {
@@ -339,7 +325,6 @@ var _ = Describe("", func() {
 		Expect(testClient.Delete(context.TODO(), cm)).NotTo(HaveOccurred())
 		Eventually(func() error { return testClient.Get(context.TODO(), cmKey, cm) }, timeout).
 			Should(Succeed())
-		defer testClient.Delete(context.TODO(), cm)
 
 		job := &batchv1.Job{}
 		Eventually(func() error { return testClient.Get(context.TODO(), depKey, job) }, timeout, time.Second).
@@ -368,7 +353,6 @@ var _ = Describe("", func() {
 
 	It("Should work well when using exactly the example yamls", func() {
 		//create a s2ibuilder
-		cleanDelete := client.PropagationPolicy(metav1.DeletePropagationOrphan)
 		s2ibuilder := &devopsv1alpha1.S2iBuilder{}
 		reader, err := os.Open(workspace + "/config/samples/devops_v1alpha1_s2ibuilder.yaml")
 		Expect(err).NotTo(HaveOccurred(), "Cannot read sample yamls")
@@ -405,7 +389,6 @@ var _ = Describe("", func() {
 		Expect(testClient.Delete(context.TODO(), cm)).NotTo(HaveOccurred())
 		Eventually(func() error { return testClient.Get(context.TODO(), cmKey, cm) }, timeout).
 			Should(Succeed())
-		defer testClient.Delete(context.TODO(), cm)
 
 		job := &batchv1.Job{}
 		Eventually(func() error { return testClient.Get(context.TODO(), depKey, job) }, timeout, time.Second).
@@ -430,10 +413,10 @@ var _ = Describe("", func() {
 			}
 			return fmt.Errorf("Failed")
 		}, time.Minute*5, time.Second*10).Should(Succeed())
-		Eventually(func() error { return testClient.Delete(context.TODO(), s2ibuilder, cleanDelete) }, timeout, time.Second).Should(Succeed())
+		Eventually(func() error { return testClient.Delete(context.TODO(), s2ibuilder) }, timeout, time.Second).Should(Succeed())
 
 		Eventually(func() bool {
 			return errors.IsNotFound(testClient.Get(context.TODO(), types.NamespacedName{Name: s2irun.Name, Namespace: s2irun.Namespace}, nil))
-		}, timeout, time.Second*10).Should(BeTrue())
+		}, timeout*10, time.Second).Should(BeTrue())
 	})
 })
