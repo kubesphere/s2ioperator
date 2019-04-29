@@ -216,6 +216,7 @@ var _ = Describe("", func() {
 		Expect(err).NotTo(HaveOccurred(), "Cannot unmarshal yamls")
 		err = testClient.Create(context.TODO(), secret)
 		Expect(err).NotTo(HaveOccurred())
+		defer testClient.Delete(context.TODO(), secret)
 
 		s2ibuilder := &devopsv1alpha1.S2iBuilder{}
 		reader, err = os.Open(workspace + "/config/samples/secret/devops_v1alpha1_s2ibuilder.yaml")
@@ -288,6 +289,7 @@ var _ = Describe("", func() {
 		Expect(err).NotTo(HaveOccurred(), "Cannot unmarshal yamls")
 		err = testClient.Create(context.TODO(), secret)
 		Expect(err).NotTo(HaveOccurred())
+		defer testClient.Delete(context.TODO(), secret)
 
 		s2ibuilder := &devopsv1alpha1.S2iBuilder{}
 		reader, err = os.Open(workspace + "/config/samples/git-secret/devops_v1alpha1_s2ibuilder.yaml")
@@ -416,7 +418,7 @@ var _ = Describe("", func() {
 		Eventually(func() error { return testClient.Delete(context.TODO(), s2ibuilder) }, timeout, time.Second).Should(Succeed())
 
 		Eventually(func() bool {
-			return errors.IsNotFound(testClient.Get(context.TODO(), types.NamespacedName{Name: s2irun.Name, Namespace: s2irun.Namespace}, nil))
-		}, timeout*10, time.Second).Should(BeTrue())
+			return errors.IsNotFound(testClient.Get(context.TODO(), types.NamespacedName{Name: s2irun.Name, Namespace: s2irun.Namespace}, createdInstance))
+		}, timeout, time.Second).Should(BeTrue())
 	})
 })
