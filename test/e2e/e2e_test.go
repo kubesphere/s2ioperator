@@ -368,7 +368,7 @@ var _ = Describe("", func() {
 
 	It("Should work well when using exactly the example yamls", func() {
 		//create a s2ibuilder
-		cleanDelete := client.PropagationPolicy(metav1.DeletePropagationForeground)
+		cleanDelete := client.PropagationPolicy(metav1.DeletePropagationBackground)
 		s2ibuilder := &devopsv1alpha1.S2iBuilder{}
 		reader, err := os.Open(workspace + "/config/samples/devops_v1alpha1_s2ibuilder.yaml")
 		Expect(err).NotTo(HaveOccurred(), "Cannot read sample yamls")
