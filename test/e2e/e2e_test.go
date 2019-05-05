@@ -217,6 +217,32 @@ var _ = Describe("", func() {
 		Eventually(func() bool {
 			return errors.IsNotFound(testClient.Get(context.TODO(), types.NamespacedName{Name: s2ibuilder.Name, Namespace: s2ibuilder.Namespace}, s2ibuilder))
 		}, timeout, time.Second).Should(BeTrue())
+
+		Eventually(func() error {
+
+			testStatefulSet := &appsv1.StatefulSet{}
+			err = testClient.Get(context.TODO(), types.NamespacedName{Name: statefulSet.Name, Namespace: statefulSet.Namespace}, testStatefulSet)
+			if err != nil {
+				return err
+			}
+			if _, ok := testStatefulSet.Labels[s2ibuilder.Name]; ok {
+				return fmt.Errorf("should remove statefulset label")
+			}
+			return nil
+		}, time.Minute*5, time.Second*10).Should(Succeed())
+
+		Eventually(func() error {
+
+			testDeployment := &appsv1.Deployment{}
+			err = testClient.Get(context.TODO(), types.NamespacedName{Name: deploy.Name, Namespace: deploy.Namespace}, testDeployment)
+			if err != nil {
+				return err
+			}
+			if _, ok := testDeployment.Labels[s2ibuilder.Name]; ok {
+				return fmt.Errorf("should remove statefulset label")
+			}
+			return nil
+		}, time.Minute*5, time.Second*10).Should(Succeed())
 	})
 
 	It("Should work well when using secrets", func() {
