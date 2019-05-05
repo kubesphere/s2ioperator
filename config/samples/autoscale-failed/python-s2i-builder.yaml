@@ -1,0 +1,23 @@
+apiVersion: devops.kubesphere.io/v1alpha1
+kind: S2iBuilder
+metadata:
+  labels:
+    controller-tools.k8s.io: "1.0"
+  name: s2ibuilder-autoscale-python
+  namespace: default
+  annotations:
+    devops.kubesphere.io/autoscale: '[{"Kind": "Deployment","Name":"python-s2i","initReplicas":3},{"Kind":"StatefulSet","Name":"python-s2i"}]'
+spec:
+  # Add fields here
+  config:
+    displayName: "For Test"
+    sourceUrl: "https://github.com/kubesphere/s2i-python-container"
+    imageName: runzexia/hello-python
+    tag: latest
+    builderPullPolicy: if-not-present
+    export: true
+    contextDir: "examples/setup-test-app/"
+    pushAuthentication:
+      username: UserShouldEnterUserName
+      password: UserShouldEnterUserPassword
+    builderImage: kubespheredev/python-35-centos7
