@@ -54,3 +54,4 @@ spec:
   defaultBaseImage: kubespheredev/nodejs-8-centos7
   version: 0.0.1
   description: "Node.js available as container is a base platform for building and running various Node.js applications and frameworks. Node.js is a platform built on Chrome's JavaScript runtime for easily building fast, scalable network applications. Node.js uses an event-driven, non-blocking I/O model that makes it lightweight and efficient, perfect for data-intensive real-time applications that run across distributed devices."
+  iconPath: assets/nodejs.png

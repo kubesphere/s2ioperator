@@ -185,3 +185,4 @@ spec:
   description: "This is a S2I builder template for Java builds whose result can be run directly without any further application server.It's suited ideally for microservices with a flat classpath (including \"far jars\").
 
                  This image also provides an easy integration with an Jolokia agent."
+  iconPath: assets/java.png
