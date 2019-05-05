@@ -102,7 +102,6 @@ var _ = Describe("", func() {
 		Expect(err).NotTo(HaveOccurred(), "Cannot unmarshal yamls")
 		err = testClient.Create(context.TODO(), deploy)
 		Expect(err).NotTo(HaveOccurred())
-		defer testClient.Delete(context.TODO(), deploy)
 
 		statefulSet := &appsv1.StatefulSet{}
 		reader, err = os.Open(workspace + "/config/samples/autoscale/python-statefulset.yaml")
@@ -111,7 +110,6 @@ var _ = Describe("", func() {
 		Expect(err).NotTo(HaveOccurred(), "Cannot unmarshal yamls")
 		err = testClient.Create(context.TODO(), statefulSet)
 		Expect(err).NotTo(HaveOccurred())
-		defer testClient.Delete(context.TODO(), statefulSet)
 
 		s2ibuilder := &devopsv1alpha1.S2iBuilder{}
 		reader, err = os.Open(workspace + "/config/samples/autoscale/python-s2i-builder.yaml")
@@ -213,11 +211,13 @@ var _ = Describe("", func() {
 		}, time.Minute*5, time.Second*10).Should(Succeed())
 		Eventually(func() error { return testClient.Delete(context.TODO(), s2ibuilder) }, timeout, time.Second).Should(Succeed())
 		Eventually(func() bool {
+
 			return errors.IsNotFound(testClient.Get(context.TODO(), types.NamespacedName{Name: s2irun.Name, Namespace: s2irun.Namespace}, s2irun))
 		}, timeout, time.Second).Should(BeTrue())
 		Eventually(func() bool {
 			return errors.IsNotFound(testClient.Get(context.TODO(), types.NamespacedName{Name: s2ibuilder.Name, Namespace: s2ibuilder.Namespace}, s2ibuilder))
 		}, timeout, time.Second).Should(BeTrue())
+
 
 		Eventually(func() error {
 
@@ -244,6 +244,14 @@ var _ = Describe("", func() {
 			}
 			return nil
 		}, time.Minute*5, time.Second*10).Should(Succeed())
+		Eventually(func() error { return testClient.Delete(context.TODO(), statefulSet) }, timeout, time.Second).Should(Succeed())
+		Eventually(func() error { return testClient.Delete(context.TODO(), deploy) }, timeout, time.Second).Should(Succeed())
+		Eventually(func() bool {
+			return errors.IsNotFound(testClient.Get(context.TODO(), types.NamespacedName{Name: deploy.Name, Namespace: deploy.Namespace}, deploy))
+		}, timeout, time.Second).Should(BeTrue())
+		Eventually(func() bool {
+			return errors.IsNotFound(testClient.Get(context.TODO(), types.NamespacedName{Name: statefulSet.Name, Namespace: statefulSet.Namespace}, statefulSet))
+		}, timeout, time.Second).Should(BeTrue())
 	})
 
 	It("Should autoScale fail when using exactly the example yamls", func() {
@@ -256,7 +264,6 @@ var _ = Describe("", func() {
 		Expect(err).NotTo(HaveOccurred(), "Cannot unmarshal yamls")
 		err = testClient.Create(context.TODO(), deploy)
 		Expect(err).NotTo(HaveOccurred())
-		defer testClient.Delete(context.TODO(), deploy)
 
 		statefulSet := &appsv1.StatefulSet{}
 		reader, err = os.Open(workspace + "/config/samples/autoscale-failed/python-statefulset.yaml")
@@ -265,7 +272,6 @@ var _ = Describe("", func() {
 		Expect(err).NotTo(HaveOccurred(), "Cannot unmarshal yamls")
 		err = testClient.Create(context.TODO(), statefulSet)
 		Expect(err).NotTo(HaveOccurred())
-		defer testClient.Delete(context.TODO(), statefulSet)
 
 		s2ibuilder := &devopsv1alpha1.S2iBuilder{}
 		reader, err = os.Open(workspace + "/config/samples/autoscale-failed/python-s2i-builder.yaml")
@@ -398,6 +404,14 @@ var _ = Describe("", func() {
 			}
 			return nil
 		}, time.Minute*5, time.Second*10).Should(Succeed())
+		Eventually(func() error { return testClient.Delete(context.TODO(), statefulSet) }, timeout, time.Second).Should(Succeed())
+		Eventually(func() error { return testClient.Delete(context.TODO(), deploy) }, timeout, time.Second).Should(Succeed())
+		Eventually(func() bool {
+			return errors.IsNotFound(testClient.Get(context.TODO(), types.NamespacedName{Name: deploy.Name, Namespace: deploy.Namespace}, deploy))
+		}, timeout, time.Second).Should(BeTrue())
+		Eventually(func() bool {
+			return errors.IsNotFound(testClient.Get(context.TODO(), types.NamespacedName{Name: statefulSet.Name, Namespace: statefulSet.Namespace}, statefulSet))
+		}, timeout, time.Second).Should(BeTrue())
 	})
 
 	It("Should work well when using secrets", func() {
@@ -478,6 +492,7 @@ var _ = Describe("", func() {
 		Eventually(func() bool {
 			return errors.IsNotFound(testClient.Get(context.TODO(), types.NamespacedName{Name: s2ibuilder.Name, Namespace: s2ibuilder.Namespace}, s2ibuilder))
 		}, timeout, time.Second).Should(BeTrue())
+
 	})
 	It("Should work well when using git secrets", func() {
 		//create a s2ibuilder
