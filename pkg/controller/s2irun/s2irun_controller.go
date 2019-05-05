@@ -337,7 +337,7 @@ func (r *ReconcileS2iRun) ScaleWorkLoads(instance *devopsv1alpha1.S2iRun, builde
 					log.Info("Autoscale Deployment", "ns", instance.Namespace, "deploy", deploy.Name)
 
 					//Check if initialization is required
-					if deploy.Annotations == nil || deploy.Annotations[devopsv1alpha1.WorkLoadCompletedInitAnnotations] != "" {
+					if deploy.Annotations == nil || deploy.Annotations[devopsv1alpha1.WorkLoadCompletedInitAnnotations] == "" {
 						//If replicas == 0, set replicas to InitReplicas
 						if deploy.Annotations == nil {
 							deploy.Annotations = make(map[string]string)
@@ -400,7 +400,7 @@ func (r *ReconcileS2iRun) ScaleWorkLoads(instance *devopsv1alpha1.S2iRun, builde
 					log.Info("Autoscale StatefulSet", "ns", instance.Namespace, "statefulSet", statefulSet.Name)
 
 					//Check if initialization is required
-					if statefulSet.Annotations == nil || statefulSet.Annotations[devopsv1alpha1.WorkLoadCompletedInitAnnotations] != "" {
+					if statefulSet.Annotations == nil || statefulSet.Annotations[devopsv1alpha1.WorkLoadCompletedInitAnnotations] == "" {
 						if statefulSet.Annotations == nil {
 							statefulSet.Annotations = make(map[string]string)
 						}
