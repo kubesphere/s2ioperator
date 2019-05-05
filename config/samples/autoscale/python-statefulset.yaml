@@ -3,6 +3,7 @@ kind: StatefulSet
 metadata:
   labels:
     app: python-s2i
+    s2ibuilder-autoscale-python: s2ibuilder-autoscale-python
   name: python-s2i
   namespace: default
 spec:

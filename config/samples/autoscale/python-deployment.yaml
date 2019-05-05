@@ -5,6 +5,7 @@ metadata:
   namespace: default
   labels:
     app: python-s2i
+    s2ibuilder-autoscale-python: s2ibuilder-autoscale-python
 spec:
   replicas: 0
   selector:

@@ -19,6 +19,7 @@ package s2ibuilder
 import (
 	"context"
 	"github.com/kubesphere/s2ioperator/pkg/util/sliceutil"
+	v1 "k8s.io/api/apps/v1"
 	"reflect"
 
 	devopsv1alpha1 "github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1"
@@ -157,6 +158,9 @@ func (r *ReconcileS2iBuilder) Reconcile(request reconcile.Request) (reconcile.Re
 			if err := r.DeleteS2iRuns(instance); err != nil {
 				return reconcile.Result{}, err
 			}
+			if err := r.DeleteWorkloadLabels(instance); err != nil {
+				return reconcile.Result{}, err
+			}
 			instance.ObjectMeta.Finalizers = sliceutil.RemoveString(instance.ObjectMeta.Finalizers, s2iBuilderFinalizerName, nil)
 			if err := r.Update(context.Background(), instance); err != nil {
 				return reconcile.Result{}, err
@@ -229,4 +233,40 @@ func (r *ReconcileS2iBuilder) DeleteS2iRuns(instance *devopsv1alpha1.S2iBuilder)
 	}
 	return nil
 
+}
+
+func (r *ReconcileS2iBuilder) DeleteWorkloadLabels(instance *devopsv1alpha1.S2iBuilder) error {
+	deployList := new(v1.DeploymentList)
+	err := r.Client.List(context.TODO(), client.InNamespace(instance.Namespace).MatchingLabels(map[string]string{
+		instance.Name: instance.Name,
+	}), deployList)
+	if err != nil && errors.IsNotFound(err) {
+		return err
+	}
+	var errList []error
+	for _, deploy := range deployList.Items {
+		delete(deploy.Labels, instance.Name)
+		if err := r.Update(context.TODO(), &deploy); err != nil {
+			errList = append(errList, err)
+		}
+	}
+
+	statefulSetList := new(v1.StatefulSetList)
+	err = r.Client.List(context.TODO(), client.InNamespace(instance.Namespace).MatchingLabels(map[string]string{
+		instance.Name: instance.Name,
+	}), statefulSetList)
+	if err != nil && errors.IsNotFound(err) {
+		return err
+	}
+
+	for _, statefulset := range statefulSetList.Items {
+		delete(statefulset.Labels, instance.Name)
+		if err := r.Update(context.TODO(), &statefulset); err != nil {
+			errList = append(errList, err)
+		}
+	}
+	if len(errList) > 0 {
+		return errorutil.NewAggregate(errList)
+	}
+	return nil
 }
