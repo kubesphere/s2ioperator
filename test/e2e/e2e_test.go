@@ -313,7 +313,6 @@ var _ = Describe("", func() {
 		Expect(testClient.Delete(context.TODO(), cm)).NotTo(HaveOccurred())
 		Eventually(func() error { return testClient.Get(context.TODO(), cmKey, cm) }, timeout).
 			Should(Succeed())
-
 		job := &batchv1.Job{}
 		Eventually(func() error { return testClient.Get(context.TODO(), depKey, job) }, timeout, time.Second).
 			Should(Succeed())
@@ -350,7 +349,7 @@ var _ = Describe("", func() {
 				if err != nil {
 					return err
 				}
-				if testDeploy.Labels[devopsv1alpha1.WorkLoadCompletedInitAnnotations] == devopsv1alpha1.Failed {
+				if testDeploy.Annotations[devopsv1alpha1.WorkLoadCompletedInitAnnotations] == devopsv1alpha1.Failed {
 					return nil
 				}
 			}
@@ -369,7 +368,7 @@ var _ = Describe("", func() {
 				if err != nil {
 					return err
 				}
-				if testStatefulSet.Labels[devopsv1alpha1.WorkLoadCompletedInitAnnotations] == devopsv1alpha1.Failed {
+				if testStatefulSet.Annotations[devopsv1alpha1.WorkLoadCompletedInitAnnotations] == devopsv1alpha1.Failed {
 					return nil
 				}
 			}
