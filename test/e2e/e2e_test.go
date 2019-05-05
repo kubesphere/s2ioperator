@@ -102,6 +102,8 @@ var _ = Describe("", func() {
 		Expect(err).NotTo(HaveOccurred(), "Cannot unmarshal yamls")
 		err = testClient.Create(context.TODO(), deploy)
 		Expect(err).NotTo(HaveOccurred())
+		defer testClient.Delete(context.TODO(), deploy)
+
 
 		statefulSet := &appsv1.StatefulSet{}
 		reader, err = os.Open(workspace + "/config/samples/autoscale/python-statefulset.yaml")
@@ -110,6 +112,8 @@ var _ = Describe("", func() {
 		Expect(err).NotTo(HaveOccurred(), "Cannot unmarshal yamls")
 		err = testClient.Create(context.TODO(), statefulSet)
 		Expect(err).NotTo(HaveOccurred())
+		defer testClient.Delete(context.TODO(), statefulSet)
+
 
 		s2ibuilder := &devopsv1alpha1.S2iBuilder{}
 		reader, err = os.Open(workspace + "/config/samples/autoscale/python-s2i-builder.yaml")
@@ -146,7 +150,6 @@ var _ = Describe("", func() {
 		Expect(testClient.Delete(context.TODO(), cm)).NotTo(HaveOccurred())
 		Eventually(func() error { return testClient.Get(context.TODO(), cmKey, cm) }, timeout).
 			Should(Succeed())
-		defer testClient.Delete(context.TODO(), cm)
 
 		job := &batchv1.Job{}
 		Eventually(func() error { return testClient.Get(context.TODO(), depKey, job) }, timeout, time.Second).
@@ -264,6 +267,7 @@ var _ = Describe("", func() {
 		Expect(err).NotTo(HaveOccurred(), "Cannot unmarshal yamls")
 		err = testClient.Create(context.TODO(), deploy)
 		Expect(err).NotTo(HaveOccurred())
+		defer testClient.Delete(context.TODO(), deploy)
 
 		statefulSet := &appsv1.StatefulSet{}
 		reader, err = os.Open(workspace + "/config/samples/autoscale-failed/python-statefulset.yaml")
@@ -272,6 +276,7 @@ var _ = Describe("", func() {
 		Expect(err).NotTo(HaveOccurred(), "Cannot unmarshal yamls")
 		err = testClient.Create(context.TODO(), statefulSet)
 		Expect(err).NotTo(HaveOccurred())
+		defer testClient.Delete(context.TODO(), statefulSet)
 
 		s2ibuilder := &devopsv1alpha1.S2iBuilder{}
 		reader, err = os.Open(workspace + "/config/samples/autoscale-failed/python-s2i-builder.yaml")
@@ -308,7 +313,6 @@ var _ = Describe("", func() {
 		Expect(testClient.Delete(context.TODO(), cm)).NotTo(HaveOccurred())
 		Eventually(func() error { return testClient.Get(context.TODO(), cmKey, cm) }, timeout).
 			Should(Succeed())
-		defer testClient.Delete(context.TODO(), cm)
 
 		job := &batchv1.Job{}
 		Eventually(func() error { return testClient.Get(context.TODO(), depKey, job) }, timeout, time.Second).
