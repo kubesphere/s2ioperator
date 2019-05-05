@@ -188,7 +188,7 @@ var _ = Describe("", func() {
 					return nil
 				}
 			}
-			return fmt.Errorf("Failed")
+			return fmt.Errorf("Failed %+v",job)
 		}, time.Minute*5, time.Second*10).Should(Succeed())
 
 		Eventually(func() error {
