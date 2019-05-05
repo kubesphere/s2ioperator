@@ -246,12 +246,11 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 		}
 		instance.Status.LogURL = logURL
 	} else {
-		log.Error(nil, "Something wrong with job")
 		instance.Status.RunState = devopsv1alpha1.Unknown
 	}
 
 	// if job finished, scale workloads
-	if instance.Status.RunState == devopsv1alpha1.Successful {
+	if instance.Status.RunState == devopsv1alpha1.Successful || instance.Status.RunState == devopsv1alpha1.Failed {
 		err = r.ScaleWorkLoads(instance, builder)
 		if err != nil {
 			return reconcile.Result{}, err
@@ -338,19 +337,23 @@ func (r *ReconcileS2iRun) ScaleWorkLoads(instance *devopsv1alpha1.S2iRun, builde
 					log.Info("Autoscale Deployment", "ns", instance.Namespace, "deploy", deploy.Name)
 
 					//Check if initialization is required
-					if deploy.Annotations == nil || deploy.Annotations[devopsv1alpha1.WorkLoadCompletedInitAnnotations] != devopsv1alpha1.Successful {
+					if deploy.Annotations == nil || deploy.Annotations[devopsv1alpha1.WorkLoadCompletedInitAnnotations] == "" {
 						//If replicas == 0, set replicas to InitReplicas
 						if deploy.Annotations == nil {
 							deploy.Annotations = make(map[string]string)
 						}
-						if *deploy.Spec.Replicas == 0 {
-							if scale.InitReplicas != nil {
-								*deploy.Spec.Replicas = *scale.InitReplicas
-							} else {
-								*deploy.Spec.Replicas = 1
+						if instance.Status.RunState == devopsv1alpha1.Successful {
+							if *deploy.Spec.Replicas == 0 {
+								if scale.InitReplicas != nil {
+									*deploy.Spec.Replicas = *scale.InitReplicas
+								} else {
+									*deploy.Spec.Replicas = 1
+								}
 							}
+							deploy.Annotations[devopsv1alpha1.WorkLoadCompletedInitAnnotations] = devopsv1alpha1.Successful
+						} else if instance.Status.RunState == devopsv1alpha1.Failed {
+							deploy.Annotations[devopsv1alpha1.WorkLoadCompletedInitAnnotations] = devopsv1alpha1.Failed
 						}
-						deploy.Annotations[devopsv1alpha1.WorkLoadCompletedInitAnnotations] = devopsv1alpha1.Successful
 					}
 					newImageName := GetNewImageName(instance, *builder.Spec.Config)
 					// if only one container update containers image config
@@ -397,19 +400,23 @@ func (r *ReconcileS2iRun) ScaleWorkLoads(instance *devopsv1alpha1.S2iRun, builde
 					log.Info("Autoscale StatefulSet", "ns", instance.Namespace, "statefulSet", statefulSet.Name)
 
 					//Check if initialization is required
-					if statefulSet.Annotations == nil || statefulSet.Annotations[devopsv1alpha1.WorkLoadCompletedInitAnnotations] != devopsv1alpha1.Successful {
+					if statefulSet.Annotations == nil || statefulSet.Annotations[devopsv1alpha1.WorkLoadCompletedInitAnnotations] == "" {
 						if statefulSet.Annotations == nil {
 							statefulSet.Annotations = make(map[string]string)
 						}
-						//If replicas == 0, set replicas to InitReplicas
-						if *statefulSet.Spec.Replicas == 0 {
-							if scale.InitReplicas != nil {
-								*statefulSet.Spec.Replicas = *scale.InitReplicas
-							} else {
-								*statefulSet.Spec.Replicas = 1
+						if instance.Status.RunState == devopsv1alpha1.Successful {
+							//If replicas == 0, set replicas to InitReplicas
+							if *statefulSet.Spec.Replicas == 0 {
+								if scale.InitReplicas != nil {
+									*statefulSet.Spec.Replicas = *scale.InitReplicas
+								} else {
+									*statefulSet.Spec.Replicas = 1
+								}
 							}
+							statefulSet.Annotations[devopsv1alpha1.WorkLoadCompletedInitAnnotations] = devopsv1alpha1.Successful
+						} else {
+							statefulSet.Annotations[devopsv1alpha1.WorkLoadCompletedInitAnnotations] = devopsv1alpha1.Failed
 						}
-						statefulSet.Annotations[devopsv1alpha1.WorkLoadCompletedInitAnnotations] = devopsv1alpha1.Successful
 					}
 
 					newImageName := GetNewImageName(instance, *builder.Spec.Config)

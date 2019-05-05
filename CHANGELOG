@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.0.11] - 2019-05-05
+ - delete workload labels
+ - add init failed anno when job failed
+
 ## [0.0.10] - 2019-04-29
  - add s2i builder finalizer
 
