@@ -3,10 +3,11 @@ package e2e_test
 import (
 	"context"
 	"fmt"
-	"k8s.io/apimachinery/pkg/api/errors"
 	"os"
 	"strings"
 	"time"
+
+	"k8s.io/apimachinery/pkg/api/errors"
 
 	devopsv1alpha1 "github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1"
 	. "github.com/onsi/ginkgo"

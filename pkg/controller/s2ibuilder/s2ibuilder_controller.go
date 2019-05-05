@@ -19,7 +19,7 @@ package s2ibuilder
 import (
 	"context"
 	"github.com/kubesphere/s2ioperator/pkg/util/sliceutil"
-	"k8s.io/kubernetes/pkg/apis/apps"
+	v1 "k8s.io/api/apps/v1"
 	"reflect"
 
 	devopsv1alpha1 "github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1"
@@ -236,7 +236,7 @@ func (r *ReconcileS2iBuilder) DeleteS2iRuns(instance *devopsv1alpha1.S2iBuilder)
 }
 
 func (r *ReconcileS2iBuilder) DeleteWorkloadLabels(instance *devopsv1alpha1.S2iBuilder) error {
-	deployList := new(apps.DeploymentList)
+	deployList := new(v1.DeploymentList)
 	err := r.Client.List(context.TODO(), client.InNamespace(instance.Namespace).MatchingLabels(map[string]string{
 		instance.Name: instance.Name,
 	}), deployList)
@@ -251,7 +251,7 @@ func (r *ReconcileS2iBuilder) DeleteWorkloadLabels(instance *devopsv1alpha1.S2iB
 		}
 	}
 
-	statefulSetList := new(apps.StatefulSetList)
+	statefulSetList := new(v1.StatefulSetList)
 	err = r.Client.List(context.TODO(), client.InNamespace(instance.Namespace).MatchingLabels(map[string]string{
 		instance.Name: instance.Name,
 	}), statefulSetList)
