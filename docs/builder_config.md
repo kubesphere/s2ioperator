@@ -1,6 +1,6 @@
 # Builder API
 
-> Builder API是以CRD的形式生成的，所以如果想要直接访问原生Https接口，请先参考https://kubernetes.io/docs/concepts/overview/kubernetes-api/，根据文档中说明构造出需要使用的API
+> Builder API是以CRD的形式生成的，所以如果想要直接访问原生Https接口，请先参考https://kubernetes.io/docs/concepts/overview/kubernetes-api/ 根据文档中说明构造出需要使用的API
 
 > 目前CRD还没有合适的工具自动生成API文档，本文通过Example的方式说明如何使用Si2Builder
 ## S2iBuilder
