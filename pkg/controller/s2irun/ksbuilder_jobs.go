@@ -292,7 +292,7 @@ func (r *ReconcileS2iRun) setGitSecret(instance *devopsv1alpha1.S2iRun, config *
 			if err != nil {
 				return err
 			}
-			config.SourceURL = fmt.Sprintf("%s://%s:%s@%s%s", sourceUrl.Scheme, url.QueryEscape(string(username)), url.QueryEscape(string(password)), sourceUrl.Host, sourceUrl.RequestURI())
+			config.SourceURL = fmt.Sprintf("%s://%s:%s@%s%s#%s", sourceUrl.Scheme, url.QueryEscape(string(username)), url.QueryEscape(string(password)), sourceUrl.Host, sourceUrl.RequestURI(), sourceUrl.Fragment)
 
 		default:
 			username, ok := secret.Data[corev1.BasicAuthUsernameKey]
@@ -307,7 +307,7 @@ func (r *ReconcileS2iRun) setGitSecret(instance *devopsv1alpha1.S2iRun, config *
 			if err != nil {
 				return err
 			}
-			config.SourceURL = fmt.Sprintf("%s://%s:%s@%s%s", sourceUrl.Scheme, url.QueryEscape(string(username)), url.QueryEscape(string(password)), sourceUrl.Host, sourceUrl.RequestURI())
+			config.SourceURL = fmt.Sprintf("%s://%s:%s@%s%s#%s", sourceUrl.Scheme, url.QueryEscape(string(username)), url.QueryEscape(string(password)), sourceUrl.Host, sourceUrl.RequestURI(), sourceUrl.Fragment)
 		}
 	}
 	return nil
