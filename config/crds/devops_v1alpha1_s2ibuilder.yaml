@@ -71,6 +71,10 @@ spec:
                     have a tar binary available, if the image contains ONBUILD commands
                     that would be executed.
                   type: boolean
+                branchName:
+                  description: The name of branch that in Git is simply a lightweight
+                    movable pointer to one of these commits.
+                  type: string
                 buildVolumes:
                   description: BuildVolumes specifies a list of volumes to mount to
                     container running the build.
@@ -101,6 +105,10 @@ spec:
                   description: CGroupLimits describes the cgroups limits that will
                     be applied to any containers run by s2i.
                   type: object
+                commitId:
+                  description: The CommitID is a SHA-1 hash of every important thing
+                    about the commit
+                  type: string
                 contextDir:
                   description: Specify a relative directory inside the application
                     repository that should be used as a root directory for the application.

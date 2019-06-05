@@ -56,6 +56,12 @@ spec:
             builderName:
               description: BuilderName specify the name of s2ibuilder, required
               type: string
+            newBranchName:
+              description: NewBranchName override the default BranchName in its s2ibuilder.
+              type: string
+            newCommitId:
+              description: NewCommitId override the default CommitId in its s2ibuilder.
+              type: string
             newTag:
               description: NewTag override the default tag in its s2ibuilder, image
                 name cannot be changed.

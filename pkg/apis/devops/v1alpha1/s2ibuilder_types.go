@@ -395,14 +395,20 @@ type S2iConfig struct {
 	// AddHost Add a line to /etc/hosts for test purpose or private use in LAN. Its format is host:IP,muliple hosts can be added  by using multiple --add-host
 	AddHost []string `json:"addHost,omitempty"`
 
-	//Export Push the result image to specify image registry in tag
+	// Export Push the result image to specify image registry in tag
 	Export bool `json:"export,omitempty"`
 
-	//SourceURL is  url of the codes such as https://github.com/a/b.git
+	// SourceURL is  url of the codes such as https://github.com/a/b.git
 	SourceURL string `json:"sourceUrl"`
 
-	//GitSecretRef is the BasicAuth Secret of Git Clone
+	// GitSecretRef is the BasicAuth Secret of Git Clone
 	GitSecretRef *corev1.LocalObjectReference `json:"gitSecretRef,omitempty"`
+
+	// The CommitID is a SHA-1 hash of every important thing about the commit
+	CommitId string `json:"commitId,omitempty"`
+
+	// The name of branch that in Git is simply a lightweight movable pointer to one of these commits.
+	BranchName string `json:"branchName,omitempty"`
 }
 
 type UserDefineTemplate struct {

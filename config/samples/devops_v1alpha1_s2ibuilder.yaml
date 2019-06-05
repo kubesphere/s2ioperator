@@ -14,3 +14,5 @@ spec:
     imageName: kubesphere/hello-python
     tag: latest
     builderPullPolicy: if-not-present
+    commitId: "37f7fc41432b9c07265c5896a4fb226caa870427"
+    branchName: "staging"
