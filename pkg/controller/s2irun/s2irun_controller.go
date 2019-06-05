@@ -291,6 +291,14 @@ func GetNewImageName(instance *devopsv1alpha1.S2iRun, config devopsv1alpha1.S2iC
 	}
 }
 
+func GetNewRevisionId(instance *devopsv1alpha1.S2iRun, config devopsv1alpha1.S2iConfig) string {
+	if instance.Spec.NewRevisionId != "" {
+		return instance.Spec.NewRevisionId
+	} else {
+		return config.RevisionId
+	}
+}
+
 // ScaleWorkLoads will auto scale workloads define in s2ibuilder's annotations
 func (r *ReconcileS2iRun) ScaleWorkLoads(instance *devopsv1alpha1.S2iRun, builder *devopsv1alpha1.S2iBuilder) error {
 	if _, ok := instance.Annotations[devopsv1alpha1.S2iRunDoNotAutoScaleAnnotations]; !ok {

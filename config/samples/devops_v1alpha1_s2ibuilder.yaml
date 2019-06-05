@@ -14,3 +14,4 @@ spec:
     imageName: kubesphere/hello-python
     tag: latest
     builderPullPolicy: if-not-present
+    revisionId: "staging"

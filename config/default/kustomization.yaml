@@ -50,4 +50,4 @@ vars:
     apiVersion: v1
 
 generatorOptions:
-  disableNameSuffixHash: true 
+  disableNameSuffixHash: true
