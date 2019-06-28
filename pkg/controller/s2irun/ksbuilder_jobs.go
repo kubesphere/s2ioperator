@@ -42,8 +42,7 @@ func (r *ReconcileS2iRun) NewConfigMap(instance *devopsv1alpha1.S2iRun, config d
 	}
 
 	config.Tag = GetNewImageName(instance, config)
-	config.BranchName = GetNewBranchName(instance, config)
-	config.CommitId = GetNewCommitId(instance, config)
+	config.RevisionId = GetNewRevisionId(instance, config)
 
 	err := r.setDockerSecret(instance, &config)
 	if err != nil {

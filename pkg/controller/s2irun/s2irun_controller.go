@@ -291,19 +291,11 @@ func GetNewImageName(instance *devopsv1alpha1.S2iRun, config devopsv1alpha1.S2iC
 	}
 }
 
-func GetNewBranchName(instance *devopsv1alpha1.S2iRun, config devopsv1alpha1.S2iConfig) string {
-	if instance.Spec.NewBranchName != "" {
-		return instance.Spec.NewBranchName
+func GetNewRevisionId(instance *devopsv1alpha1.S2iRun, config devopsv1alpha1.S2iConfig) string {
+	if instance.Spec.NewRevisionId != "" {
+		return instance.Spec.NewRevisionId
 	} else {
-		return config.BranchName
-	}
-}
-
-func GetNewCommitId(instance *devopsv1alpha1.S2iRun, config devopsv1alpha1.S2iConfig) string {
-	if instance.Spec.NewCommitId != "" {
-		return instance.Spec.NewCommitId
-	} else {
-		return config.CommitId
+		return config.RevisionId
 	}
 }
 

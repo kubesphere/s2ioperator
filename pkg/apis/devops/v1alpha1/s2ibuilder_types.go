@@ -404,11 +404,8 @@ type S2iConfig struct {
 	// GitSecretRef is the BasicAuth Secret of Git Clone
 	GitSecretRef *corev1.LocalObjectReference `json:"gitSecretRef,omitempty"`
 
-	// The CommitID is a SHA-1 hash of every important thing about the commit
-	CommitId string `json:"commitId,omitempty"`
-
-	// The name of branch that in Git is simply a lightweight movable pointer to one of these commits.
-	BranchName string `json:"branchName,omitempty"`
+	// The RevisionId is a branch name or a SHA-1 hash of every important thing about the commit
+	RevisionId string `json:"revisionId,omitempty"`
 }
 
 type UserDefineTemplate struct {

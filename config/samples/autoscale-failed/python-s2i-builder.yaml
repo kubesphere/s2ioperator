@@ -21,6 +21,5 @@ spec:
       username: UserShouldEnterUserName
       password: UserShouldEnterUserPassword
     builderImage: kubespheredev/python-35-centos7
-    commitId: "b3f973b86e78d936df2637eb8058006e9bd5822c"
-    branchName: "master"
+    revisionId: "b3f973b86e78d936df2637eb8058006e9bd5822c"
 
