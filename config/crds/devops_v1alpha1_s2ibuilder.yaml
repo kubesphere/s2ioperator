@@ -188,6 +188,8 @@ spec:
                       type: string
                     secretRef:
                       type: object
+                    serverAddress:
+                      type: string
                     username:
                       type: string
                   type: object
@@ -243,6 +245,8 @@ spec:
                       type: string
                     secretRef:
                       type: object
+                    serverAddress:
+                      type: string
                     username:
                       type: string
                   type: object
@@ -256,6 +260,8 @@ spec:
                       type: string
                     secretRef:
                       type: object
+                    serverAddress:
+                      type: string
                     username:
                       type: string
                   type: object
@@ -291,6 +297,8 @@ spec:
                       type: string
                     secretRef:
                       type: object
+                    serverAddress:
+                      type: string
                     username:
                       type: string
                   type: object

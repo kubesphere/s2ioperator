@@ -1,4 +1,3 @@
-API rule violation: names_match,github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1,AuthConfig,ServerAddress
 API rule violation: names_match,github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1,CGroupLimits,CPUPeriod
 API rule violation: names_match,github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1,CGroupLimits,CPUQuota
 API rule violation: names_match,github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1,CGroupLimits,CPUShares

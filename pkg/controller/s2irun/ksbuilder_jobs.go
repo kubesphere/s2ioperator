@@ -162,6 +162,7 @@ func (r *ReconcileS2iRun) setDockerSecret(instance *devopsv1alpha1.S2iRun, confi
 		if err != nil {
 			return err
 		}
+		config.PushAuthentication.ServerAddress = entry.ServerAddress
 		config.PushAuthentication.Username = entry.Username
 		config.PushAuthentication.Password = entry.Password
 		config.PushAuthentication.Email = entry.Email
@@ -179,6 +180,7 @@ func (r *ReconcileS2iRun) setDockerSecret(instance *devopsv1alpha1.S2iRun, confi
 		if err != nil {
 			return err
 		}
+		config.PushAuthentication.ServerAddress = entry.ServerAddress
 		config.PullAuthentication.Username = entry.Username
 		config.PullAuthentication.Password = entry.Password
 		config.PullAuthentication.Email = entry.Email
@@ -196,6 +198,7 @@ func (r *ReconcileS2iRun) setDockerSecret(instance *devopsv1alpha1.S2iRun, confi
 		if err != nil {
 			return err
 		}
+		config.PushAuthentication.ServerAddress = entry.ServerAddress
 		config.IncrementalAuthentication.Username = entry.Username
 		config.IncrementalAuthentication.Password = entry.Password
 		config.IncrementalAuthentication.Email = entry.Email
@@ -213,6 +216,7 @@ func (r *ReconcileS2iRun) setDockerSecret(instance *devopsv1alpha1.S2iRun, confi
 		if err != nil {
 			return err
 		}
+		config.PushAuthentication.ServerAddress = entry.ServerAddress
 		config.RuntimeAuthentication.Username = entry.Username
 		config.RuntimeAuthentication.Password = entry.Password
 		config.RuntimeAuthentication.Email = entry.Email
@@ -331,7 +335,8 @@ func getDockerEntryFromDockerSecret(instance *corev1.Secret) (dockerConfigEntry 
 	if len(dockerConfig.Auths) == 0 {
 		return nil, fmt.Errorf("docker config auth len should not be 0")
 	}
-	for _, dockerConfigEntry := range dockerConfig.Auths {
+	for registryAddress, dockerConfigEntry := range dockerConfig.Auths {
+		dockerConfigEntry.ServerAddress = registryAddress
 		return dockerConfigEntry.DeepCopy(), nil
 	}
 	return nil, nil
