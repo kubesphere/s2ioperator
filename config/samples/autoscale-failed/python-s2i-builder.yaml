@@ -12,7 +12,7 @@ spec:
   config:
     displayName: "For Test"
     sourceUrl: "https://github.com/kubesphere/s2i-python-container"
-    imageName: runzexia/hello-python
+    imageName: DOCKERHUB_NAMESPACE/hello-python
     tag: latest
     builderPullPolicy: if-not-present
     export: true

@@ -187,7 +187,7 @@ var _ = Describe("", func() {
 				if err != nil {
 					return err
 				}
-				if testDeploy.Spec.Replicas != nil && *testDeploy.Spec.Replicas == 3 && testDeploy.Spec.Template.Spec.Containers[0].Image == "runzexia/hello-python:v0.1.0" {
+				if testDeploy.Spec.Replicas != nil && *testDeploy.Spec.Replicas == 3 && testDeploy.Spec.Template.Spec.Containers[0].Image == "DOCKERHUB_NAMESPACE/hello-python:v0.1.0" {
 					return nil
 				}
 			}
@@ -206,7 +206,7 @@ var _ = Describe("", func() {
 				if err != nil {
 					return err
 				}
-				if testStatefulSet.Spec.Replicas != nil && *testStatefulSet.Spec.Replicas == 1 && testStatefulSet.Spec.Template.Spec.Containers[0].Image == "runzexia/hello-python:v0.1.0" {
+				if testStatefulSet.Spec.Replicas != nil && *testStatefulSet.Spec.Replicas == 1 && testStatefulSet.Spec.Template.Spec.Containers[0].Image == "DOCKERHUB_NAMESPACE/hello-python:v0.1.0" {
 					return nil
 				}
 			}

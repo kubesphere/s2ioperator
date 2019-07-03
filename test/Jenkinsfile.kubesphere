@@ -1,6 +1,7 @@
 pipeline {
    environment {
       KUBECONFIG = '/root/.kube/config'
+      DOCKERHUB_NAMESPACE = 'zhuxiaoyang'
     }
   agent {
     kubernetes {
@@ -41,6 +42,11 @@ spec:
     }
     stage('test') {
       steps {
+       sh  "sed -i.bak 's#DOCKERHUB_NAMESPACE#$DOCKERHUB_NAMESPACE#' ./config/samples/autoscale/*.yaml"
+       sh  "sed -i.bak 's#DOCKERHUB_NAMESPACE#$DOCKERHUB_NAMESPACE#' ./config/samples/autoscale-failed/*.yaml"
+       sh  "sed -i.bak 's#DOCKERHUB_NAMESPACE#$DOCKERHUB_NAMESPACE#' ./config/samples/git-secret/*.yaml"
+       sh  "sed -i.bak 's#DOCKERHUB_NAMESPACE#$DOCKERHUB_NAMESPACE#' ./config/samples/secret/*.yaml"
+       sh  "sed -i.bak 's#DOCKERHUB_NAMESPACE#$DOCKERHUB_NAMESPACE#' ./test/Jenkinsfile.kubesphere"
 
        withCredentials([usernamePassword(passwordVariable : 'DOCKER_PASSWORD' ,usernameVariable : 'DOCKER_USERNAME' ,credentialsId : "dockerhub-id" ,)]) {
           sh 'echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin'
