@@ -56,6 +56,10 @@ spec:
             builderName:
               description: BuilderName specify the name of s2ibuilder, required
               type: string
+            newRevisionId:
+              description: NewRevisionId override the default NewRevisionId in its
+                s2ibuilder.
+              type: string
             newTag:
               description: NewTag override the default tag in its s2ibuilder, image
                 name cannot be changed.

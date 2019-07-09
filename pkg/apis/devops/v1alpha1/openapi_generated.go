@@ -1476,6 +1476,13 @@ func schema_pkg_apis_devops_v1alpha1_S2iConfig(ref common.ReferenceCallback) com
 							Ref:         ref("k8s.io/api/core/v1.LocalObjectReference"),
 						},
 					},
+					"revisionId": {
+						SchemaProps: spec.SchemaProps{
+							Description: "The RevisionId is a branch name or a SHA-1 hash of every important thing about the commit",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 				},
 				Required: []string{"imageName", "sourceUrl"},
 			},
@@ -1607,6 +1614,13 @@ func schema_pkg_apis_devops_v1alpha1_S2iRunSpec(ref common.ReferenceCallback) co
 					"newTag": {
 						SchemaProps: spec.SchemaProps{
 							Description: "NewTag override the default tag in its s2ibuilder, image name cannot be changed.",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"newRevisionId": {
+						SchemaProps: spec.SchemaProps{
+							Description: "NewRevisionId override the default NewRevisionId in its s2ibuilder.",
 							Type:        []string{"string"},
 							Format:      "",
 						},
