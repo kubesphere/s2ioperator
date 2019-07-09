@@ -325,7 +325,7 @@ func schema_pkg_apis_devops_v1alpha1_AuthConfig(ref common.ReferenceCallback) co
 							Format: "",
 						},
 					},
-					"server_address": {
+					"serverAddress": {
 						SchemaProps: spec.SchemaProps{
 							Type:   []string{"string"},
 							Format: "",
@@ -512,6 +512,12 @@ func schema_pkg_apis_devops_v1alpha1_DockerConfigEntry(ref common.ReferenceCallb
 						},
 					},
 					"email": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
+					"serverAddress": {
 						SchemaProps: spec.SchemaProps{
 							Type:   []string{"string"},
 							Format: "",

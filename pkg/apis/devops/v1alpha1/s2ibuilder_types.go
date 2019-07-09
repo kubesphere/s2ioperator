@@ -113,7 +113,7 @@ type AuthConfig struct {
 	Username      string                       `json:"username,omitempty"`
 	Password      string                       `json:"password,omitempty"`
 	Email         string                       `json:"email,omitempty"`
-	ServerAddress string                       `json:"server_address,omitempty"`
+	ServerAddress string                       `json:"serverAddress,omitempty"`
 	SecretRef     *corev1.LocalObjectReference `json:"secretRef,omitempty"`
 }
 
@@ -483,9 +483,10 @@ type DockerConfigJson struct {
 type DockerConfigMap map[string]DockerConfigEntry
 
 type DockerConfigEntry struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Email    string `json:"email"`
+	Username      string `json:"username"`
+	Password      string `json:"password"`
+	Email         string `json:"email"`
+	ServerAddress string `json:"serverAddress,omitempty"`
 }
 
 func init() {
