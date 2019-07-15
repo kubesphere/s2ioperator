@@ -1,0 +1,10 @@
+apiVersion: devops.kubesphere.io/v1alpha1
+kind: S2iRun
+metadata:
+  labels:
+    labels.devops.kubesphere.io/builder-name: s2ibuilder-runtime-sample
+  name: s2irun-runtime-sample
+  namespace: default
+spec:
+  builderName: s2ibuilder-runtime-sample
+  newTag: test-1

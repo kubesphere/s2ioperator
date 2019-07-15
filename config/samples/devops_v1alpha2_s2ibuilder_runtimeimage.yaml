@@ -1,0 +1,19 @@
+apiVersion: devops.kubesphere.io/v1alpha1
+kind: S2iBuilder
+metadata:
+  labels:
+    controller-tools.k8s.io: "1.0"
+  name: s2ibuilder-runtime-sample
+  namespace: default
+spec:
+  config:
+    displayName: "For Test"
+    builderImage: kubesphere/java-8-centos7:advanced-2.0.0
+    runtimeArtifacts:
+      - source: /deployments
+    runtimeImage: zhuxiaoyang/s2i-java8-runtime:latest
+    imageName: kubesphere/sample-java
+    sourceUrl: https://github.com/soulseen/devops-java-sample.git
+    tag: latest
+    revisionId: master
+    builderPullPolicy: if-not-present

@@ -5,11 +5,11 @@ metadata:
     controller-tools.k8s.io: "1.0"
   name: python
 spec:
-  baseImages:
-    - kubespheredev/python-36-centos7
-    - kubespheredev/python-35-centos7
-    - kubespheredev/python-34-centos7
-    - kubespheredev/python-27-centos7
+  images:
+    - builderImage: kubespheredev/python-36-centos7
+    - builderImage: kubespheredev/python-35-centos7
+    - builderImage: kubespheredev/python-34-centos7
+    - builderImage: kubespheredev/python-27-centos7
   environment:
     - key: APP_SCRIPT
       type: string

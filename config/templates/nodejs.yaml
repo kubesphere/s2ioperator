@@ -5,10 +5,10 @@ metadata:
     controller-tools.k8s.io: "1.0"
   name: nodejs
 spec:
-  baseImages:
-    - kubespheredev/nodejs-8-centos7
-    - kubespheredev/nodejs-6-centos7
-    - kubespheredev/nodejs-4-centos7
+  images:
+    - builderImage: kubespheredev/nodejs-8-centos7
+    - builderImage: kubespheredev/nodejs-6-centos7
+    - builderImage: kubespheredev/nodejs-4-centos7
   environment:
     - key: NODE_ENV
       type: string

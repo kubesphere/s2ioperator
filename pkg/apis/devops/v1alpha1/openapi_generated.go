@@ -38,6 +38,7 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.DockerConfigEntry":        schema_pkg_apis_devops_v1alpha1_DockerConfigEntry(ref),
 		"github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.DockerConfigJson":         schema_pkg_apis_devops_v1alpha1_DockerConfigJson(ref),
 		"github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.EnvironmentSpec":          schema_pkg_apis_devops_v1alpha1_EnvironmentSpec(ref),
+		"github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.Images":                   schema_pkg_apis_devops_v1alpha1_Images(ref),
 		"github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.Parameter":                schema_pkg_apis_devops_v1alpha1_Parameter(ref),
 		"github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.ProxyConfig":              schema_pkg_apis_devops_v1alpha1_ProxyConfig(ref),
 		"github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.S2iAutoScale":             schema_pkg_apis_devops_v1alpha1_S2iAutoScale(ref),
@@ -585,6 +586,45 @@ func schema_pkg_apis_devops_v1alpha1_EnvironmentSpec(ref common.ReferenceCallbac
 	}
 }
 
+func schema_pkg_apis_devops_v1alpha1_Images(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"builderImage": {
+						SchemaProps: spec.SchemaProps{
+							Description: "BaseImage are the images this template will use.",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"runtimeImage": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
+					"runtimeArtifacts": {
+						SchemaProps: spec.SchemaProps{
+							Type: []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Ref: ref("github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.VolumeSpec"),
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		Dependencies: []string{
+			"github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.VolumeSpec"},
+	}
+}
+
 func schema_pkg_apis_devops_v1alpha1_Parameter(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
@@ -984,15 +1024,14 @@ func schema_pkg_apis_devops_v1alpha1_S2iBuilderTemplateSpec(ref common.Reference
 							Format:      "",
 						},
 					},
-					"baseImages": {
+					"images": {
 						SchemaProps: spec.SchemaProps{
-							Description: "BaseImages are the images this template will use.",
+							Description: "Images are the images this template will use.",
 							Type:        []string{"array"},
 							Items: &spec.SchemaOrArray{
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
-										Type:   []string{"string"},
-										Format: "",
+										Ref: ref("github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.Images"),
 									},
 								},
 							},
@@ -1043,7 +1082,7 @@ func schema_pkg_apis_devops_v1alpha1_S2iBuilderTemplateSpec(ref common.Reference
 			},
 		},
 		Dependencies: []string{
-			"github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.Parameter"},
+			"github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.Images", "github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.Parameter"},
 	}
 }
 
@@ -1720,7 +1759,7 @@ func schema_pkg_apis_devops_v1alpha1_UserDefineTemplate(ref common.ReferenceCall
 							},
 						},
 					},
-					"baseImage": {
+					"builderImage": {
 						SchemaProps: spec.SchemaProps{
 							Description: "BaseImage specify which version of this template to use",
 							Type:        []string{"string"},
@@ -1742,21 +1781,21 @@ func schema_pkg_apis_devops_v1alpha1_VolumeSpec(ref common.ReferenceCallback) co
 				Description: "VolumeSpec represents a single volume mount point.",
 				Type:        []string{"object"},
 				Properties: map[string]spec.Schema{
-					"Source": {
+					"source": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Source is a reference to the volume source.",
 							Type:        []string{"string"},
 							Format:      "",
 						},
 					},
-					"Destination": {
+					"destination": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Destination is the path to mount the volume to - absolute or relative.",
 							Type:        []string{"string"},
 							Format:      "",
 						},
 					},
-					"Keep": {
+					"keep": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Keep indicates if the mounted data should be kept in the final image.",
 							Type:        []string{"boolean"},
@@ -1764,7 +1803,6 @@ func schema_pkg_apis_devops_v1alpha1_VolumeSpec(ref common.ReferenceCallback) co
 						},
 					},
 				},
-				Required: []string{"Source", "Destination", "Keep"},
 			},
 		},
 		Dependencies: []string{},
