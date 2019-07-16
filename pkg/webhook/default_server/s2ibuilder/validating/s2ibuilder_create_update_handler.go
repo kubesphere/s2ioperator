@@ -66,10 +66,14 @@ func (h *S2iBuilderCreateUpdateHandler) validatingS2iBuilderFn(ctx context.Conte
 		if len(errs) != 0 {
 			return false, "validate template parameters failed", errorutil.NewAggregate(errs)
 		}
-		if obj.Spec.FromTemplate.BaseImage != "" {
-			if !reflectutils.Contains(obj.Spec.FromTemplate.BaseImage, t.Spec.BaseImages) {
+		var BaseImages []string
+		for _, ImageInfo := range t.Spec.ContainerInfo {
+			BaseImages = append(BaseImages, ImageInfo.BuilderImage)
+		}
+		if obj.Spec.FromTemplate.BuilderImage != "" {
+			if !reflectutils.Contains(obj.Spec.FromTemplate.BuilderImage, BaseImages) {
 				return false, "validate failed", fmt.Errorf("builder's baseImage [%s] not in builder baseImages [%v]",
-					obj.Spec.FromTemplate.BaseImage, t.Spec.BaseImages)
+					obj.Spec.FromTemplate.BuilderImage, BaseImages)
 			}
 		}
 		fromTemplate = true

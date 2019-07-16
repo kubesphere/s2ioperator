@@ -203,6 +203,18 @@ spec:
                     that are injected to the container that runs assemble. All files
                     we inject will be truncated after the assemble script finishes.
                   items:
+                    properties:
+                      destination:
+                        description: Destination is the path to mount the volume to
+                          - absolute or relative.
+                        type: string
+                      keep:
+                        description: Keep indicates if the mounted data should be
+                          kept in the final image.
+                        type: boolean
+                      source:
+                        description: Source is a reference to the volume source.
+                        type: string
                     type: object
                   type: array
                 keepSymlinks:
@@ -289,6 +301,18 @@ spec:
                     it's empty, S2I will try to get this list from io.openshift.s2i.assemble-input-files
                     label on a RuntimeImage.
                   items:
+                    properties:
+                      destination:
+                        description: Destination is the path to mount the volume to
+                          - absolute or relative.
+                        type: string
+                      keep:
+                        description: Keep indicates if the mounted data should be
+                          kept in the final image.
+                        type: boolean
+                      source:
+                        description: Source is a reference to the volume source.
+                        type: string
                     type: object
                   type: array
                 runtimeAuthentication:
@@ -362,7 +386,7 @@ spec:
             fromTemplate:
               description: FromTemplate define some inputs from user
               properties:
-                baseImage:
+                builderImage:
                   description: BaseImage specify which version of this template to
                     use
                   type: string
@@ -467,16 +491,38 @@ spec:
           type: object
         spec:
           properties:
-            baseImages:
-              description: BaseImages are the images this template will use.
-              items:
-                type: string
-              type: array
             codeFramework:
               description: CodeFramework means which language this template is designed
                 for and which framework is using if has framework. Like Java, NodeJS
                 etc
               type: string
+            containerInfo:
+              description: Images are the images this template will use.
+              items:
+                properties:
+                  builderImage:
+                    description: BaseImage are the images this template will use.
+                    type: string
+                  runtimeArtifacts:
+                    items:
+                      properties:
+                        destination:
+                          description: Destination is the path to mount the volume
+                            to - absolute or relative.
+                          type: string
+                        keep:
+                          description: Keep indicates if the mounted data should be
+                            kept in the final image.
+                          type: boolean
+                        source:
+                          description: Source is a reference to the volume source.
+                          type: string
+                      type: object
+                    type: array
+                  runtimeImage:
+                    type: string
+                type: object
+              type: array
             defaultBaseImage:
               description: DefaultBaseImage is the image that will be used by default
               type: string

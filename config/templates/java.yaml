@@ -5,9 +5,15 @@ metadata:
     controller-tools.k8s.io: "1.0"
   name: java
 spec:
-  baseImages:
-    - kubespheredev/java-11-centos7
-    - kubespheredev/java-8-centos7
+  containerInfo:
+    - builderImage: kubespheredev/java-11-centos7:advanced-2.0.0
+      runtimeImage: zhuxiaoyang/s2i-java11-runtime:latest
+      runtimeArtifacts:
+        - source: "/deployments"
+    - builderImage: kubespheredev/java-8-centos7:advanced-2.0.0
+      runtimeImage: zhuxiaoyang/s2i-java8-runtime:latest
+      runtimeArtifacts:
+        - source: "/deployments"
   environment:
     - key: MAVEN_ARGS
       type: string
@@ -180,7 +186,7 @@ spec:
       required: false
       defaultValue: ""
   codeFramework: java
-  defaultBaseImage: kubespheredev/java-8-centos7
+  defaultBaseImage: kubespheredev/java-8-centos7:advanced-2.0.0
   version: 0.0.1
   description: "This is a S2I builder template for Java builds whose result can be run directly without any further application server.It's suited ideally for microservices with a flat classpath (including \"far jars\").
 

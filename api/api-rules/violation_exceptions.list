@@ -18,9 +18,6 @@ API rule violation: names_match,github.com/kubesphere/s2ioperator/pkg/apis/devop
 API rule violation: names_match,github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1,S2iConfig,ImageScriptsURL
 API rule violation: names_match,github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1,S2iConfig,ScriptsURL
 API rule violation: names_match,github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1,S2iConfig,SourceURL
-API rule violation: names_match,github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1,VolumeSpec,Destination
-API rule violation: names_match,github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1,VolumeSpec,Keep
-API rule violation: names_match,github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1,VolumeSpec,Source
 API rule violation: names_match,k8s.io/api/core/v1,AzureDiskVolumeSource,DataDiskURI
 API rule violation: names_match,k8s.io/api/core/v1,ContainerStatus,LastTerminationState
 API rule violation: names_match,k8s.io/api/core/v1,DaemonEndpoint,Port

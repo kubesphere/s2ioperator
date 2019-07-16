@@ -26,8 +26,8 @@ func (r *ReconcileS2iRun) NewConfigMap(instance *devopsv1alpha1.S2iRun, config d
 		if err != nil {
 			return nil, err
 		}
-		if template.BaseImage != "" {
-			config.BuilderImage = template.BaseImage
+		if template.BuilderImage != "" {
+			config.BuilderImage = template.BuilderImage
 		} else {
 			config.BuilderImage = t.Spec.DefaultBaseImage
 		}

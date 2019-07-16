@@ -79,11 +79,11 @@ type CGroupLimits struct {
 // VolumeSpec represents a single volume mount point.
 type VolumeSpec struct {
 	// Source is a reference to the volume source.
-	Source string
+	Source string `json:"source,omitempty"`
 	// Destination is the path to mount the volume to - absolute or relative.
-	Destination string
+	Destination string `json:"destination,omitempty"`
 	// Keep indicates if the mounted data should be kept in the final image.
-	Keep bool
+	Keep bool `json:"keep,omitempty"`
 }
 
 // DockerConfig contains the configuration for a Docker connection.
@@ -414,7 +414,7 @@ type UserDefineTemplate struct {
 	//Parameters must use with `template`, fill some parameters which template will use
 	Parameters []Parameter `json:"parameters,omitempty"`
 	//BaseImage specify which version of this template to use
-	BaseImage string `json:"baseImage,omitempty"`
+	BuilderImage string `json:"builderImage,omitempty"`
 }
 
 // S2iBuilderSpec defines the desired state of S2iBuilder
