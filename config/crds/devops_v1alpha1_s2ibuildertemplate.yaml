@@ -45,6 +45,33 @@ spec:
                 for and which framework is using if has framework. Like Java, NodeJS
                 etc
               type: string
+            containerInfo:
+              description: Images are the images this template will use.
+              items:
+                properties:
+                  builderImage:
+                    description: BaseImage are the images this template will use.
+                    type: string
+                  runtimeArtifacts:
+                    items:
+                      properties:
+                        destination:
+                          description: Destination is the path to mount the volume
+                            to - absolute or relative.
+                          type: string
+                        keep:
+                          description: Keep indicates if the mounted data should be
+                            kept in the final image.
+                          type: boolean
+                        source:
+                          description: Source is a reference to the volume source.
+                          type: string
+                      type: object
+                    type: array
+                  runtimeImage:
+                    type: string
+                type: object
+              type: array
             defaultBaseImage:
               description: DefaultBaseImage is the image that will be used by default
               type: string
@@ -77,33 +104,6 @@ spec:
             iconPath:
               description: IconPath is used for frontend display
               type: string
-            images:
-              description: Images are the images this template will use.
-              items:
-                properties:
-                  builderImage:
-                    description: BaseImage are the images this template will use.
-                    type: string
-                  runtimeArtifacts:
-                    items:
-                      properties:
-                        destination:
-                          description: Destination is the path to mount the volume
-                            to - absolute or relative.
-                          type: string
-                        keep:
-                          description: Keep indicates if the mounted data should be
-                            kept in the final image.
-                          type: boolean
-                        source:
-                          description: Source is a reference to the volume source.
-                          type: string
-                      type: object
-                    type: array
-                  runtimeImage:
-                    type: string
-                type: object
-              type: array
             version:
               description: Version of template
               type: string

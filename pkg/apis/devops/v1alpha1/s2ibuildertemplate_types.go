@@ -56,7 +56,7 @@ type S2iBuilderTemplateSpec struct {
 	//DefaultBaseImage is the image that will be used by default
 	DefaultBaseImage string `json:"defaultBaseImage,omitempty"`
 	//Images are the images this template will use.
-	Images []Images `json:"images,omitempty"`
+	ContainerInfo []ContainerInfo `json:"containerInfo,omitempty"`
 	//CodeFramework means which language this template is designed for and which framework is using if has framework. Like Java, NodeJS etc
 	CodeFramework CodeFramework `json:"codeFramework,omitempty"`
 	// Parameters is a set of environment variables to be passed to the image.
@@ -69,7 +69,7 @@ type S2iBuilderTemplateSpec struct {
 	IconPath string `json:"iconPath,omitempty"`
 }
 
-type Images struct {
+type ContainerInfo struct {
 	//BaseImage are the images this template will use.
 	BuilderImage     string       `json:"builderImage,omitempty"`
 	RuntimeImage     string       `json:"runtimeImage,omitempty"`

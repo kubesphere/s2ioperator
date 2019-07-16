@@ -34,11 +34,11 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.AuthConfig":               schema_pkg_apis_devops_v1alpha1_AuthConfig(ref),
 		"github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.CGroupLimits":             schema_pkg_apis_devops_v1alpha1_CGroupLimits(ref),
 		"github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.ContainerConfig":          schema_pkg_apis_devops_v1alpha1_ContainerConfig(ref),
+		"github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.ContainerInfo":            schema_pkg_apis_devops_v1alpha1_ContainerInfo(ref),
 		"github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.DockerConfig":             schema_pkg_apis_devops_v1alpha1_DockerConfig(ref),
 		"github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.DockerConfigEntry":        schema_pkg_apis_devops_v1alpha1_DockerConfigEntry(ref),
 		"github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.DockerConfigJson":         schema_pkg_apis_devops_v1alpha1_DockerConfigJson(ref),
 		"github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.EnvironmentSpec":          schema_pkg_apis_devops_v1alpha1_EnvironmentSpec(ref),
-		"github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.Images":                   schema_pkg_apis_devops_v1alpha1_Images(ref),
 		"github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.Parameter":                schema_pkg_apis_devops_v1alpha1_Parameter(ref),
 		"github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.ProxyConfig":              schema_pkg_apis_devops_v1alpha1_ProxyConfig(ref),
 		"github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.S2iAutoScale":             schema_pkg_apis_devops_v1alpha1_S2iAutoScale(ref),
@@ -437,6 +437,45 @@ func schema_pkg_apis_devops_v1alpha1_ContainerConfig(ref common.ReferenceCallbac
 	}
 }
 
+func schema_pkg_apis_devops_v1alpha1_ContainerInfo(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"builderImage": {
+						SchemaProps: spec.SchemaProps{
+							Description: "BaseImage are the images this template will use.",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"runtimeImage": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
+					"runtimeArtifacts": {
+						SchemaProps: spec.SchemaProps{
+							Type: []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Ref: ref("github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.VolumeSpec"),
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		Dependencies: []string{
+			"github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.VolumeSpec"},
+	}
+}
+
 func schema_pkg_apis_devops_v1alpha1_DockerConfig(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
@@ -583,45 +622,6 @@ func schema_pkg_apis_devops_v1alpha1_EnvironmentSpec(ref common.ReferenceCallbac
 			},
 		},
 		Dependencies: []string{},
-	}
-}
-
-func schema_pkg_apis_devops_v1alpha1_Images(ref common.ReferenceCallback) common.OpenAPIDefinition {
-	return common.OpenAPIDefinition{
-		Schema: spec.Schema{
-			SchemaProps: spec.SchemaProps{
-				Type: []string{"object"},
-				Properties: map[string]spec.Schema{
-					"builderImage": {
-						SchemaProps: spec.SchemaProps{
-							Description: "BaseImage are the images this template will use.",
-							Type:        []string{"string"},
-							Format:      "",
-						},
-					},
-					"runtimeImage": {
-						SchemaProps: spec.SchemaProps{
-							Type:   []string{"string"},
-							Format: "",
-						},
-					},
-					"runtimeArtifacts": {
-						SchemaProps: spec.SchemaProps{
-							Type: []string{"array"},
-							Items: &spec.SchemaOrArray{
-								Schema: &spec.Schema{
-									SchemaProps: spec.SchemaProps{
-										Ref: ref("github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.VolumeSpec"),
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-		},
-		Dependencies: []string{
-			"github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.VolumeSpec"},
 	}
 }
 
@@ -1024,14 +1024,14 @@ func schema_pkg_apis_devops_v1alpha1_S2iBuilderTemplateSpec(ref common.Reference
 							Format:      "",
 						},
 					},
-					"images": {
+					"containerInfo": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Images are the images this template will use.",
 							Type:        []string{"array"},
 							Items: &spec.SchemaOrArray{
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
-										Ref: ref("github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.Images"),
+										Ref: ref("github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.ContainerInfo"),
 									},
 								},
 							},
@@ -1082,7 +1082,7 @@ func schema_pkg_apis_devops_v1alpha1_S2iBuilderTemplateSpec(ref common.Reference
 			},
 		},
 		Dependencies: []string{
-			"github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.Images", "github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.Parameter"},
+			"github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.ContainerInfo", "github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.Parameter"},
 	}
 }
 

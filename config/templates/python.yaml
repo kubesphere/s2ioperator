@@ -5,7 +5,7 @@ metadata:
     controller-tools.k8s.io: "1.0"
   name: python
 spec:
-  images:
+  containerInfo:
     - builderImage: kubespheredev/python-36-centos7
     - builderImage: kubespheredev/python-35-centos7
     - builderImage: kubespheredev/python-34-centos7

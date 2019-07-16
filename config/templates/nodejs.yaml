@@ -5,7 +5,7 @@ metadata:
     controller-tools.k8s.io: "1.0"
   name: nodejs
 spec:
-  images:
+  containerInfo:
     - builderImage: kubespheredev/nodejs-8-centos7
     - builderImage: kubespheredev/nodejs-6-centos7
     - builderImage: kubespheredev/nodejs-4-centos7

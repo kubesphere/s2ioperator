@@ -45,7 +45,7 @@ type S2iBuilderTemplateCreateUpdateHandler struct {
 
 func (h *S2iBuilderTemplateCreateUpdateHandler) validatingS2iBuilderTemplateFn(ctx context.Context, obj *devopsv1alpha1.S2iBuilderTemplate) (bool, string, error) {
 
-	if len(obj.Spec.Images) == 0 {
+	if len(obj.Spec.ContainerInfo) == 0 {
 		return false, "validate failed", errors.NewFieldRequired("baseImages")
 	}
 
@@ -53,16 +53,16 @@ func (h *S2iBuilderTemplateCreateUpdateHandler) validatingS2iBuilderTemplateFn(c
 		return false, "validate failed", errors.NewFieldRequired("defaultBaseImage")
 	}
 	var builderImages []string
-	for _, Image := range obj.Spec.Images {
-		builderImages = append(builderImages, Image.BuilderImage)
+	for _, ImageInfo := range obj.Spec.ContainerInfo {
+		builderImages = append(builderImages, ImageInfo.BuilderImage)
 	}
 	if !reflectutils.Contains(obj.Spec.DefaultBaseImage, builderImages) {
 		return false, "validate failed", errors.NewFieldInvalidValueWithReason("defaultBaseImage",
 			fmt.Sprintf("defaultBaseImage [%s] should in [%v]", obj.Spec.DefaultBaseImage, builderImages))
 	}
 
-	for _, Image := range obj.Spec.Images {
-		if err := validateDockerReference(Image.BuilderImage); err != nil {
+	for _, ImageInfo := range obj.Spec.ContainerInfo {
+		if err := validateDockerReference(ImageInfo.BuilderImage); err != nil {
 			return false, "validate failed", errors.NewFieldInvalidValueWithReason("builderImage", err.Error())
 		}
 	}

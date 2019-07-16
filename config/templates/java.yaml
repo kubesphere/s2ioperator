@@ -5,7 +5,7 @@ metadata:
     controller-tools.k8s.io: "1.0"
   name: java
 spec:
-  images:
+  containerInfo:
     - builderImage: kubespheredev/java-11-centos7:advanced-2.0.0
       runtimeImage: zhuxiaoyang/s2i-java11-runtime:latest
       runtimeArtifacts:

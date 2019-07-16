@@ -67,8 +67,8 @@ func (h *S2iBuilderCreateUpdateHandler) validatingS2iBuilderFn(ctx context.Conte
 			return false, "validate template parameters failed", errorutil.NewAggregate(errs)
 		}
 		var BaseImages []string
-		for _, Image := range t.Spec.Images {
-			BaseImages = append(BaseImages, Image.BuilderImage)
+		for _, ImageInfo := range t.Spec.ContainerInfo {
+			BaseImages = append(BaseImages, ImageInfo.BuilderImage)
 		}
 		if obj.Spec.FromTemplate.BuilderImage != "" {
 			if !reflectutils.Contains(obj.Spec.FromTemplate.BuilderImage, BaseImages) {
