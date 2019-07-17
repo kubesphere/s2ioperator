@@ -424,6 +424,10 @@ type S2iBuilderSpec struct {
 	Config *S2iConfig `json:"config,omitempty"`
 	//FromTemplate define some inputs from user
 	FromTemplate *UserDefineTemplate `json:"fromTemplate,omitempty"`
+	//A hostPath volume mounts a file or directory from the host node's filesystem into your container.
+	HostPath string `json:"hostPath,omitempty"`
+	//Directory location in Container.
+	MountPath string `json:"mountPath,omitempty"`
 }
 
 // S2iBuilderStatus defines the observed state of S2iBuilder

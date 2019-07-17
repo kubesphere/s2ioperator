@@ -418,6 +418,13 @@ spec:
                     type: object
                   type: array
               type: object
+            hostPath:
+              description: A hostPath volume mounts a file or directory from the host
+                node's filesystem into your container.
+              type: string
+            mountPath:
+              description: Directory location in Container.
+              type: string
           type: object
         status:
           properties:

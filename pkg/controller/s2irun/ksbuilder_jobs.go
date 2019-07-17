@@ -70,7 +70,71 @@ func (r *ReconcileS2iRun) NewConfigMap(instance *devopsv1alpha1.S2iRun, config d
 	return configMap, nil
 }
 
-func (r *ReconcileS2iRun) GenerateNewJob(instance *devopsv1alpha1.S2iRun) (*batchv1.Job, error) {
+func getVolumes(builder *devopsv1alpha1.S2iBuilder, cfgString string, configMapName string) []corev1.Volume {
+	var volumes []corev1.Volume
+	defaultDockerVolume := corev1.Volume{
+		Name: "docker-sock",
+		VolumeSource: corev1.VolumeSource{
+			HostPath: &corev1.HostPathVolumeSource{Path: "/var/run/docker.sock"},
+		},
+	}
+	defaultConfigVolume := corev1.Volume{
+		Name: cfgString,
+		VolumeSource: corev1.VolumeSource{
+			ConfigMap: &corev1.ConfigMapVolumeSource{
+				LocalObjectReference: corev1.LocalObjectReference{
+					Name: configMapName,
+				},
+				Items: []corev1.KeyToPath{
+					{
+						Key:  ConfigDataKey,
+						Path: "config.json",
+					},
+				},
+			},
+		},
+	}
+	volumes = append(volumes, defaultDockerVolume, defaultConfigVolume)
+
+	if builder.Spec.HostPath != "" && builder.Spec.MountPath != "" {
+		prePath := "/data"
+		hostPath := prePath + builder.Spec.HostPath
+		dependencyHostPath := corev1.Volume{
+			Name: "dependency-path",
+			VolumeSource: corev1.VolumeSource{
+				HostPath: &corev1.HostPathVolumeSource{Path: hostPath},
+			},
+		}
+		volumes = append(volumes, dependencyHostPath)
+
+	}
+	return volumes
+}
+
+func getVolumeMounts(builder *devopsv1alpha1.S2iBuilder, cfgString string) []corev1.VolumeMount {
+	var volumeMounts []corev1.VolumeMount
+	defaultConfigVolumeMount := corev1.VolumeMount{
+		Name:      cfgString,
+		ReadOnly:  true,
+		MountPath: "/etc/data",
+	}
+	defaultDockerVolumeMount := corev1.VolumeMount{
+		Name:      "docker-sock",
+		MountPath: "/var/run/docker.sock",
+	}
+	volumeMounts = append(volumeMounts, defaultConfigVolumeMount, defaultDockerVolumeMount)
+
+	if builder.Spec.HostPath != "" && builder.Spec.MountPath != "" {
+		dependencyMountPath := corev1.VolumeMount{
+			Name:      "dependency-path",
+			MountPath: builder.Spec.MountPath,
+		}
+		volumeMounts = append(volumeMounts, dependencyMountPath)
+	}
+	return volumeMounts
+}
+
+func (r *ReconcileS2iRun) GenerateNewJob(instance *devopsv1alpha1.S2iRun, builder *devopsv1alpha1.S2iBuilder) (*batchv1.Job, error) {
 	instanceUidSlice := strings.Split(string(instance.UID), "-")
 	cfgString := "config-data"
 	configMapName := instance.Name + fmt.Sprintf("-%s", instanceUidSlice[len(instanceUidSlice)-1]) + "-configmap"
@@ -79,6 +143,9 @@ func (r *ReconcileS2iRun) GenerateNewJob(instance *devopsv1alpha1.S2iRun) (*batc
 	if imageName == "" {
 		return nil, fmt.Errorf("Failed to get s2i-image name, please set the env 'S2IIMAGENAME' ")
 	}
+
+	volumes := getVolumes(builder, cfgString, configMapName)
+	volumeMounts := getVolumeMounts(builder, cfgString)
 
 	job := &batchv1.Job{
 		ObjectMeta: metav1.ObjectMeta{
@@ -102,44 +169,11 @@ func (r *ReconcileS2iRun) GenerateNewJob(instance *devopsv1alpha1.S2iRun) (*batc
 									Value: "/etc/data/config.json",
 								},
 							},
-							VolumeMounts: []corev1.VolumeMount{
-								{
-									Name:      cfgString,
-									ReadOnly:  true,
-									MountPath: "/etc/data",
-								},
-								{
-									Name:      "docker-sock",
-									MountPath: "/var/run/docker.sock",
-								},
-							},
+							VolumeMounts: volumeMounts,
 						},
 					},
 					RestartPolicy: corev1.RestartPolicyNever,
-					Volumes: []corev1.Volume{
-						{
-							Name: cfgString,
-							VolumeSource: corev1.VolumeSource{
-								ConfigMap: &corev1.ConfigMapVolumeSource{
-									LocalObjectReference: corev1.LocalObjectReference{
-										Name: configMapName,
-									},
-									Items: []corev1.KeyToPath{
-										{
-											Key:  ConfigDataKey,
-											Path: "config.json",
-										},
-									},
-								},
-							},
-						},
-						{
-							Name: "docker-sock",
-							VolumeSource: corev1.VolumeSource{
-								HostPath: &corev1.HostPathVolumeSource{Path: "/var/run/docker.sock"},
-							},
-						},
-					},
+					Volumes:       volumes,
 				},
 			},
 			BackoffLimit: &instance.Spec.BackoffLimit,

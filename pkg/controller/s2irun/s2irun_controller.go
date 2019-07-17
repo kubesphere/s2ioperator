@@ -189,7 +189,7 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 		}
 	}
 	//job set up
-	job, err := r.GenerateNewJob(instance)
+	job, err := r.GenerateNewJob(instance, builder)
 	if err != nil {
 		log.Error(err, "Failed to initialize a job")
 		return reconcile.Result{}, err

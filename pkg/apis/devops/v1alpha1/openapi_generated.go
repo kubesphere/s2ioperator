@@ -868,6 +868,20 @@ func schema_pkg_apis_devops_v1alpha1_S2iBuilderSpec(ref common.ReferenceCallback
 							Ref:         ref("github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.UserDefineTemplate"),
 						},
 					},
+					"hostPath": {
+						SchemaProps: spec.SchemaProps{
+							Description: "A hostPath volume mounts a file or directory from the host node's filesystem into your container.",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"mountPath": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Directory location in Container.",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 				},
 			},
 		},
