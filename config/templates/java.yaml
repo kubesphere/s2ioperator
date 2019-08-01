@@ -192,3 +192,4 @@ spec:
 
                  This image also provides an easy integration with an Jolokia agent."
   iconPath: assets/java.png
+  buildVolumes: ["devops_cache:/tmp/artifacts"]

@@ -1078,6 +1078,20 @@ func schema_pkg_apis_devops_v1alpha1_S2iBuilderTemplateSpec(ref common.Reference
 							Format:      "",
 						},
 					},
+					"buildVolumes": {
+						SchemaProps: spec.SchemaProps{
+							Description: "BuildVolumes specifies a list of volumes to mount to container running the build.",
+							Type:        []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Type:   []string{"string"},
+										Format: "",
+									},
+								},
+							},
+						},
+					},
 				},
 			},
 		},
