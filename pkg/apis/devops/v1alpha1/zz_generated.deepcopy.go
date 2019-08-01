@@ -456,6 +456,11 @@ func (in *S2iBuilderTemplateSpec) DeepCopyInto(out *S2iBuilderTemplateSpec) {
 			(*in)[i].DeepCopyInto(&(*out)[i])
 		}
 	}
+	if in.BuildVolumes != nil {
+		in, out := &in.BuildVolumes, &out.BuildVolumes
+		*out = make([]string, len(*in))
+		copy(*out, *in)
+	}
 	return
 }
 

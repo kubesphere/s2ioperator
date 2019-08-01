@@ -47,7 +47,7 @@ spec:
           - name: SECRET_NAME
             value: $(WEBHOOK_SECRET_NAME)
           - name: S2IIMAGENAME
-            value: magicsong/s2irun:v0.0.1
+            value: kubespheredev/s2irun:v0.0.2
         resources:
           limits:
             cpu: 100m
