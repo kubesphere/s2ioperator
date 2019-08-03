@@ -406,6 +406,15 @@ type S2iConfig struct {
 
 	// The RevisionId is a branch name or a SHA-1 hash of every important thing about the commit
 	RevisionId string `json:"revisionId,omitempty"`
+
+	// The name of taint.
+	TaintKey string `json:"taintKey,omitempty"`
+
+	// The key of Node Affinity.
+	NodeAffinityKey string `json:"nodeAffinityKey,omitempty"`
+
+	// The values of Node Affinity.
+	NodeAffinityValue []string `json:"nodeAffinityValue,omitempty"`
 }
 
 type UserDefineTemplate struct {

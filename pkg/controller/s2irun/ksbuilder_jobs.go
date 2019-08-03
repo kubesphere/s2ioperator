@@ -16,7 +16,10 @@ import (
 )
 
 const (
-	ConfigDataKey = "data"
+	ConfigDataKey     = "data"
+	TaintKey          = "kubesphere.io/ci"
+	NodeAffinityKey   = "kubesphere.io/worker"
+	NodeAffinityValue = "ci"
 )
 
 func (r *ReconcileS2iRun) NewConfigMap(instance *devopsv1alpha1.S2iRun, config devopsv1alpha1.S2iConfig, template *devopsv1alpha1.UserDefineTemplate) (*corev1.ConfigMap, error) {
@@ -249,6 +252,69 @@ func setJobLabelAnnotations(instance *devopsv1alpha1.S2iRun, config devopsv1alph
 	} else {
 		job.Annotations[devopsv1alpha1.DescriptionAnnotations] = description
 	}
+}
+func setJobLabelandToleration(job *batchv1.Job, config devopsv1alpha1.S2iConfig) {
+	var taintKey = TaintKey
+	var nodeAffinityKey = NodeAffinityKey
+	var nodeAffinityValues = []string{NodeAffinityValue}
+
+	if config.TaintKey != "" {
+		taintKey = config.TaintKey
+	}
+
+	if config.NodeAffinityKey != "" {
+		nodeAffinityKey = config.NodeAffinityKey
+	}
+
+	if config.NodeAffinityValue != nil {
+		nodeAffinityValues = config.NodeAffinityValue
+	}
+
+	tolerationNoSchedule := corev1.Toleration{
+		Key:      taintKey,
+		Operator: corev1.TolerationOpExists,
+		Effect:   corev1.TaintEffectNoSchedule,
+	}
+
+	tolerationPreferNoSchedule := corev1.Toleration{
+		Key:      taintKey,
+		Operator: corev1.TolerationOpExists,
+		Effect:   corev1.TaintEffectPreferNoSchedule,
+	}
+
+	tolerations := []corev1.Toleration{
+		tolerationNoSchedule,
+		tolerationPreferNoSchedule,
+	}
+
+	nodeSelectorRequirements := corev1.NodeSelectorRequirement{
+		Key:      nodeAffinityKey,
+		Operator: corev1.NodeSelectorOpIn,
+		Values:   nodeAffinityValues,
+	}
+
+	preferredSchedulingTerms := corev1.PreferredSchedulingTerm{
+		Weight: 1,
+		Preference: corev1.NodeSelectorTerm{
+			MatchExpressions: []corev1.NodeSelectorRequirement{
+				nodeSelectorRequirements,
+			},
+		},
+	}
+
+	preferredDuringSchedulingIgnoredDuringExecutions := []corev1.PreferredSchedulingTerm{
+		preferredSchedulingTerms,
+	}
+
+	affinity := &corev1.Affinity{
+		NodeAffinity: &corev1.NodeAffinity{
+			PreferredDuringSchedulingIgnoredDuringExecution: preferredDuringSchedulingIgnoredDuringExecutions,
+		},
+	}
+
+	job.Spec.Template.Spec.Affinity = affinity
+	job.Spec.Template.Spec.Tolerations = tolerations
+
 }
 func setConfigMapLabelAnnotations(instance *devopsv1alpha1.S2iRun, config devopsv1alpha1.S2iConfig, template *devopsv1alpha1.UserDefineTemplate, cm *corev1.ConfigMap) {
 	description := ""
