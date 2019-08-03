@@ -7,8 +7,11 @@ metadata:
 spec:
   containerInfo:
     - builderImage: kubespheredev/nodejs-8-centos7
+      buildVolumes: ["s2i_nodejs_cache:/opt/app-root/src/.npm"]
     - builderImage: kubespheredev/nodejs-6-centos7
+      buildVolumes: ["s2i_nodejs_cache:/opt/app-root/src/.npm"]
     - builderImage: kubespheredev/nodejs-4-centos7
+      buildVolumes: ["s2i_nodejs_cache:/opt/app-root/src/.npm"]
   environment:
     - key: NODE_ENV
       type: string
@@ -55,4 +58,3 @@ spec:
   version: 0.0.1
   description: "Node.js available as container is a base platform for building and running various Node.js applications and frameworks. Node.js is a platform built on Chrome's JavaScript runtime for easily building fast, scalable network applications. Node.js uses an event-driven, non-blocking I/O model that makes it lightweight and efficient, perfect for data-intensive real-time applications that run across distributed devices."
   iconPath: assets/nodejs.png
-  buildVolumes: ["devops_cache:/opt/app-root/src/.npm"]

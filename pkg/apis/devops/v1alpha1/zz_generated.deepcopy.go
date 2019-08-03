@@ -97,6 +97,11 @@ func (in *ContainerInfo) DeepCopyInto(out *ContainerInfo) {
 		*out = make([]VolumeSpec, len(*in))
 		copy(*out, *in)
 	}
+	if in.BuildVolumes != nil {
+		in, out := &in.BuildVolumes, &out.BuildVolumes
+		*out = make([]string, len(*in))
+		copy(*out, *in)
+	}
 	return
 }
 
@@ -455,11 +460,6 @@ func (in *S2iBuilderTemplateSpec) DeepCopyInto(out *S2iBuilderTemplateSpec) {
 		for i := range *in {
 			(*in)[i].DeepCopyInto(&(*out)[i])
 		}
-	}
-	if in.BuildVolumes != nil {
-		in, out := &in.BuildVolumes, &out.BuildVolumes
-		*out = make([]string, len(*in))
-		copy(*out, *in)
 	}
 	return
 }

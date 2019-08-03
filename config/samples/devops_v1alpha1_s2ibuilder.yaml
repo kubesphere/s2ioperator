@@ -15,4 +15,4 @@ spec:
     tag: latest
     builderPullPolicy: if-not-present
     revisionId: "staging"
-    buildVolumes: ["devops_cache:/opt/app-root/lib"]
+    buildVolumes: ["s2i_python35_cache:/opt/app-root/lib"]
