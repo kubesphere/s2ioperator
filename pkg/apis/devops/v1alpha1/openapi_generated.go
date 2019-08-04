@@ -1556,7 +1556,7 @@ func schema_pkg_apis_devops_v1alpha1_S2iConfig(ref common.ReferenceCallback) com
 							Format:      "",
 						},
 					},
-					"nodeAffinityValue": {
+					"nodeAffinityValues": {
 						SchemaProps: spec.SchemaProps{
 							Description: "The values of Node Affinity.",
 							Type:        []string{"array"},

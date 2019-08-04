@@ -21,7 +21,12 @@ import (
 
 var _ = Describe("", func() {
 
-	const timeout = time.Second * 25
+	const (
+		timeout           = time.Second * 25
+		TaintKey          = "kubesphere.io/ci"
+		NodeAffinityKey   = "node-role.kubesphere.io/worker"
+		NodeAffinityValue = "ci"
+	)
 	It("Should work well when using exactly the runtimeimage example yamls", func() {
 		//create a s2ibuilder
 		s2ibuilder := &devopsv1alpha1.S2iBuilder{}
@@ -63,6 +68,9 @@ var _ = Describe("", func() {
 		job := &batchv1.Job{}
 		Eventually(func() error { return testClient.Get(context.TODO(), depKey, job) }, timeout, time.Second).
 			Should(Succeed())
+		
+		res := checkAnffinitTaint(job, NodeAffinityKey, NodeAffinityValue, TaintKey)
+		Expect(res).To(Equal(true))
 
 		//for our example, the status must be successful
 		Eventually(func() error {
@@ -133,6 +141,9 @@ var _ = Describe("", func() {
 		job := &batchv1.Job{}
 		Eventually(func() error { return testClient.Get(context.TODO(), depKey, job) }, timeout, time.Second).
 			Should(Succeed())
+
+		res := checkAnffinitTaint(job, s2ibuilder.Spec.Config.NodeAffinityKey, s2ibuilder.Spec.Config.NodeAffinityValues[0], s2ibuilder.Spec.Config.TaintKey)
+		Expect(res).To(Equal(true))
 
 		//for our example, the status must be successful
 		Eventually(func() error {
@@ -643,3 +654,25 @@ var _ = Describe("", func() {
 		}, timeout, time.Second).Should(BeTrue())
 	})
 })
+
+func checkAnffinitTaint(job *batchv1.Job, nodeAffinityKey string, nodeAffinityValue string, taintKey string) (bool) {
+	if job.Spec.Template.Spec.Affinity.NodeAffinity.PreferredDuringSchedulingIgnoredDuringExecution[0].Preference.MatchExpressions[0].Key != nodeAffinityKey {
+		fmt.Println("Check nodeAffinityKey error.")
+		fmt.Println(job.Spec.Template.Spec.Affinity.NodeAffinity.PreferredDuringSchedulingIgnoredDuringExecution[0].Preference.MatchExpressions[0].Key, nodeAffinityKey)
+		return false
+
+	}
+	if job.Spec.Template.Spec.Affinity.NodeAffinity.PreferredDuringSchedulingIgnoredDuringExecution[0].Preference.MatchExpressions[0].Values[0] != nodeAffinityValue {
+		fmt.Println("Check nodeAffinityValue error.")
+		fmt.Println(job.Spec.Template.Spec.Affinity.NodeAffinity.PreferredDuringSchedulingIgnoredDuringExecution[0].Preference.MatchExpressions[0].Values[0], nodeAffinityValue)
+		return false
+	}
+
+	for _, toleration := range job.Spec.Template.Spec.Tolerations {
+		if toleration.Key == taintKey {
+			return true
+		}
+	}
+	fmt.Println("Check toleration error.")
+	return false
+}

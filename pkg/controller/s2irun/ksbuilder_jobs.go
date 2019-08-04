@@ -18,7 +18,7 @@ import (
 const (
 	ConfigDataKey     = "data"
 	TaintKey          = "kubesphere.io/ci"
-	NodeAffinityKey   = "kubesphere.io/worker"
+	NodeAffinityKey   = "node-role.kubesphere.io/worker"
 	NodeAffinityValue = "ci"
 )
 
@@ -266,8 +266,8 @@ func setJobLabelandToleration(job *batchv1.Job, config devopsv1alpha1.S2iConfig)
 		nodeAffinityKey = config.NodeAffinityKey
 	}
 
-	if config.NodeAffinityValue != nil {
-		nodeAffinityValues = config.NodeAffinityValue
+	if config.NodeAffinityValues != nil {
+		nodeAffinityValues = config.NodeAffinityValues
 	}
 
 	tolerationNoSchedule := corev1.Toleration{

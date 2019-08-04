@@ -414,7 +414,7 @@ type S2iConfig struct {
 	NodeAffinityKey string `json:"nodeAffinityKey,omitempty"`
 
 	// The values of Node Affinity.
-	NodeAffinityValue []string `json:"nodeAffinityValue,omitempty"`
+	NodeAffinityValues []string `json:"nodeAffinityValues,omitempty"`
 }
 
 type UserDefineTemplate struct {
