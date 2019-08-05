@@ -235,6 +235,14 @@ spec:
                   description: LayeredBuild describes if this is build which layered
                     scripts and sources on top of BuilderImage.
                   type: boolean
+                nodeAffinityKey:
+                  description: The key of Node Affinity.
+                  type: string
+                nodeAffinityValues:
+                  description: The values of Node Affinity.
+                  items:
+                    type: string
+                  type: array
                 outputImageName:
                   description: OutputImageName is a result image name without tag,
                     default is latest. tag will append to ImageName in the end
@@ -365,6 +373,9 @@ spec:
                   type: string
                 tag:
                   description: Tag is a result image tag name.
+                  type: string
+                taintKey:
+                  description: The name of taint.
                   type: string
                 usage:
                   description: Usage allows for properly shortcircuiting s2i logic

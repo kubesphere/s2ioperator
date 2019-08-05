@@ -1542,6 +1542,34 @@ func schema_pkg_apis_devops_v1alpha1_S2iConfig(ref common.ReferenceCallback) com
 							Format:      "",
 						},
 					},
+					"taintKey": {
+						SchemaProps: spec.SchemaProps{
+							Description: "The name of taint.",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"nodeAffinityKey": {
+						SchemaProps: spec.SchemaProps{
+							Description: "The key of Node Affinity.",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"nodeAffinityValues": {
+						SchemaProps: spec.SchemaProps{
+							Description: "The values of Node Affinity.",
+							Type:        []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Type:   []string{"string"},
+										Format: "",
+									},
+								},
+							},
+						},
+					},
 				},
 				Required: []string{"imageName", "sourceUrl"},
 			},

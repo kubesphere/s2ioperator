@@ -575,6 +575,11 @@ func (in *S2iConfig) DeepCopyInto(out *S2iConfig) {
 		*out = new(v1.LocalObjectReference)
 		**out = **in
 	}
+	if in.NodeAffinityValues != nil {
+		in, out := &in.NodeAffinityValues, &out.NodeAffinityValues
+		*out = make([]string, len(*in))
+		copy(*out, *in)
+	}
 	return
 }
 

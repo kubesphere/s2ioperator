@@ -15,4 +15,7 @@ spec:
     tag: latest
     builderPullPolicy: if-not-present
     revisionId: "staging"
+    nodeAffinityKey: "affinityKey1"
+    nodeAffinityValues: ["affinityValue1"]
+    taintKey: "taint1"
     buildVolumes: ["s2i_python35_cache:/opt/app-root/lib"]

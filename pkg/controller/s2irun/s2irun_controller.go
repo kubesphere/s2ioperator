@@ -195,6 +195,7 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 		return reconcile.Result{}, err
 	}
 	setJobLabelAnnotations(instance, *builder.Spec.Config, builder.Spec.FromTemplate, job)
+	setJobLabelandToleration(job, *builder.Spec.Config)
 	found := &batchv1.Job{}
 	err = r.Get(context.TODO(), types.NamespacedName{Name: job.Name, Namespace: job.Namespace}, found)
 	if err != nil && k8serror.IsNotFound(err) {
