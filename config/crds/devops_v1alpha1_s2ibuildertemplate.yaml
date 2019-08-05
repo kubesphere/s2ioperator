@@ -40,12 +40,6 @@ spec:
           type: object
         spec:
           properties:
-            buildVolumes:
-              description: BuildVolumes specifies a list of volumes to mount to container
-                running the build.
-              items:
-                type: string
-              type: array
             codeFramework:
               description: CodeFramework means which language this template is designed
                 for and which framework is using if has framework. Like Java, NodeJS
@@ -55,6 +49,12 @@ spec:
               description: Images are the images this template will use.
               items:
                 properties:
+                  buildVolumes:
+                    description: BuildVolumes specifies a list of volumes to mount
+                      to container running the build.
+                    items:
+                      type: string
+                    type: array
                   builderImage:
                     description: BaseImage are the images this template will use.
                     type: string

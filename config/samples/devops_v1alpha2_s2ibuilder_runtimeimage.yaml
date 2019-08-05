@@ -17,4 +17,4 @@ spec:
     tag: latest
     revisionId: master
     builderPullPolicy: if-not-present
-    buildVolumes: ["devops_cache:/opt/app-root/lib"]
+    buildVolumes: ["s2i_java_cache:/opt/app-root/lib"]
