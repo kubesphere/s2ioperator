@@ -67,9 +67,6 @@ type S2iBuilderTemplateSpec struct {
 	Description string `json:"description,omitempty"`
 	// IconPath is used for frontend display
 	IconPath string `json:"iconPath,omitempty"`
-	// BuildVolumes specifies a list of volumes to mount to container running the
-	// build.
-	BuildVolumes []string `json:"buildVolumes,omitempty"`
 }
 
 type ContainerInfo struct {
@@ -77,6 +74,9 @@ type ContainerInfo struct {
 	BuilderImage     string       `json:"builderImage,omitempty"`
 	RuntimeImage     string       `json:"runtimeImage,omitempty"`
 	RuntimeArtifacts []VolumeSpec `json:"runtimeArtifacts,omitempty"`
+	// BuildVolumes specifies a list of volumes to mount to container running the
+	// build.
+	BuildVolumes []string `json:"buildVolumes,omitempty"`
 }
 
 // S2iBuilderTemplateStatus defines the observed state of S2iBuilderTemplate

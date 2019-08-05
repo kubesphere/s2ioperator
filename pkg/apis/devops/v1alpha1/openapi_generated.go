@@ -468,6 +468,20 @@ func schema_pkg_apis_devops_v1alpha1_ContainerInfo(ref common.ReferenceCallback)
 							},
 						},
 					},
+					"buildVolumes": {
+						SchemaProps: spec.SchemaProps{
+							Description: "BuildVolumes specifies a list of volumes to mount to container running the build.",
+							Type:        []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Type:   []string{"string"},
+										Format: "",
+									},
+								},
+							},
+						},
+					},
 				},
 			},
 		},
@@ -1076,20 +1090,6 @@ func schema_pkg_apis_devops_v1alpha1_S2iBuilderTemplateSpec(ref common.Reference
 							Description: "IconPath is used for frontend display",
 							Type:        []string{"string"},
 							Format:      "",
-						},
-					},
-					"buildVolumes": {
-						SchemaProps: spec.SchemaProps{
-							Description: "BuildVolumes specifies a list of volumes to mount to container running the build.",
-							Type:        []string{"array"},
-							Items: &spec.SchemaOrArray{
-								Schema: &spec.Schema{
-									SchemaProps: spec.SchemaProps{
-										Type:   []string{"string"},
-										Format: "",
-									},
-								},
-							},
 						},
 					},
 				},

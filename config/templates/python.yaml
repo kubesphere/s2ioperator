@@ -7,9 +7,13 @@ metadata:
 spec:
   containerInfo:
     - builderImage: kubespheredev/python-36-centos7
+      buildVolumes: ["s2i_python36_cache:/opt/app-root/lib"]
     - builderImage: kubespheredev/python-35-centos7
+      buildVolumes: ["s2i_python35_cache:/opt/app-root/lib"]
     - builderImage: kubespheredev/python-34-centos7
+      buildVolumes: ["s2i_python34_cache:/opt/app-root/lib"]
     - builderImage: kubespheredev/python-27-centos7
+      buildVolumes: ["s2i_python27_cache:/opt/app-root/lib"]
   environment:
     - key: APP_SCRIPT
       type: string
@@ -79,4 +83,3 @@ spec:
 
                 This container image includes an npm utility, so users can use it to install JavaScript modules for their web applications. There is no guarantee for any specific npm or nodejs version, that is included in the image; those versions can be changed anytime and the nodejs itself is included just to make the npm work."
   iconPath: assets/python.png
-  buildVolumes: ["devops_cache:/opt/app-root/lib"]

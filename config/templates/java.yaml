@@ -10,10 +10,12 @@ spec:
       runtimeImage: zhuxiaoyang/s2i-java11-runtime:latest
       runtimeArtifacts:
         - source: "/deployments"
+      buildVolumes: ["s2i_java_cache:/tmp/artifacts"]
     - builderImage: kubespheredev/java-8-centos7:advanced-2.0.0
       runtimeImage: zhuxiaoyang/s2i-java8-runtime:latest
       runtimeArtifacts:
         - source: "/deployments"
+      buildVolumes: ["s2i_java_cache:/tmp/artifacts"]
   environment:
     - key: MAVEN_ARGS
       type: string
@@ -192,4 +194,3 @@ spec:
 
                  This image also provides an easy integration with an Jolokia agent."
   iconPath: assets/java.png
-  buildVolumes: ["devops_cache:/tmp/artifacts"]

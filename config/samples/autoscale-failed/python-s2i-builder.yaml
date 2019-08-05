@@ -22,5 +22,5 @@ spec:
       password: UserShouldEnterUserPassword
     builderImage: kubespheredev/python-35-centos7
     revisionId: "b3f973b86e78d936df2637eb8058006e9bd5822c"
-    buildVolumes: ["devops_cache:/opt/app-root/lib"]
+    buildVolumes: ["s2i_python35_cache:/opt/app-root/lib"]
 
