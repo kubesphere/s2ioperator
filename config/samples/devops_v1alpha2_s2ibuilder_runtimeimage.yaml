@@ -11,7 +11,7 @@ spec:
     builderImage: kubesphere/java-8-centos7:advanced-2.0.0
     runtimeArtifacts:
       - source: /deployments
-    runtimeImage: zhuxiaoyang/s2i-java8-runtime:latest
+    runtimeImage: kubespheredev/s2i-java8-runtime:latest
     imageName: kubesphere/sample-java
     sourceUrl: https://github.com/soulseen/devops-java-sample.git
     tag: latest
