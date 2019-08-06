@@ -1529,6 +1529,13 @@ func schema_pkg_apis_devops_v1alpha1_S2iConfig(ref common.ReferenceCallback) com
 							Format:      "",
 						},
 					},
+					"isBinaryURL": {
+						SchemaProps: spec.SchemaProps{
+							Description: "IsBinaryURL explain the type of SourceURL. If it is IsBinaryURL, it will download the file directly without using git.",
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
 					"gitSecretRef": {
 						SchemaProps: spec.SchemaProps{
 							Description: "GitSecretRef is the BasicAuth Secret of Git Clone",
@@ -1708,6 +1715,13 @@ func schema_pkg_apis_devops_v1alpha1_S2iRunSpec(ref common.ReferenceCallback) co
 					"newRevisionId": {
 						SchemaProps: spec.SchemaProps{
 							Description: "NewRevisionId override the default NewRevisionId in its s2ibuilder.",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"newSourceURL": {
+						SchemaProps: spec.SchemaProps{
+							Description: "NewSourceURL is used to download new binary artifacts",
 							Type:        []string{"string"},
 							Format:      "",
 						},

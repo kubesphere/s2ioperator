@@ -53,12 +53,12 @@ func (h *S2iRunCreateUpdateHandler) validatingS2iRunFn(ctx context.Context, obj 
 
 	builder := &devopsv1alpha1.S2iBuilder{}
 
-	err := h.Client.Get(context.TODO(), types2.NamespacedName{Namespace:origin.Namespace,Name:obj.Spec.BuilderName},builder)
-	if err != nil && !k8serror.IsNotFound(err){
+	err := h.Client.Get(context.TODO(), types2.NamespacedName{Namespace: origin.Namespace, Name: obj.Spec.BuilderName}, builder)
+	if err != nil && !k8serror.IsNotFound(err) {
 		return false, "validate failed", errors.NewFieldInvalidValueWithReason("no", "could not call k8s api")
 	}
-	if !k8serror.IsNotFound(err){
-		if obj.Spec.NewSourceURL != "" && !builder.Spec.Config.IsBinaryURL{
+	if !k8serror.IsNotFound(err) {
+		if obj.Spec.NewSourceURL != "" && !builder.Spec.Config.IsBinaryURL {
 			return false, "validate failed", errors.NewFieldInvalidValueWithReason("newSourceURL", "only b2i could set newSourceURL")
 		}
 	}

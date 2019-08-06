@@ -49,6 +49,10 @@ spec:
           sh  "sed -i.bak 's#UserShouldEnterUserName#$DOCKER_USERNAME#' ./config/samples/autoscale/*.yaml"
           sh  "sed -i.bak 's#UserShouldEnterUserPassword#$DOCKER_PASSWORD#' ./config/samples/autoscale/*.yaml"
        }
+       withCredentials([usernamePassword(passwordVariable : 'DOCKER_PASSWORD' ,usernameVariable : 'DOCKER_USERNAME' ,credentialsId : "sed-dockerhub-id" ,)]) {
+          sh  "sed -i.bak 's#UserShouldEnterUserName#$DOCKER_USERNAME#' ./config/samples/b2i/*.yaml"
+          sh  "sed -i.bak 's#UserShouldEnterUserPassword#$DOCKER_PASSWORD#' ./config/samples/b2i/*.yaml"
+       }
        withCredentials([string(credentialsId: 'dockerconfig',variable: 'DOCKERCONFIG')]){
           sh  "sed -i.bak 's#UserShouldEnterBase64DockerConfig#$DOCKERCONFIG#' ./config/samples/secret/*.yaml"
        }

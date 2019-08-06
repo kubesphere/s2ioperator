@@ -1,0 +1,25 @@
+apiVersion: devops.kubesphere.io/v1alpha1
+kind: S2iBuilder
+metadata:
+  labels:
+    controller-tools.k8s.io: "1.0"
+  name: s2ibuilder-b2i-tomcat
+  namespace: default
+  annotations:
+    devops.kubesphere.io/autoscale: '[{"Kind": "Deployment","Name":"tomcat-s2i","initReplicas":3},{"Kind":"StatefulSet","Name":"tomcat-s2i"}]'
+spec:
+  # Add fields here
+  config:
+    displayName: "For Test"
+    sourceUrl: "https://github.com/kubesphere/devops-java-sample/releases/download/v0.0.1/spring-mvc-java11.war"
+    imageName: runzexia/hello-java
+    tag: latest
+    builderPullPolicy: if-not-present
+    export: true
+    isBinaryURL: true
+    pushAuthentication:
+      username: UserShouldEnterUserName
+      password: UserShouldEnterUserPassword
+    builderImage: kubespheredev/tomcat85-java11-centos7
+    buildVolumes: ["s2i_java_cache:/tmp/artifacts"]
+

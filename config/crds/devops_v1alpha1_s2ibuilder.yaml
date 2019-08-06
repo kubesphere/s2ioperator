@@ -217,6 +217,11 @@ spec:
                         type: string
                     type: object
                   type: array
+                isBinaryURL:
+                  description: IsBinaryURL explain the type of SourceURL. If it is
+                    IsBinaryURL, it will download the file directly without using
+                    git.
+                  type: boolean
                 keepSymlinks:
                   description: KeepSymlinks indicates to copy symlinks as symlinks.
                     Default behavior is to follow symlinks and copy files by content.

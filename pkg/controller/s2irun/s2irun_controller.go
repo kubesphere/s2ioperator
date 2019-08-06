@@ -300,7 +300,7 @@ func GetNewRevisionId(instance *devopsv1alpha1.S2iRun, config devopsv1alpha1.S2i
 	}
 }
 
-func GetNewSourceURL(instance *devopsv1alpha1.S2iRun, config devopsv1alpha1.S2iConfig) string   {
+func GetNewSourceURL(instance *devopsv1alpha1.S2iRun, config devopsv1alpha1.S2iConfig) string {
 	if instance.Spec.NewSourceURL != "" {
 		return instance.Spec.NewSourceURL
 	} else {
