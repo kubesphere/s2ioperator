@@ -5,16 +5,16 @@ metadata:
     controller-tools.k8s.io: "1.0"
     builder-type.kubesphere.io/s2i: "s2i"
     builder-type.kubesphere.io/b2i: "b2i"
-  name: java
+  name: tomcat
 spec:
   containerInfo:
-    - builderImage: kubespheredev/java-11-centos7:latest
-      runtimeImage: kubespheredev/java-11-runtime:latest
+    - builderImage: kubespheredev/tomcat85-java11-centos7:latest
+      runtimeImage: kubespheredev/tomcat85-java11-runtime:latest
       runtimeArtifacts:
         - source: "/deployments"
       buildVolumes: ["s2i_java_cache:/tmp/artifacts"]
-    - builderImage: kubespheredev/java-8-centos7:latest
-      runtimeImage: kubespheredev/java-8-runtime:latest
+    - builderImage: kubespheredev/tomcat85-java8-centos7:latest
+      runtimeImage: kubespheredev/tomcat85-java8-runtime:latest
       runtimeArtifacts:
         - source: "/deployments"
       buildVolumes: ["s2i_java_cache:/tmp/artifacts"]
@@ -134,10 +134,8 @@ spec:
       description: "The list of hosts that should be reached directly, bypassing the proxy, that translates into the http.nonProxyHosts system property."
       required: false
       defaultValue: ""
-  codeFramework: java
-  defaultBaseImage: kubespheredev/java-8-centos7:advanced-2.0.0
+  codeFramework: tomcat
+  defaultBaseImage: kubespheredev/tomcat85-java8-centos7:latest
   version: 0.0.1
-  description: "This is a S2I builder template for Java builds whose result can be run directly without any further application server.It's suited ideally for microservices with a flat classpath (including \"far jars\").
-
-                 This image also provides an easy integration with an Jolokia agent."
-  iconPath: assets/java.png
+  description: "This is a S2I builder template for Java builds whose result can be run directly with Tomcat application server."
+  iconPath: assets/tomcat.png

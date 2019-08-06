@@ -51,7 +51,19 @@ type S2iRunCreateUpdateHandler struct {
 func (h *S2iRunCreateUpdateHandler) validatingS2iRunFn(ctx context.Context, obj *devopsv1alpha1.S2iRun) (bool, string, error) {
 	origin := &devopsv1alpha1.S2iRun{}
 
-	err := h.Client.Get(context.TODO(), types2.NamespacedName{Namespace: obj.Namespace, Name: obj.Name}, origin)
+	builder := &devopsv1alpha1.S2iBuilder{}
+
+	err := h.Client.Get(context.TODO(), types2.NamespacedName{Namespace: origin.Namespace, Name: obj.Spec.BuilderName}, builder)
+	if err != nil && !k8serror.IsNotFound(err) {
+		return false, "validate failed", errors.NewFieldInvalidValueWithReason("no", "could not call k8s api")
+	}
+	if !k8serror.IsNotFound(err) {
+		if obj.Spec.NewSourceURL != "" && !builder.Spec.Config.IsBinaryURL {
+			return false, "validate failed", errors.NewFieldInvalidValueWithReason("newSourceURL", "only b2i could set newSourceURL")
+		}
+	}
+
+	err = h.Client.Get(context.TODO(), types2.NamespacedName{Namespace: obj.Namespace, Name: obj.Name}, origin)
 	if !k8serror.IsNotFound(err) && origin.Status.RunState != "" && !reflect.DeepEqual(origin.Spec, obj.Spec) {
 		return false, "validate failed", errors.NewFieldInvalidValueWithReason("spec", "should not change s2i run spec when job started")
 	}

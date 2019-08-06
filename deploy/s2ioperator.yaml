@@ -217,6 +217,11 @@ spec:
                         type: string
                     type: object
                   type: array
+                isBinaryURL:
+                  description: IsBinaryURL explain the type of SourceURL. If it is
+                    IsBinaryURL, it will download the file directly without using
+                    git.
+                  type: boolean
                 keepSymlinks:
                   description: KeepSymlinks indicates to copy symlinks as symlinks.
                     Default behavior is to follow symlinks and copy files by content.
@@ -238,7 +243,7 @@ spec:
                 nodeAffinityKey:
                   description: The key of Node Affinity.
                   type: string
-                nodeAffinityValue:
+                nodeAffinityValues:
                   description: The values of Node Affinity.
                   items:
                     type: string
@@ -647,6 +652,9 @@ spec:
             newRevisionId:
               description: NewRevisionId override the default NewRevisionId in its
                 s2ibuilder.
+              type: string
+            newSourceURL:
+              description: NewSourceURL is used to download new binary artifacts
               type: string
             newTag:
               description: NewTag override the default tag in its s2ibuilder, image

@@ -1,0 +1,49 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: tomcat-s2i
+  namespace: default
+  labels:
+    app: tomcat-s2i
+    s2ibuilder-b2i-tomcat: s2ibuilder-b2i-tomcat
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: tomcat-s2i
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: tomcat-s2i
+    spec:
+      containers:
+        - name: tomcat
+          image: 'runzexia/hello-java:latest'
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 100m
+              memory: 200Mi
+            requests:
+              cpu: 10m
+              memory: 10Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      serviceAccountName: default
+      serviceAccount: default
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600

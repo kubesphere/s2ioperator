@@ -60,6 +60,9 @@ spec:
               description: NewRevisionId override the default NewRevisionId in its
                 s2ibuilder.
               type: string
+            newSourceURL:
+              description: NewSourceURL is used to download new binary artifacts
+              type: string
             newTag:
               description: NewTag override the default tag in its s2ibuilder, image
                 name cannot be changed.
