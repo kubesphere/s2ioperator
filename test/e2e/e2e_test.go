@@ -90,7 +90,7 @@ var _ = Describe("", func() {
 				}
 			}
 			return fmt.Errorf("Failed")
-		}, time.Minute*5, time.Second*10).Should(Succeed())
+		}, time.Minute*10, time.Second*10).Should(Succeed())
 		Eventually(func() error { return testClient.Delete(context.TODO(), s2ibuilder) }, timeout, time.Second).Should(Succeed())
 		Eventually(func() bool {
 			return errors.IsNotFound(testClient.Get(context.TODO(), types.NamespacedName{Name: s2irun.Name, Namespace: s2irun.Namespace}, s2irun))

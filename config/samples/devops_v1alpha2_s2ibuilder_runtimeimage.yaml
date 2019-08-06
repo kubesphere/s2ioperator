@@ -8,12 +8,12 @@ metadata:
 spec:
   config:
     displayName: "For Test"
-    builderImage: kubesphere/java-8-centos7:advanced-2.0.0
+    builderImage: kubespheredev/java-8-centos7:latest
     runtimeArtifacts:
       - source: /deployments
     runtimeImage: kubespheredev/s2i-java8-runtime:latest
     imageName: kubesphere/sample-java
-    sourceUrl: https://github.com/soulseen/devops-java-sample.git
+    sourceUrl: https://github.com/kubesphere/devops-java-sample.git
     tag: latest
     revisionId: master
     builderPullPolicy: if-not-present
