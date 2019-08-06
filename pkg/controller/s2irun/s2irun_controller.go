@@ -300,6 +300,14 @@ func GetNewRevisionId(instance *devopsv1alpha1.S2iRun, config devopsv1alpha1.S2i
 	}
 }
 
+func GetNewSourceURL(instance *devopsv1alpha1.S2iRun, config devopsv1alpha1.S2iConfig) string   {
+	if instance.Spec.NewSourceURL != "" {
+		return instance.Spec.NewSourceURL
+	} else {
+		return config.SourceURL
+	}
+}
+
 // ScaleWorkLoads will auto scale workloads define in s2ibuilder's annotations
 func (r *ReconcileS2iRun) ScaleWorkLoads(instance *devopsv1alpha1.S2iRun, builder *devopsv1alpha1.S2iBuilder) error {
 	if _, ok := instance.Annotations[devopsv1alpha1.S2iRunDoNotAutoScaleAnnotations]; !ok {

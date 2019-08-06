@@ -46,6 +46,7 @@ func (r *ReconcileS2iRun) NewConfigMap(instance *devopsv1alpha1.S2iRun, config d
 
 	config.Tag = GetNewImageName(instance, config)
 	config.RevisionId = GetNewRevisionId(instance, config)
+	config.SourceURL = GetNewSourceURL(instance, config)
 
 	err := r.setDockerSecret(instance, &config)
 	if err != nil {

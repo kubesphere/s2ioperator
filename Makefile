@@ -1,6 +1,6 @@
 
 # Image URL to use all building/pushing image targets
-IMG ?= kubespheredev/s2ioperator:advanced-2.1x.0
+IMG ?= kubespheredev/s2ioperator:advanced-2.1.0
 
 all: test manager
 

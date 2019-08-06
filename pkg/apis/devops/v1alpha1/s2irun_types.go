@@ -41,6 +41,8 @@ type S2iRunSpec struct {
 	NewTag string `json:"newTag,omitempty"`
 	//NewRevisionId override the default NewRevisionId in its s2ibuilder.
 	NewRevisionId string `json:"newRevisionId,omitempty"`
+	//NewSourceURL is used to download new binary artifacts
+	NewSourceURL string `json:"newSourceURL,omitempty"`
 }
 
 // S2iRunStatus defines the observed state of S2iRun
