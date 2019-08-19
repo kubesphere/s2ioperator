@@ -91,6 +91,7 @@ var _ = Describe("", func() {
 			}
 			return fmt.Errorf("Failed")
 		}, time.Minute*10, time.Second*10).Should(Succeed())
+
 		Eventually(func() error { return testClient.Delete(context.TODO(), s2ibuilder) }, timeout, time.Second).Should(Succeed())
 		Eventually(func() bool {
 			return errors.IsNotFound(testClient.Get(context.TODO(), types.NamespacedName{Name: s2irun.Name, Namespace: s2irun.Namespace}, s2irun))
@@ -164,6 +165,19 @@ var _ = Describe("", func() {
 			}
 			return fmt.Errorf("Failed")
 		}, time.Minute*5, time.Second*10).Should(Succeed())
+
+		Eventually(func() bool {
+			res := &devopsv1alpha1.S2iRun{}
+			err = testClient.Get(context.TODO(), types.NamespacedName{Name: s2irun.Name, Namespace: s2irun.Namespace}, res)
+			if err != nil {
+				return false
+			}
+			if strings.Contains(res.Status.S2iBuildResult.ImageName,s2ibuilder.Spec.Config.ImageName) {
+				return true
+			}
+			return false
+		}, timeout, time.Second).Should(BeTrue())
+
 		Eventually(func() error { return testClient.Delete(context.TODO(), s2ibuilder) }, timeout, time.Second).Should(Succeed())
 		Eventually(func() bool {
 			return errors.IsNotFound(testClient.Get(context.TODO(), types.NamespacedName{Name: s2irun.Name, Namespace: s2irun.Namespace}, s2irun))

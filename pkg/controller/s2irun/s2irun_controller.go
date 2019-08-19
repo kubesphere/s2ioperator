@@ -20,6 +20,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	v12 "k8s.io/api/rbac/v1"
 	"reflect"
 	"time"
 
@@ -46,7 +47,12 @@ import (
 var log = logf.Log.WithName("s2irun-controller")
 
 const (
-	S2iRunBuilderLabel = "labels.devops.kubesphere.io/builder-name"
+	S2iRunBuilderLabel        = "labels.devops.kubesphere.io/builder-name"
+	AnnotationBuildResultKey  = "s2iBuildResult"
+	AnnotationBuildSourceKey  = "s2iBuildSource"
+	RegularServiceAccount     = "s2irun"
+	RegularClusterRoleName    = "s2i-regular-role"
+	RegularClusterRoleBinding = "s2i-regular-rolebinding"
 )
 
 /**
@@ -118,6 +124,9 @@ type ReconcileS2iRun struct {
 // +kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;list;watch;create;update;patch
 // +kubebuilder:rbac:groups=extensions,resources=deployments,verbs=get;list;watch;create;update;patch
 // +kubebuilder:rbac:groups=core,resources=secrets,verbs=get
+// +kubebuilder:rbac:groups=core,resources=serviceaccounts,verbs=get;list;watch;create
+// +kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=clusterrolebindings,verbs=get;list;watch;create
+// +kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=clusterroles,verbs=get;list;watch;create
 func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result, error) {
 	// Fetch the S2iRun instance
 	log.Info("Reconciler of s2irun called", "Name", request.Name)
@@ -188,6 +197,62 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 			}
 		}
 	}
+
+	//set Cluster Role
+	cr := &v12.ClusterRole{}
+	err = r.Get(context.TODO(), types.NamespacedName{Name: RegularClusterRoleName}, cr)
+	if err != nil && k8serror.IsNotFound(err) {
+		cr := r.NewRegularClusterRole()
+		log.Info("Creating ClusterRole", "name", cr.Name)
+		err = r.Create(context.TODO(), cr)
+		if err != nil {
+			if k8serror.IsAlreadyExists(err) {
+				log.Info("Skip creating 'Already-Exists' ClusterRole", "ClusterRole-Name", RegularClusterRoleName)
+				return reconcile.Result{RequeueAfter: time.Second * 5}, nil
+			}
+			log.Error(err, "Create ClusterRole failed", "name", cr.Name)
+			return reconcile.Result{}, err
+		}
+		log.Info("Creating ClusterRole", "name", cr.Name, "success")
+	}
+
+	//set service account
+	sa := &corev1.ServiceAccount{}
+	err = r.Get(context.TODO(), types.NamespacedName{Namespace: instance.Namespace, Name: RegularServiceAccount}, sa)
+	if err != nil && k8serror.IsNotFound(err) {
+		sa := r.NewServiceAccount(RegularServiceAccount, instance.Namespace)
+		log.Info("Creating ServiceAccount", "Namespace", sa.Namespace, "name", sa.Name)
+		err = r.Create(context.TODO(), sa)
+		if err != nil {
+			if k8serror.IsAlreadyExists(err) {
+				log.Info("Skip creating 'Already-Exists' sa", "ServiceAccount-Name", RegularServiceAccount)
+				return reconcile.Result{RequeueAfter: time.Second * 5}, nil
+			}
+			log.Error(err, "Create ServiceAccount failed", "Namespace", sa.Namespace, "name", sa.Name)
+			return reconcile.Result{}, err
+		}
+		log.Info("Creating ServiceAccount", "Namespace", sa.Namespace, "name", sa.Name, "success")
+	}
+
+	//set ClusterRoleBinding
+	crb := &v12.ClusterRoleBinding{}
+	clusterRoleBindingName := RegularClusterRoleBinding + "-" + sa.Namespace
+	err = r.Get(context.TODO(), types.NamespacedName{Name: clusterRoleBindingName}, crb)
+	if err != nil && k8serror.IsNotFound(err) {
+		crb := r.NewClusterRoleBinding(clusterRoleBindingName, RegularClusterRoleName, sa.Name, sa.Namespace)
+		log.Info("Creating ClusterRoleBinding", "Namespace", crb.Namespace, "name", crb.Name)
+		err = r.Create(context.TODO(), crb)
+		if err != nil {
+			if k8serror.IsAlreadyExists(err) {
+				log.Info("Skip creating 'Already-Exists' ClusterRoleBinding", "ClusterRoleBinding-Name", crb.Name)
+				return reconcile.Result{RequeueAfter: time.Second * 5}, nil
+			}
+			log.Error(err, "Create ClusterRoleBinding failed", "Namespace", crb.Namespace, "name", crb.Name)
+			return reconcile.Result{}, err
+		}
+		log.Info("Creating ClusterRoleBinding", "Namespace", crb.Namespace, "name", crb.Name, "success")
+	}
+
 	//job set up
 	job, err := r.GenerateNewJob(instance)
 	if err != nil {
@@ -250,6 +315,19 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 		instance.Status.RunState = devopsv1alpha1.Unknown
 	}
 
+	// set s2irun status
+	buildSource := found.Annotations[AnnotationBuildSourceKey]
+	s2iBuildSource := &devopsv1alpha1.S2iBuildSource{}
+	err = json.Unmarshal([]byte(buildSource), s2iBuildSource)
+	instance.Status.S2iBuildSource = s2iBuildSource
+
+	if instance.Status.RunState == devopsv1alpha1.Successful {
+		buildResult := found.Annotations[AnnotationBuildResultKey]
+		s2iBuildResult := &devopsv1alpha1.S2iBuildResult{}
+		err = json.Unmarshal([]byte(buildResult), s2iBuildResult)
+		instance.Status.S2iBuildResult = s2iBuildResult
+	}
+
 	// if job finished, scale workloads
 	if instance.Status.RunState == devopsv1alpha1.Successful || instance.Status.RunState == devopsv1alpha1.Failed {
 		err = r.ScaleWorkLoads(instance, builder)
@@ -257,7 +335,7 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 			return reconcile.Result{}, err
 		}
 	}
-	instance.Status.ImageName = GetNewImageName(instance, *builder.Spec.Config)
+
 	if !reflect.DeepEqual(instance.Status, origin.Status) {
 		err = r.Status().Update(context.Background(), instance)
 		if err != nil {
