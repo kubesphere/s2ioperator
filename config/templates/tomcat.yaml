@@ -5,6 +5,7 @@ metadata:
     controller-tools.k8s.io: "1.0"
     builder-type.kubesphere.io/s2i: "s2i"
     builder-type.kubesphere.io/b2i: "b2i"
+    binary-type.kubesphere.io: "war"
   name: tomcat
 spec:
   containerInfo:
