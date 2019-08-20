@@ -11,7 +11,6 @@ spec:
   # Add fields here
   config:
     displayName: "For Test"
-    sourceUrl: "https://github.com/kubesphere/devops-java-sample/releases/download/v0.0.1/spring-mvc-java11.war"
     imageName: runzexia/hello-java
     tag: latest
     builderPullPolicy: if-not-present

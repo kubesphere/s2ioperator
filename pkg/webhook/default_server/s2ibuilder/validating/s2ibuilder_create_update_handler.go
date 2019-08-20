@@ -50,7 +50,6 @@ type S2iBuilderCreateUpdateHandler struct {
 }
 
 func (h *S2iBuilderCreateUpdateHandler) validatingS2iBuilderFn(ctx context.Context, obj *devopsv1alpha1.S2iBuilder) (bool, string, error) {
-	// TODO(user): implement your admission logic
 	fromTemplate := false
 	if obj.Spec.FromTemplate != nil {
 		t := &devopsv1alpha1.S2iBuilderTemplate{}
