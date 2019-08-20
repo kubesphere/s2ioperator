@@ -11,7 +11,7 @@ import (
 // ValidateConfig returns a list of error from validation.
 func ValidateConfig(config *api.S2iConfig, fromTemplate bool) []error {
 	allErrs := make([]error, 0)
-	if len(config.SourceURL) == 0 {
+	if !config.IsBinaryURL && len(config.SourceURL) == 0 {
 		allErrs = append(allErrs, errors.NewFieldRequired("sourceUrl"))
 	}
 	if !fromTemplate && len(config.BuilderImage) == 0 {
