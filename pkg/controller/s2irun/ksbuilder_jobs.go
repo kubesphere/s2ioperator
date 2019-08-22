@@ -23,16 +23,17 @@ const (
 	NodeAffinityValue = "ci"
 )
 
-func (r *ReconcileS2iRun) NewRegularClusterRole() *v1.ClusterRole {
-	cr := &v1.ClusterRole{
+func (r *ReconcileS2iRun) NewRegularRole(roleName, namespace string) *v1.Role {
+	cr := &v1.Role{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: RegularClusterRoleName,
+			Name:      roleName,
+			Namespace: namespace,
 		},
 		Rules: []v1.PolicyRule{
 			{
-				APIGroups: []string{"batch"},
-				Resources: []string{"jobs"},
-				Verbs:     []string{"get", "list", "watch", "create", "update", "patch"},
+				APIGroups: []string{""},
+				Resources: []string{"pods"},
+				Verbs:     []string{"get", "list", "watch", "update", "patch"},
 			},
 		},
 	}
@@ -50,10 +51,11 @@ func (r *ReconcileS2iRun) NewServiceAccount(saName string, namespace string) *co
 	return sa
 }
 
-func (r *ReconcileS2iRun) NewClusterRoleBinding(name, roleName, saName, namespace string) *v1.ClusterRoleBinding {
-	clusterRoleBinding := &v1.ClusterRoleBinding{
+func (r *ReconcileS2iRun) NewRoleBinding(name, roleName, saName, namespace string) *v1.RoleBinding {
+	roleBinding := &v1.RoleBinding{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: name,
+			Name:      name,
+			Namespace: namespace,
 		},
 		Subjects: []v1.Subject{
 			{
@@ -64,12 +66,12 @@ func (r *ReconcileS2iRun) NewClusterRoleBinding(name, roleName, saName, namespac
 		},
 		RoleRef: v1.RoleRef{
 			APIGroup: "rbac.authorization.k8s.io",
-			Kind:     "ClusterRole",
+			Kind:     "Role",
 			Name:     roleName,
 		},
 	}
 
-	return clusterRoleBinding
+	return roleBinding
 }
 
 func (r *ReconcileS2iRun) NewConfigMap(instance *devopsv1alpha1.S2iRun, config devopsv1alpha1.S2iConfig, template *devopsv1alpha1.UserDefineTemplate) (*corev1.ConfigMap, error) {
@@ -158,12 +160,20 @@ func (r *ReconcileS2iRun) GenerateNewJob(instance *devopsv1alpha1.S2iRun) (*batc
 									Value: "/etc/data/config.json",
 								},
 								{
-									Name:  "S2iRunNamespace",
-									Value: instance.Namespace,
+									Name: "POD_NAMESPACE",
+									ValueFrom: &corev1.EnvVarSource{
+										FieldRef: &corev1.ObjectFieldSelector{
+											FieldPath: "metadata.namespace",
+										},
+									},
 								},
 								{
-									Name:  "S2iRunJobName",
-									Value: jobName,
+									Name: "POD_NAME",
+									ValueFrom: &corev1.EnvVarSource{
+										FieldRef: &corev1.ObjectFieldSelector{
+											FieldPath: "metadata.name",
+										},
+									},
 								},
 							},
 							VolumeMounts: []corev1.VolumeMount{

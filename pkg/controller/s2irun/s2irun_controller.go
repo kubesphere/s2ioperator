@@ -47,12 +47,12 @@ import (
 var log = logf.Log.WithName("s2irun-controller")
 
 const (
-	S2iRunBuilderLabel        = "labels.devops.kubesphere.io/builder-name"
-	AnnotationBuildResultKey  = "s2iBuildResult"
-	AnnotationBuildSourceKey  = "s2iBuildSource"
-	RegularServiceAccount     = "s2irun"
-	RegularClusterRoleName    = "s2i-regular-role"
-	RegularClusterRoleBinding = "s2i-regular-rolebinding"
+	S2iRunBuilderLabel       = "labels.devops.kubesphere.io/builder-name"
+	AnnotationBuildResultKey = "s2iBuildResult"
+	AnnotationBuildSourceKey = "s2iBuildSource"
+	RegularServiceAccount    = "s2irun"
+	RegularRoleName          = "s2i-regular-role"
+	RegularRoleBinding       = "s2i-regular-rolebinding"
 )
 
 /**
@@ -119,14 +119,14 @@ type ReconcileS2iRun struct {
 // +kubebuilder:rbac:groups=devops.kubesphere.io,resources=s2iruns,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=devops.kubesphere.io,resources=s2iruns/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=devops.kubesphere.io,resources=s2ibuildertemplates,verbs=get;list;watch
-// +kubebuilder:rbac:groups=core,resources=pods,verbs=get;list;watch
+// +kubebuilder:rbac:groups=core,resources=pods,verbs=get;list;watch;update;patch
 // +kubebuilder:rbac:groups=apps,resources=statefulsets,verbs=get;list;watch;create;update;patch
 // +kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;list;watch;create;update;patch
 // +kubebuilder:rbac:groups=extensions,resources=deployments,verbs=get;list;watch;create;update;patch
 // +kubebuilder:rbac:groups=core,resources=secrets,verbs=get
 // +kubebuilder:rbac:groups=core,resources=serviceaccounts,verbs=get;list;watch;create
-// +kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=clusterrolebindings,verbs=get;list;watch;create
-// +kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=clusterroles,verbs=get;list;watch;create
+// +kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=rolebindings,verbs=get;list;watch;create
+// +kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=roles,verbs=get;list;watch;create
 func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result, error) {
 	// Fetch the S2iRun instance
 	log.Info("Reconciler of s2irun called", "Name", request.Name)
@@ -198,22 +198,22 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 		}
 	}
 
-	//set Cluster Role
-	cr := &v12.ClusterRole{}
-	err = r.Get(context.TODO(), types.NamespacedName{Name: RegularClusterRoleName}, cr)
+	//set Role
+	cr := &v12.Role{}
+	err = r.Get(context.TODO(), types.NamespacedName{Namespace: instance.Namespace, Name: RegularRoleName}, cr)
 	if err != nil && k8serror.IsNotFound(err) {
-		cr := r.NewRegularClusterRole()
-		log.Info("Creating ClusterRole", "name", cr.Name)
+		cr := r.NewRegularRole(RegularRoleName, instance.Namespace)
+		log.Info("Creating Role", "name", cr.Name)
 		err = r.Create(context.TODO(), cr)
 		if err != nil {
 			if k8serror.IsAlreadyExists(err) {
-				log.Info("Skip creating 'Already-Exists' ClusterRole", "ClusterRole-Name", RegularClusterRoleName)
+				log.Info("Skip creating 'Already-Exists' Role", "Role-Name", RegularRoleName)
 				return reconcile.Result{RequeueAfter: time.Second * 5}, nil
 			}
-			log.Error(err, "Create ClusterRole failed", "name", cr.Name)
+			log.Error(err, "Create Role failed", "name", cr.Name)
 			return reconcile.Result{}, err
 		}
-		log.Info("Creating ClusterRole", "name", cr.Name, "success")
+		log.Info("Creating Role", "name", cr.Name, "success")
 	}
 
 	//set service account
@@ -234,23 +234,22 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 		log.Info("Creating ServiceAccount", "Namespace", sa.Namespace, "name", sa.Name, "success")
 	}
 
-	//set ClusterRoleBinding
-	crb := &v12.ClusterRoleBinding{}
-	clusterRoleBindingName := RegularClusterRoleBinding + "-" + sa.Namespace
-	err = r.Get(context.TODO(), types.NamespacedName{Name: clusterRoleBindingName}, crb)
+	//set RoleBinding
+	crb := &v12.RoleBinding{}
+	err = r.Get(context.TODO(), types.NamespacedName{Namespace: instance.Namespace, Name: RegularRoleBinding}, crb)
 	if err != nil && k8serror.IsNotFound(err) {
-		crb := r.NewClusterRoleBinding(clusterRoleBindingName, RegularClusterRoleName, sa.Name, sa.Namespace)
-		log.Info("Creating ClusterRoleBinding", "Namespace", crb.Namespace, "name", crb.Name)
+		crb := r.NewRoleBinding(RegularRoleBinding, RegularRoleName, sa.Name, sa.Namespace)
+		log.Info("Creating RoleBinding", "Namespace", crb.Namespace, "name", crb.Name)
 		err = r.Create(context.TODO(), crb)
 		if err != nil {
 			if k8serror.IsAlreadyExists(err) {
-				log.Info("Skip creating 'Already-Exists' ClusterRoleBinding", "ClusterRoleBinding-Name", crb.Name)
+				log.Info("Skip creating 'Already-Exists' RoleBinding", "RoleBinding-Name", crb.Name)
 				return reconcile.Result{RequeueAfter: time.Second * 5}, nil
 			}
-			log.Error(err, "Create ClusterRoleBinding failed", "Namespace", crb.Namespace, "name", crb.Name)
+			log.Error(err, "Create RoleBinding failed", "Namespace", crb.Namespace, "name", crb.Name)
 			return reconcile.Result{}, err
 		}
-		log.Info("Creating ClusterRoleBinding", "Namespace", crb.Namespace, "name", crb.Name, "success")
+		log.Info("Creating RoleBinding", "Namespace", crb.Namespace, "name", crb.Name, "success")
 	}
 
 	//job set up
@@ -316,13 +315,26 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 	}
 
 	// set s2irun status
-	buildSource := found.Annotations[AnnotationBuildSourceKey]
+	pods := &corev1.PodList{}
+	listOption := &client.ListOptions{}
+	listOption.SetLabelSelector("job-name=" + found.Name)
+	listOption.InNamespace(found.Namespace)
+	err = r.List(context.TODO(), listOption, pods)
+	if err != nil {
+		log.Error(nil, "Error in get pod of job")
+		return reconcile.Result{}, nil
+	}
+	if len(pods.Items) == 0 {
+		return reconcile.Result{}, fmt.Errorf("cannot find any pod of the job %s", found.Name)
+	}
+	foundPod := pods.Items[0]
+
+	buildSource := foundPod.Annotations[AnnotationBuildSourceKey]
 	s2iBuildSource := &devopsv1alpha1.S2iBuildSource{}
 	err = json.Unmarshal([]byte(buildSource), s2iBuildSource)
 	instance.Status.S2iBuildSource = s2iBuildSource
-
 	if instance.Status.RunState == devopsv1alpha1.Successful {
-		buildResult := found.Annotations[AnnotationBuildResultKey]
+		buildResult := foundPod.Annotations[AnnotationBuildResultKey]
 		s2iBuildResult := &devopsv1alpha1.S2iBuildResult{}
 		err = json.Unmarshal([]byte(buildResult), s2iBuildResult)
 		instance.Status.S2iBuildResult = s2iBuildResult

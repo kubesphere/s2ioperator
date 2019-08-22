@@ -803,7 +803,7 @@ func schema_pkg_apis_devops_v1alpha1_S2iBuildResult(ref common.ReferenceCallback
 					},
 					"imageCreated": {
 						SchemaProps: spec.SchemaProps{
-							Description: "Created time.",
+							Description: "Image created time.",
 							Type:        []string{"string"},
 							Format:      "",
 						},
