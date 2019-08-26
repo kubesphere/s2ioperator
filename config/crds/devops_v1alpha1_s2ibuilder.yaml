@@ -248,6 +248,9 @@ spec:
                   items:
                     type: string
                   type: array
+                outputBuildResult:
+                  description: Whether output build result to status.
+                  type: boolean
                 outputImageName:
                   description: OutputImageName is a result image name without tag,
                     default is latest. tag will append to ImageName in the end

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"k8s.io/api/rbac/v1"
 	"net/url"
 	"os"
 	"strings"
@@ -21,6 +22,57 @@ const (
 	NodeAffinityKey   = "node-role.kubesphere.io/worker"
 	NodeAffinityValue = "ci"
 )
+
+func (r *ReconcileS2iRun) NewRegularRole(roleName, namespace string) *v1.Role {
+	cr := &v1.Role{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      roleName,
+			Namespace: namespace,
+		},
+		Rules: []v1.PolicyRule{
+			{
+				APIGroups: []string{""},
+				Resources: []string{"pods"},
+				Verbs:     []string{"get", "list", "watch", "update", "patch"},
+			},
+		},
+	}
+
+	return cr
+}
+
+func (r *ReconcileS2iRun) NewServiceAccount(saName string, namespace string) *corev1.ServiceAccount {
+	sa := &corev1.ServiceAccount{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      saName,
+			Namespace: namespace,
+		},
+	}
+	return sa
+}
+
+func (r *ReconcileS2iRun) NewRoleBinding(name, roleName, saName, namespace string) *v1.RoleBinding {
+	roleBinding := &v1.RoleBinding{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      name,
+			Namespace: namespace,
+		},
+		Subjects: []v1.Subject{
+			{
+				Kind:      "ServiceAccount",
+				Name:      saName,
+				Namespace: namespace,
+			},
+		},
+		RoleRef: v1.RoleRef{
+			APIGroup: "rbac.authorization.k8s.io",
+			Kind:     "Role",
+			Name:     roleName,
+		},
+	}
+
+	return roleBinding
+}
 
 func (r *ReconcileS2iRun) NewConfigMap(instance *devopsv1alpha1.S2iRun, config devopsv1alpha1.S2iConfig, template *devopsv1alpha1.UserDefineTemplate) (*corev1.ConfigMap, error) {
 	if template != nil {
@@ -60,6 +112,7 @@ func (r *ReconcileS2iRun) NewConfigMap(instance *devopsv1alpha1.S2iRun, config d
 	if err != nil {
 		return nil, err
 	}
+
 	instanceUidSlice := strings.Split(string(instance.UID), "-")
 	configMapName := instance.Name + fmt.Sprintf("-%s", instanceUidSlice[len(instanceUidSlice)-1]) + "-configmap"
 	dataMap := make(map[string]string)
@@ -95,6 +148,7 @@ func (r *ReconcileS2iRun) GenerateNewJob(instance *devopsv1alpha1.S2iRun) (*batc
 					Labels: map[string]string{"job-name": jobName},
 				},
 				Spec: corev1.PodSpec{
+					ServiceAccountName: RegularServiceAccount,
 					Containers: []corev1.Container{
 						{
 							Name:            "s2irun",
@@ -104,6 +158,22 @@ func (r *ReconcileS2iRun) GenerateNewJob(instance *devopsv1alpha1.S2iRun) (*batc
 								{
 									Name:  "S2I_CONFIG_PATH",
 									Value: "/etc/data/config.json",
+								},
+								{
+									Name: "POD_NAMESPACE",
+									ValueFrom: &corev1.EnvVarSource{
+										FieldRef: &corev1.ObjectFieldSelector{
+											FieldPath: "metadata.namespace",
+										},
+									},
+								},
+								{
+									Name: "POD_NAME",
+									ValueFrom: &corev1.EnvVarSource{
+										FieldRef: &corev1.ObjectFieldSelector{
+											FieldPath: "metadata.name",
+										},
+									},
 								},
 							},
 							VolumeMounts: []corev1.VolumeMount{
