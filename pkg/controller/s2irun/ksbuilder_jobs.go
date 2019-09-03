@@ -443,7 +443,7 @@ func getDockerEntryFromDockerSecret(instance *corev1.Secret) (dockerConfigEntry 
 
 	if instance.Type != corev1.SecretTypeDockerConfigJson {
 		return nil, fmt.Errorf("secret %s in ns %s type should be %s",
-			instance.Namespace, instance.Name, corev1.SecretTypeDockerConfigJson)
+			instance.Name, instance.Namespace, corev1.SecretTypeDockerConfigJson)
 	}
 	dockerConfigBytes, ok := instance.Data[corev1.DockerConfigJsonKey]
 	if !ok {
