@@ -127,6 +127,7 @@ type ReconcileS2iRun struct {
 // +kubebuilder:rbac:groups=core,resources=serviceaccounts,verbs=get;list;watch;create
 // +kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=rolebindings,verbs=get;list;watch;create
 // +kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=roles,verbs=get;list;watch;create
+// +kubebuilder:rbac:groups=core,resources=namespaces,verbs=get;list;watch
 func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result, error) {
 	// Fetch the S2iRun instance
 	log.Info("Reconciler of s2irun called", "Name", request.Name)

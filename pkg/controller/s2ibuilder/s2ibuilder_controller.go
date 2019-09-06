@@ -19,7 +19,7 @@ package s2ibuilder
 import (
 	"context"
 	"github.com/kubesphere/s2ioperator/pkg/util/sliceutil"
-	v1 "k8s.io/api/apps/v1"
+	"k8s.io/api/apps/v1"
 	"reflect"
 
 	devopsv1alpha1 "github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1"
