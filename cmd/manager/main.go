@@ -18,6 +18,7 @@ package main
 
 import (
 	"flag"
+	"github.com/kubesphere/s2ioperator/pkg/metrics"
 	"os"
 
 	"github.com/kubesphere/s2ioperator/pkg/apis"
@@ -74,6 +75,10 @@ func main() {
 		log.Error(err, "unable to register webhooks to the manager")
 		os.Exit(1)
 	}
+
+	// Set up s2i metrics
+	log.Info("start collect s2i metrics")
+	go metrics.CollectS2iMetrics(mgr.GetClient())
 
 	// Start the Cmd
 	log.Info("Starting the Cmd.")
