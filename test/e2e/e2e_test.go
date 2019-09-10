@@ -23,8 +23,8 @@ var _ = Describe("", func() {
 
 	const (
 		timeout           = time.Second * 25
-		TaintKey          = "kubesphere.io/ci"
-		NodeAffinityKey   = "node-role.kubesphere.io/worker"
+		TaintKey          = "node.kubernetes.io/ci"
+		NodeAffinityKey   = "node-role.kubernetes.io/worker"
 		NodeAffinityValue = "ci"
 	)
 	It("Should work well when using exactly the runtimeimage example yamls", func() {
