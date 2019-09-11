@@ -18,8 +18,8 @@ import (
 
 const (
 	ConfigDataKey     = "data"
-	TaintKey          = "kubesphere.io/ci"
-	NodeAffinityKey   = "node-role.kubesphere.io/worker"
+	TaintKey          = "node.kubernetes.io/ci"
+	NodeAffinityKey   = "node-role.kubernetes.io/worker"
 	NodeAffinityValue = "ci"
 )
 
