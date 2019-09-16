@@ -53,7 +53,7 @@ func (h *S2iRunCreateUpdateHandler) validatingS2iRunFn(ctx context.Context, obj 
 
 	builder := &devopsv1alpha1.S2iBuilder{}
 
-	err := h.Client.Get(context.TODO(), types2.NamespacedName{Namespace: origin.Namespace, Name: obj.Spec.BuilderName}, builder)
+	err := h.Client.Get(context.TODO(), types2.NamespacedName{Namespace: obj.Namespace, Name: obj.Spec.BuilderName}, builder)
 	if err != nil && !k8serror.IsNotFound(err) {
 		return false, "validate failed", errors.NewFieldInvalidValueWithReason("no", "could not call k8s api")
 	}
