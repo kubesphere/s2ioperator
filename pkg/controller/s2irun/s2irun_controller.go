@@ -53,6 +53,7 @@ const (
 	RegularServiceAccount    = "s2irun"
 	RegularRoleName          = "s2i-regular-role"
 	RegularRoleBinding       = "s2i-regular-rolebinding"
+	DefaultRevisionId        = "master"
 )
 
 /**
@@ -330,15 +331,33 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 	}
 	foundPod := pods.Items[0]
 
-	buildSource := foundPod.Annotations[AnnotationBuildSourceKey]
 	s2iBuildSource := &devopsv1alpha1.S2iBuildSource{}
-	err = json.Unmarshal([]byte(buildSource), s2iBuildSource)
+	if buildSource := foundPod.Annotations[AnnotationBuildSourceKey]; buildSource != "" {
+		err = json.Unmarshal([]byte(buildSource), s2iBuildSource)
+		if err != nil {
+			return reconcile.Result{}, err
+		}
+	}
 	instance.Status.S2iBuildSource = s2iBuildSource
-	if instance.Status.RunState == devopsv1alpha1.Successful {
-		buildResult := foundPod.Annotations[AnnotationBuildResultKey]
-		s2iBuildResult := &devopsv1alpha1.S2iBuildResult{}
+
+	s2iBuildResult := &devopsv1alpha1.S2iBuildResult{}
+	if buildResult := foundPod.Annotations[AnnotationBuildResultKey]; buildResult != "" {
 		err = json.Unmarshal([]byte(buildResult), s2iBuildResult)
-		instance.Status.S2iBuildResult = s2iBuildResult
+		if err != nil {
+			return reconcile.Result{}, err
+		}
+	}
+	instance.Status.S2iBuildResult = s2iBuildResult
+
+	//set default build source info
+	instance.Status.S2iBuildSource.BuilderImage = builder.Spec.Config.BuilderImage
+	instance.Status.S2iBuildSource.SourceUrl = builder.Spec.Config.SourceURL
+	instance.Status.S2iBuildSource.Description = builder.Spec.Config.Description
+	instance.Status.S2iBuildResult.ImageName = builder.Spec.Config.ImageName
+	if builder.Spec.Config.RevisionId == "" {
+		instance.Status.S2iBuildSource.RevisionId = DefaultRevisionId
+	} else {
+		instance.Status.S2iBuildSource.RevisionId = builder.Spec.Config.RevisionId
 	}
 
 	// if job finished, scale workloads
