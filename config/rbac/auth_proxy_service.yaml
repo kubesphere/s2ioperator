@@ -6,7 +6,7 @@ metadata:
     prometheus.io/scheme: http
     prometheus.io/scrape: "true"
   labels:
-    control-plane: controller-manager
+    control-plane: s2i-controller-manager
     controller-tools.k8s.io: "1.0"
   name: s2ioperator-metrics-service
   namespace: system
@@ -16,5 +16,5 @@ spec:
     port: 8080
     targetPort: 8080
   selector:
-    control-plane: controller-manager
+    control-plane: s2i-controller-manager
     controller-tools.k8s.io: "1.0"

@@ -973,7 +973,7 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    control-plane: controller-manager
+    control-plane: s2i-controller-manager
     controller-tools.k8s.io: "1.0"
   name: s2ioperator
   namespace: kubesphere-devops-system
@@ -981,7 +981,7 @@ spec:
   ports:
   - port: 443
   selector:
-    control-plane: controller-manager
+    control-plane: s2i-controller-manager
     controller-tools.k8s.io: "1.0"
 ---
 apiVersion: v1
@@ -992,7 +992,7 @@ metadata:
     prometheus.io/scheme: http
     prometheus.io/scrape: "true"
   labels:
-    control-plane: controller-manager
+    control-plane: s2i-controller-manager
     controller-tools.k8s.io: "1.0"
   name: s2ioperator-metrics-service
   namespace: kubesphere-devops-system
@@ -1002,7 +1002,7 @@ spec:
     port: 8080
     targetPort: 8080
   selector:
-    control-plane: controller-manager
+    control-plane: s2i-controller-manager
     controller-tools.k8s.io: "1.0"
 ---
 apiVersion: apps/v1
@@ -1016,7 +1016,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      control-plane: controller-manager
+      control-plane: s2i-controller-manager
       controller-tools.k8s.io: "1.0"
   serviceName: s2ioperator
   template:
@@ -1024,7 +1024,7 @@ spec:
       annotations:
         prometheus.io/scrape: "true"
       labels:
-        control-plane: controller-manager
+        control-plane: s2i-controller-manager
         controller-tools.k8s.io: "1.0"
     spec:
       containers:
