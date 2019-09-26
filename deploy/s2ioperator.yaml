@@ -992,6 +992,7 @@ metadata:
     prometheus.io/scheme: http
     prometheus.io/scrape: "true"
   labels:
+    app: s2i-metrics
     control-plane: s2i-controller-manager
     controller-tools.k8s.io: "1.0"
   name: s2ioperator-metrics-service
