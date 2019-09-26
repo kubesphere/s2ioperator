@@ -8,6 +8,7 @@ metadata:
   labels:
     control-plane: s2i-controller-manager
     controller-tools.k8s.io: "1.0"
+    app: s2i-metrics
   name: s2ioperator-metrics-service
   namespace: system
 spec:
