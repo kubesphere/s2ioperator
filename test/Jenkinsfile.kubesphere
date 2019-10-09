@@ -1,7 +1,9 @@
 pipeline {
    environment {
       KUBECONFIG = '/root/.kube/config'
+      IMAGE_NAME = 'kubespheredev/s2ioperator:advanced-2.1.0'
     }
+
   agent {
     kubernetes {
       label 's2i'
@@ -30,6 +32,7 @@ spec:
     }
 
   }
+
   stages {
     stage('set kubeconfig'){
      steps{
@@ -74,8 +77,13 @@ make e2e-test'''
         branch 'master'
       }
       steps {
-        sh "make release"
-      }
+        sh "cd /go/src/github.com/kubesphere/s2ioperator"
+        sh "docker build -f deploy/Dockerfile -t $IMAGE_NAME bin/"
+        withCredentials([usernamePassword(passwordVariable : 'DOCKER_PASSWORD' ,usernameVariable : 'DOCKER_USERNAME' ,credentialsId : "dockerhub-id" ,)]) {
+          sh 'echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin'
+          sh 'docker push $IMAGE_NAME'
+        }
     }
   }
+}
 }
