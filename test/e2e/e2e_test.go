@@ -172,7 +172,7 @@ var _ = Describe("", func() {
 			if err != nil {
 				return false
 			}
-			if strings.Contains(res.Status.S2iBuildResult.ImageName,s2ibuilder.Spec.Config.ImageName) {
+			if strings.Contains(res.Status.S2iBuildResult.ImageName, s2ibuilder.Spec.Config.ImageName) {
 				return true
 			}
 			return false
