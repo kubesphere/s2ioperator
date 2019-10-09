@@ -1041,7 +1041,7 @@ spec:
         - name: S2IIMAGENAME
           value: kubespheredev/s2irun:v0.0.3
         image: kubespheredev/s2ioperator:advanced-2.1.0
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         name: manager
         ports:
         - containerPort: 8080

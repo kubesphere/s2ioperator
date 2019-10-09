@@ -15,7 +15,7 @@ const (
 )
 
 func init() {
-	webhookName := "mutating-create-s2ibuilder"
+	webhookName := "mutating-create-update-s2ibuilder"
 	if HandlerMap[webhookName] == nil {
 		HandlerMap[webhookName] = []admission.Handler{}
 	}

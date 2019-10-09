@@ -10,7 +10,7 @@ import (
 var logger = log.Log.WithName("s2ibuilder-mutate")
 
 func init() {
-	builderName := "mutating-create-s2ibuilder"
+	builderName := "mutating-create-update-s2ibuilder"
 	Builders[builderName] = builder.
 		NewWebhookBuilder().
 		Name(builderName+".kubesphere.io").
