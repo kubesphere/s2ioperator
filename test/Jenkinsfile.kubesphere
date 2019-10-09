@@ -68,5 +68,14 @@ cd /go/src/github.com/kubesphere/s2ioperator
 make e2e-test'''
       }
     }
+
+    stage('docker push') {
+      when{
+        branch 'master'
+      }
+      steps {
+        sh "make release"
+      }
+    }
   }
 }
