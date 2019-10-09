@@ -455,7 +455,7 @@ func (r *ReconcileS2iRun) ScaleWorkLoads(instance *devopsv1alpha1.S2iRun, builde
 					deploy := &v1.Deployment{}
 					err := r.Get(context.TODO(), types.NamespacedName{Namespace: instance.Namespace, Name: scale.Name}, deploy)
 					if err != nil && k8serror.IsNotFound(err) {
-						errs = append(errs, err)
+						log.Info("Workload not found", "ns", instance.Namespace, "deploy", deploy.Name)
 						continue
 					} else if err != nil {
 						return err
@@ -521,7 +521,7 @@ func (r *ReconcileS2iRun) ScaleWorkLoads(instance *devopsv1alpha1.S2iRun, builde
 					statefulSet := &v1.StatefulSet{}
 					err := r.Get(context.TODO(), types.NamespacedName{Namespace: instance.Namespace, Name: scale.Name}, statefulSet)
 					if err != nil {
-						errs = append(errs, err)
+						log.Info("Workload not found", "ns", instance.Namespace, "deploy", scale.Name)
 						continue
 					}
 					log.Info("Autoscale StatefulSet", "ns", instance.Namespace, "statefulSet", statefulSet.Name)
