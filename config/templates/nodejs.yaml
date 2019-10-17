@@ -4,6 +4,8 @@ metadata:
   labels:
     controller-tools.k8s.io: "1.0"
     builder-type.kubesphere.io/s2i: "s2i"
+  annotations:
+    devops.kubesphere.io/s2i-template-url: https://github.com/kubesphere/s2i-nodejs-container
   name: nodejs
 spec:
   containerInfo:
