@@ -1218,9 +1218,16 @@ func schema_pkg_apis_devops_v1alpha1_S2iBuilderTemplateSpec(ref common.Reference
 							Format:      "",
 						},
 					},
-					"description": {
+					"descriptionEN": {
 						SchemaProps: spec.SchemaProps{
-							Description: "Description illustrate the purpose of this template",
+							Description: "Description illustrate the purpose of this template.(EN)",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"descriptionCN": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Description illustrate the purpose of this template.(CN)",
 							Type:        []string{"string"},
 							Format:      "",
 						},

@@ -140,7 +140,8 @@ spec:
   codeFramework: java
   defaultBaseImage: kubespheredev/java-8-centos7:advanced-2.0.0
   version: 0.0.1
-  description: "This is a S2I builder template for Java builds whose result can be run directly without any further application server.It's suited ideally for microservices with a flat classpath (including \"far jars\").
+  descriptionEN: "This is a S2I builder template for Java builds whose result can be run directly without any further application server.It's suited ideally for microservices with a flat classpath (including \"far jars\").
 
                  This image also provides an easy integration with an Jolokia agent."
+  descriptionCN: "Java应用的S2i构建器模版，并且集成了Jolokia代理。通过该模版可构建出直接运行的应用镜像。"
   iconPath: assets/java.png

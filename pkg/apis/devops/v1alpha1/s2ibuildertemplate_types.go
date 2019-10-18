@@ -63,8 +63,10 @@ type S2iBuilderTemplateSpec struct {
 	Parameters []Parameter `json:"environment,omitempty"`
 	// Version of template
 	Version string `json:"version,omitempty"`
-	// Description illustrate the purpose of this template
-	Description string `json:"description,omitempty"`
+	// Description illustrate the purpose of this template.(EN)
+	DescriptionEN string `json:"descriptionEN,omitempty"`
+	// Description illustrate the purpose of this template.(CN)
+	DescriptionCN string `json:"descriptionCN,omitempty"`
 	// IconPath is used for frontend display
 	IconPath string `json:"iconPath,omitempty"`
 }

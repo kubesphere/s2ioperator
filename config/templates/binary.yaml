@@ -20,5 +20,6 @@ spec:
   codeFramework: binary
   defaultBaseImage: kubespheredev/s2i-binary:latest
   version: 0.0.1
-  description: "This is a B2i builder template for binary build"
+  descriptionEN: "This is a B2i builder template for binary build"
+  descriptionCN: "B2i 二进制文件构建镜像的通用模版"
   iconPath: assets/binary.png

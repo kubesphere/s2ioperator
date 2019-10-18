@@ -140,5 +140,6 @@ spec:
   codeFramework: java
   defaultBaseImage: kubespheredev/tomcat85-java8-centos7:latest
   version: 0.0.1
-  description: "This is a S2I builder template for Java builds whose result can be run directly with Tomcat application server."
+  descirptionCN: "Tomcat应用的S2i构建器模版，通过该模版可构建出直接运行的应用镜像。"
+  descriptionEN: "This is a S2I builder template for Java builds whose result can be run directly with Tomcat application server."
   iconPath: assets/tomcat.png

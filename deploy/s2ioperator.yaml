@@ -551,8 +551,11 @@ spec:
             defaultBaseImage:
               description: DefaultBaseImage is the image that will be used by default
               type: string
-            description:
-              description: Description illustrate the purpose of this template
+            descriptionCN:
+              description: Description illustrate the purpose of this template.(CN)
+              type: string
+            descriptionEN:
+              description: Description illustrate the purpose of this template.(EN)
               type: string
             environment:
               description: Parameters is a set of environment variables to be passed

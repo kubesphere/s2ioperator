@@ -59,5 +59,6 @@ spec:
   codeFramework: nodejs
   defaultBaseImage: kubespheredev/nodejs-8-centos7
   version: 0.0.1
-  description: "Node.js available as container is a base platform for building and running various Node.js applications and frameworks. Node.js is a platform built on Chrome's JavaScript runtime for easily building fast, scalable network applications. Node.js uses an event-driven, non-blocking I/O model that makes it lightweight and efficient, perfect for data-intensive real-time applications that run across distributed devices."
+  descriptionEN: "Node.js available as container is a base platform for building and running various Node.js applications and frameworks. Node.js is a platform built on Chrome's JavaScript runtime for easily building fast, scalable network applications. Node.js uses an event-driven, non-blocking I/O model that makes it lightweight and efficient, perfect for data-intensive real-time applications that run across distributed devices."
+  descirptionCN: "Nodejs应用的S2i构建器模版。Node.js是基于Chrome的JavaScript运行时构建的平台，可轻松构建快速，可扩展的网络应用程序。"
   iconPath: assets/nodejs.png
