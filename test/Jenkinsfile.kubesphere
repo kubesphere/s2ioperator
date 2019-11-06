@@ -1,7 +1,7 @@
 pipeline {
    environment {
       KUBECONFIG = '/root/.kube/config'
-      IMAGE_NAME = 'kubespheredev/s2ioperator:advanced-2.1.0'
+      IMAGE_NAME = 'kubespheredev/s2ioperator:2.1.0'
     }
 
   agent {
