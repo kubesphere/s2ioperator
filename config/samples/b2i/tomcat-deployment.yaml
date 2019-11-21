@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: tomcat
-          image: 'kubespheredev/hello-java:latest'
+          image: 'kubespheredev/s2i-test-java:latest'
           ports:
             - containerPort: 8080
               protocol: TCP

@@ -10,7 +10,7 @@ spec:
    config:
      builderImage: kubespheredev/python-35-centos7
      sourceUrl: "https://github.com/runzexia/django-ex"
-     imageName: kubespheredev/hello-python
+     imageName: kubespheredev/s2i-test-python
      tag: latest
      builderPullPolicy: if-not-present
      gitSecretRef:
