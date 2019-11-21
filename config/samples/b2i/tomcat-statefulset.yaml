@@ -21,7 +21,7 @@ spec:
         app: tomcat-s2i
     spec:
       containers:
-        - image: runzexia/hello-java:latest
+        - image: kubespheredev/hello-java:latest
           imagePullPolicy: Always
           name: container-frx25k
           resources:
