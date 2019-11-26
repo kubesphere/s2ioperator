@@ -12,7 +12,7 @@ spec:
   config:
     displayName: "For Test"
     sourceUrl: "https://github.com/kubesphere/s2i-python-container"
-    imageName: runzexia/hello-python
+    imageName: kubespheredev/s2i-test-python
     tag: latest
     builderPullPolicy: if-not-present
     export: true

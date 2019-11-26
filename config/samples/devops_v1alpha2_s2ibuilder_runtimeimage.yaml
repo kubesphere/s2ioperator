@@ -12,7 +12,7 @@ spec:
     runtimeArtifacts:
       - source: /deployments
     runtimeImage: kubespheredev/java-8-runtime:latest
-    imageName: kubesphere/sample-java
+    imageName: kubespheredev/s2i-test-java
     sourceUrl: https://github.com/kubesphere/devops-java-sample.git
     tag: latest
     revisionId: master

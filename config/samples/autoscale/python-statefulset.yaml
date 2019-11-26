@@ -21,7 +21,7 @@ spec:
         app: python-s2i
     spec:
       containers:
-        - image: runzexia/hello-python:latest
+        - image: kubespheredev/s2i-test-python:latest
           imagePullPolicy: Always
           name: container-frx25k
           resources:
