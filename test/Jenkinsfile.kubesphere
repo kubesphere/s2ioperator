@@ -12,7 +12,7 @@ kind: Pod
 spec:
   containers:
   - name: go
-    image: kubespheredev/builder-go:v2.1.0
+    image: kubesphere/builder-go:v2.1.0
     command: [\'cat\']
     tty: true
     volumeMounts:
