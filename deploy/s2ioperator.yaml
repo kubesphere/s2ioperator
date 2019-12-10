@@ -588,13 +588,15 @@ spec:
     type: string
   group: devops.kubesphere.io
   names:
+    categories:
+    - devops
     kind: S2iBuilderTemplate
     listKind: S2iBuilderTemplateList
     plural: s2ibuildertemplates
     shortNames:
     - s2ibt
     singular: s2ibuildertemplate
-  scope: Namespaced
+  scope: Cluster
   subresources: {}
   validation:
     openAPIV3Schema:
@@ -1170,21 +1172,6 @@ spec:
   - name: http
     port: 8080
     targetPort: 8080
-  selector:
-    control-plane: s2i-controller-manager
-    controller-tools.k8s.io: "1.0"
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    control-plane: s2i-controller-manager
-    controller-tools.k8s.io: "1.0"
-  name: s2ioperator
-  namespace: kubesphere-devops-system
-spec:
-  ports:
-  - port: 443
   selector:
     control-plane: s2i-controller-manager
     controller-tools.k8s.io: "1.0"
