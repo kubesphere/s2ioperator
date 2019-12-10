@@ -394,7 +394,6 @@ func schema_pkg_apis_devops_v1alpha1_CGroupLimits(ref common.ReferenceCallback) 
 				Required: []string{"MemoryLimitBytes", "CPUShares", "CPUPeriod", "CPUQuota", "MemorySwap", "Parent"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -409,6 +408,7 @@ func schema_pkg_apis_devops_v1alpha1_ContainerConfig(ref common.ReferenceCallbac
 						SchemaProps: spec.SchemaProps{
 							Type: []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Type:   []string{"string"},
@@ -435,7 +435,6 @@ func schema_pkg_apis_devops_v1alpha1_ContainerConfig(ref common.ReferenceCallbac
 				Required: []string{"Labels", "Env"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -545,7 +544,6 @@ func schema_pkg_apis_devops_v1alpha1_DockerConfig(ref common.ReferenceCallback) 
 				Required: []string{"Endpoint", "CertFile", "KeyFile", "CAFile", "UseTLS", "TLSVerify"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -583,7 +581,6 @@ func schema_pkg_apis_devops_v1alpha1_DockerConfigEntry(ref common.ReferenceCallb
 				Required: []string{"username", "password", "email"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -597,6 +594,7 @@ func schema_pkg_apis_devops_v1alpha1_DockerConfigJson(ref common.ReferenceCallba
 						SchemaProps: spec.SchemaProps{
 							Type: []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Ref: ref("github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1.DockerConfigEntry"),
@@ -637,7 +635,6 @@ func schema_pkg_apis_devops_v1alpha1_EnvironmentSpec(ref common.ReferenceCallbac
 				Required: []string{"name", "value"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -699,7 +696,6 @@ func schema_pkg_apis_devops_v1alpha1_Parameter(ref common.ReferenceCallback) com
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -725,7 +721,6 @@ func schema_pkg_apis_devops_v1alpha1_ProxyConfig(ref common.ReferenceCallback) c
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -770,7 +765,6 @@ func schema_pkg_apis_devops_v1alpha1_S2iAutoScale(ref common.ReferenceCallback) 
 				Required: []string{"kind", "name"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -832,7 +826,6 @@ func schema_pkg_apis_devops_v1alpha1_S2iBuildResult(ref common.ReferenceCallback
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -908,7 +901,6 @@ func schema_pkg_apis_devops_v1alpha1_S2iBuildSource(ref common.ReferenceCallback
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -1246,10 +1238,8 @@ func schema_pkg_apis_devops_v1alpha1_S2iBuilderTemplateStatus(ref common.Referen
 			SchemaProps: spec.SchemaProps{
 				Description: "S2iBuilderTemplateStatus defines the observed state of S2iBuilderTemplate",
 				Type:        []string{"object"},
-				Properties:  map[string]spec.Schema{},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -1590,6 +1580,7 @@ func schema_pkg_apis_devops_v1alpha1_S2iConfig(ref common.ReferenceCallback) com
 							Description: "Labels specify labels and their values to be applied to the resulting image. Label keys must have non-zero length. The labels defined here override generated labels in case they have the same name.",
 							Type:        []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Type:   []string{"string"},
@@ -1877,7 +1868,6 @@ func schema_pkg_apis_devops_v1alpha1_S2iRunSpec(ref common.ReferenceCallback) co
 				Required: []string{"builderName"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -2013,7 +2003,6 @@ func schema_pkg_apis_devops_v1alpha1_VolumeSpec(ref common.ReferenceCallback) co
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -2056,7 +2045,6 @@ func schema_k8sio_api_core_v1_AWSElasticBlockStoreVolumeSource(ref common.Refere
 				Required: []string{"volumeID"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -2118,7 +2106,6 @@ func schema_k8sio_api_core_v1_AttachedVolume(ref common.ReferenceCallback) commo
 				Required: []string{"name", "devicePath"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -2203,7 +2190,6 @@ func schema_k8sio_api_core_v1_AzureDiskVolumeSource(ref common.ReferenceCallback
 				Required: []string{"diskName", "diskURI"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -2246,7 +2232,6 @@ func schema_k8sio_api_core_v1_AzureFilePersistentVolumeSource(ref common.Referen
 				Required: []string{"secretName", "shareName"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -2282,7 +2267,6 @@ func schema_k8sio_api_core_v1_AzureFileVolumeSource(ref common.ReferenceCallback
 				Required: []string{"secretName", "shareName"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -2368,6 +2352,7 @@ func schema_k8sio_api_core_v1_CSIPersistentVolumeSource(ref common.ReferenceCall
 							Description: "Attributes of the volume to publish.",
 							Type:        []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Type:   []string{"string"},
@@ -2442,7 +2427,6 @@ func schema_k8sio_api_core_v1_Capabilities(ref common.ReferenceCallback) common.
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -2677,7 +2661,6 @@ func schema_k8sio_api_core_v1_ClientIPConfig(ref common.ReferenceCallback) commo
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -2720,7 +2703,6 @@ func schema_k8sio_api_core_v1_ComponentCondition(ref common.ReferenceCallback) c
 				Required: []string{"type", "status"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -2859,6 +2841,7 @@ func schema_k8sio_api_core_v1_ConfigMap(ref common.ReferenceCallback) common.Ope
 							Description: "Data contains the configuration data. Each key must consist of alphanumeric characters, '-', '_' or '.'. Values with non-UTF-8 byte sequences must use the BinaryData field. The keys stored in Data must not overlap with the keys in the BinaryData field, this is enforced during validation process.",
 							Type:        []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Type:   []string{"string"},
@@ -2873,6 +2856,7 @@ func schema_k8sio_api_core_v1_ConfigMap(ref common.ReferenceCallback) common.Ope
 							Description: "BinaryData contains the binary data. Each key must consist of alphanumeric characters, '-', '_' or '.'. BinaryData can contain byte sequences that are not in the UTF-8 range. The keys stored in BinaryData must not overlap with the ones in the Data field, this is enforced during validation process. Using this field will require 1.10+ apiserver and kubelet.",
 							Type:        []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Type:   []string{"string"},
@@ -2914,7 +2898,6 @@ func schema_k8sio_api_core_v1_ConfigMapEnvSource(ref common.ReferenceCallback) c
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -2950,7 +2933,6 @@ func schema_k8sio_api_core_v1_ConfigMapKeySelector(ref common.ReferenceCallback)
 				Required: []string{"key"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -3049,7 +3031,6 @@ func schema_k8sio_api_core_v1_ConfigMapNodeConfigSource(ref common.ReferenceCall
 				Required: []string{"namespace", "name", "kubeletConfigKey"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -3203,7 +3184,7 @@ func schema_k8sio_api_core_v1_Container(ref common.ReferenceCallback) common.Ope
 					"ports": {
 						VendorExtensible: spec.VendorExtensible{
 							Extensions: spec.Extensions{
-								"x-kubernetes-list-map-keys": []string{
+								"x-kubernetes-list-map-keys": []interface{}{
 									"containerPort",
 									"protocol",
 								},
@@ -3407,7 +3388,6 @@ func schema_k8sio_api_core_v1_ContainerImage(ref common.ReferenceCallback) commo
 				Required: []string{"names"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -3457,7 +3437,6 @@ func schema_k8sio_api_core_v1_ContainerPort(ref common.ReferenceCallback) common
 				Required: []string{"containerPort"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -3602,7 +3581,6 @@ func schema_k8sio_api_core_v1_ContainerStateWaiting(ref common.ReferenceCallback
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -3694,7 +3672,6 @@ func schema_k8sio_api_core_v1_DaemonEndpoint(ref common.ReferenceCallback) commo
 				Required: []string{"Port"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -3906,7 +3883,6 @@ func schema_k8sio_api_core_v1_EndpointPort(ref common.ReferenceCallback) common.
 				Required: []string{"port"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -4405,7 +4381,6 @@ func schema_k8sio_api_core_v1_EventSource(ref common.ReferenceCallback) common.O
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -4433,7 +4408,6 @@ func schema_k8sio_api_core_v1_ExecAction(ref common.ReferenceCallback) common.Op
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -4496,7 +4470,6 @@ func schema_k8sio_api_core_v1_FCVolumeSource(ref common.ReferenceCallback) commo
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -4539,6 +4512,7 @@ func schema_k8sio_api_core_v1_FlexPersistentVolumeSource(ref common.ReferenceCal
 							Description: "Optional: Extra command options if any.",
 							Type:        []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Type:   []string{"string"},
@@ -4596,6 +4570,7 @@ func schema_k8sio_api_core_v1_FlexVolumeSource(ref common.ReferenceCallback) com
 							Description: "Optional: Extra command options if any.",
 							Type:        []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Type:   []string{"string"},
@@ -4638,7 +4613,6 @@ func schema_k8sio_api_core_v1_FlockerVolumeSource(ref common.ReferenceCallback) 
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -4681,7 +4655,6 @@ func schema_k8sio_api_core_v1_GCEPersistentDiskVolumeSource(ref common.Reference
 				Required: []string{"pdName"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -4717,7 +4690,6 @@ func schema_k8sio_api_core_v1_GitRepoVolumeSource(ref common.ReferenceCallback) 
 				Required: []string{"repository"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -4760,7 +4732,6 @@ func schema_k8sio_api_core_v1_GlusterfsPersistentVolumeSource(ref common.Referen
 				Required: []string{"endpoints", "path"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -4796,7 +4767,6 @@ func schema_k8sio_api_core_v1_GlusterfsVolumeSource(ref common.ReferenceCallback
 				Required: []string{"endpoints", "path"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -4881,7 +4851,6 @@ func schema_k8sio_api_core_v1_HTTPHeader(ref common.ReferenceCallback) common.Op
 				Required: []string{"name", "value"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -4949,7 +4918,6 @@ func schema_k8sio_api_core_v1_HostAlias(ref common.ReferenceCallback) common.Ope
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -4978,7 +4946,6 @@ func schema_k8sio_api_core_v1_HostPathVolumeSource(ref common.ReferenceCallback)
 				Required: []string{"path"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -5212,7 +5179,6 @@ func schema_k8sio_api_core_v1_KeyToPath(ref common.ReferenceCallback) common.Ope
 				Required: []string{"key", "path"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -5303,6 +5269,7 @@ func schema_k8sio_api_core_v1_LimitRangeItem(ref common.ReferenceCallback) commo
 							Description: "Max usage constraints on this kind by resource name.",
 							Type:        []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Ref: ref("k8s.io/apimachinery/pkg/api/resource.Quantity"),
@@ -5316,6 +5283,7 @@ func schema_k8sio_api_core_v1_LimitRangeItem(ref common.ReferenceCallback) commo
 							Description: "Min usage constraints on this kind by resource name.",
 							Type:        []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Ref: ref("k8s.io/apimachinery/pkg/api/resource.Quantity"),
@@ -5329,6 +5297,7 @@ func schema_k8sio_api_core_v1_LimitRangeItem(ref common.ReferenceCallback) commo
 							Description: "Default resource requirement limit value by resource name if resource limit is omitted.",
 							Type:        []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Ref: ref("k8s.io/apimachinery/pkg/api/resource.Quantity"),
@@ -5342,6 +5311,7 @@ func schema_k8sio_api_core_v1_LimitRangeItem(ref common.ReferenceCallback) commo
 							Description: "DefaultRequest is the default resource requirement request value by resource name if resource request is omitted.",
 							Type:        []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Ref: ref("k8s.io/apimachinery/pkg/api/resource.Quantity"),
@@ -5355,6 +5325,7 @@ func schema_k8sio_api_core_v1_LimitRangeItem(ref common.ReferenceCallback) commo
 							Description: "MaxLimitRequestRatio if specified, the named resource must have a request and limit that are both non-zero where limit divided by request is less than or equal to the enumerated value; this represents the max burst for the named resource.",
 							Type:        []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Ref: ref("k8s.io/apimachinery/pkg/api/resource.Quantity"),
@@ -5522,7 +5493,6 @@ func schema_k8sio_api_core_v1_LoadBalancerIngress(ref common.ReferenceCallback) 
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -5571,7 +5541,6 @@ func schema_k8sio_api_core_v1_LocalObjectReference(ref common.ReferenceCallback)
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -5600,7 +5569,6 @@ func schema_k8sio_api_core_v1_LocalVolumeSource(ref common.ReferenceCallback) co
 				Required: []string{"path"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -5636,7 +5604,6 @@ func schema_k8sio_api_core_v1_NFSVolumeSource(ref common.ReferenceCallback) comm
 				Required: []string{"server", "path"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -5760,7 +5727,6 @@ func schema_k8sio_api_core_v1_NamespaceSpec(ref common.ReferenceCallback) common
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -5781,7 +5747,6 @@ func schema_k8sio_api_core_v1_NamespaceStatus(ref common.ReferenceCallback) comm
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -5857,7 +5822,6 @@ func schema_k8sio_api_core_v1_NodeAddress(ref common.ReferenceCallback) common.O
 				Required: []string{"type", "address"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -6113,7 +6077,6 @@ func schema_k8sio_api_core_v1_NodeProxyOptions(ref common.ReferenceCallback) com
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -6129,6 +6092,7 @@ func schema_k8sio_api_core_v1_NodeResources(ref common.ReferenceCallback) common
 							Description: "Capacity represents the available resources of a node",
 							Type:        []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Ref: ref("k8s.io/apimachinery/pkg/api/resource.Quantity"),
@@ -6214,7 +6178,6 @@ func schema_k8sio_api_core_v1_NodeSelectorRequirement(ref common.ReferenceCallba
 				Required: []string{"key", "operator"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -6333,6 +6296,7 @@ func schema_k8sio_api_core_v1_NodeStatus(ref common.ReferenceCallback) common.Op
 							Description: "Capacity represents the total resources of a node. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#capacity",
 							Type:        []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Ref: ref("k8s.io/apimachinery/pkg/api/resource.Quantity"),
@@ -6346,6 +6310,7 @@ func schema_k8sio_api_core_v1_NodeStatus(ref common.ReferenceCallback) common.Op
 							Description: "Allocatable represents the resources of a node that are available for scheduling. Defaults to Capacity.",
 							Type:        []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Ref: ref("k8s.io/apimachinery/pkg/api/resource.Quantity"),
@@ -6546,7 +6511,6 @@ func schema_k8sio_api_core_v1_NodeSystemInfo(ref common.ReferenceCallback) commo
 				Required: []string{"machineID", "systemUUID", "bootID", "kernelVersion", "osImage", "containerRuntimeVersion", "kubeletVersion", "kubeProxyVersion", "operatingSystem", "architecture"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -6575,7 +6539,6 @@ func schema_k8sio_api_core_v1_ObjectFieldSelector(ref common.ReferenceCallback) 
 				Required: []string{"fieldPath"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -6638,7 +6601,6 @@ func schema_k8sio_api_core_v1_ObjectReference(ref common.ReferenceCallback) comm
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -6940,6 +6902,7 @@ func schema_k8sio_api_core_v1_PersistentVolumeClaimStatus(ref common.ReferenceCa
 							Description: "Represents the actual resources of the underlying volume.",
 							Type:        []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Ref: ref("k8s.io/apimachinery/pkg/api/resource.Quantity"),
@@ -7000,7 +6963,6 @@ func schema_k8sio_api_core_v1_PersistentVolumeClaimVolumeSource(ref common.Refer
 				Required: []string{"claimName"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -7212,6 +7174,7 @@ func schema_k8sio_api_core_v1_PersistentVolumeSpec(ref common.ReferenceCallback)
 							Description: "A description of the persistent volume's resources and capacity. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#capacity",
 							Type:        []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Ref: ref("k8s.io/apimachinery/pkg/api/resource.Quantity"),
@@ -7452,7 +7415,6 @@ func schema_k8sio_api_core_v1_PersistentVolumeStatus(ref common.ReferenceCallbac
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -7481,7 +7443,6 @@ func schema_k8sio_api_core_v1_PhotonPersistentDiskVolumeSource(ref common.Refere
 				Required: []string{"pdID"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -7716,7 +7677,6 @@ func schema_k8sio_api_core_v1_PodAttachOptions(ref common.ReferenceCallback) com
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -7855,7 +7815,6 @@ func schema_k8sio_api_core_v1_PodDNSConfigOption(ref common.ReferenceCallback) c
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -7933,7 +7892,6 @@ func schema_k8sio_api_core_v1_PodExecOptions(ref common.ReferenceCallback) commo
 				Required: []string{"command"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -8108,7 +8066,6 @@ func schema_k8sio_api_core_v1_PodPortForwardOptions(ref common.ReferenceCallback
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -8143,7 +8100,6 @@ func schema_k8sio_api_core_v1_PodProxyOptions(ref common.ReferenceCallback) comm
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -8165,7 +8121,6 @@ func schema_k8sio_api_core_v1_PodReadinessGate(ref common.ReferenceCallback) com
 				Required: []string{"conditionType"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -8363,6 +8318,7 @@ func schema_k8sio_api_core_v1_PodSpec(ref common.ReferenceCallback) common.OpenA
 							Description: "NodeSelector is a selector which must be true for the pod to fit on a node. Selector which must match a node's labels for the pod to be scheduled on that node. More info: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/",
 							Type:        []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Type:   []string{"string"},
@@ -8873,7 +8829,6 @@ func schema_k8sio_api_core_v1_PortworxVolumeSource(ref common.ReferenceCallback)
 				Required: []string{"volumeID"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -9098,7 +9053,6 @@ func schema_k8sio_api_core_v1_QuobyteVolumeSource(ref common.ReferenceCallback) 
 				Required: []string{"registry", "volume"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -9480,6 +9434,7 @@ func schema_k8sio_api_core_v1_ReplicationControllerSpec(ref common.ReferenceCall
 							Description: "Selector is a label query over pods that should match the Replicas count. If Selector is empty, it is defaulted to the labels present on the Pod template. Label keys and values that must match in order to be controlled by this replication controller, if empty defaulted to labels on Pod template. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#label-selectors",
 							Type:        []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Type:   []string{"string"},
@@ -9717,6 +9672,7 @@ func schema_k8sio_api_core_v1_ResourceQuotaSpec(ref common.ReferenceCallback) co
 							Description: "hard is the set of desired hard limits for each named resource. More info: https://kubernetes.io/docs/concepts/policy/resource-quotas/",
 							Type:        []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Ref: ref("k8s.io/apimachinery/pkg/api/resource.Quantity"),
@@ -9765,6 +9721,7 @@ func schema_k8sio_api_core_v1_ResourceQuotaStatus(ref common.ReferenceCallback) 
 							Description: "Hard is the set of enforced hard limits for each named resource. More info: https://kubernetes.io/docs/concepts/policy/resource-quotas/",
 							Type:        []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Ref: ref("k8s.io/apimachinery/pkg/api/resource.Quantity"),
@@ -9778,6 +9735,7 @@ func schema_k8sio_api_core_v1_ResourceQuotaStatus(ref common.ReferenceCallback) 
 							Description: "Used is the current observed total usage of the resource in the namespace.",
 							Type:        []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Ref: ref("k8s.io/apimachinery/pkg/api/resource.Quantity"),
@@ -9806,6 +9764,7 @@ func schema_k8sio_api_core_v1_ResourceRequirements(ref common.ReferenceCallback)
 							Description: "Limits describes the maximum amount of compute resources allowed. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/",
 							Type:        []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Ref: ref("k8s.io/apimachinery/pkg/api/resource.Quantity"),
@@ -9819,6 +9778,7 @@ func schema_k8sio_api_core_v1_ResourceRequirements(ref common.ReferenceCallback)
 							Description: "Requests describes the minimum amount of compute resources required. If Requests is omitted for a container, it defaults to Limits if that is explicitly specified, otherwise to an implementation-defined value. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/",
 							Type:        []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Ref: ref("k8s.io/apimachinery/pkg/api/resource.Quantity"),
@@ -9873,7 +9833,6 @@ func schema_k8sio_api_core_v1_SELinuxOptions(ref common.ReferenceCallback) commo
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -10114,7 +10073,6 @@ func schema_k8sio_api_core_v1_ScopedResourceSelectorRequirement(ref common.Refer
 				Required: []string{"scopeName", "operator"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -10150,6 +10108,7 @@ func schema_k8sio_api_core_v1_Secret(ref common.ReferenceCallback) common.OpenAP
 							Description: "Data contains the secret data. Each key must consist of alphanumeric characters, '-', '_' or '.'. The serialized form of the secret data is a base64 encoded string, representing the arbitrary (possibly non-string) data value here. Described in https://tools.ietf.org/html/rfc4648#section-4",
 							Type:        []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Type:   []string{"string"},
@@ -10164,6 +10123,7 @@ func schema_k8sio_api_core_v1_Secret(ref common.ReferenceCallback) common.OpenAP
 							Description: "stringData allows specifying non-binary secret data in string form. It is provided as a write-only convenience method. All keys and values are merged into the data field on write, overwriting any existing values. It is never output when reading from the API.",
 							Type:        []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Type:   []string{"string"},
@@ -10212,7 +10172,6 @@ func schema_k8sio_api_core_v1_SecretEnvSource(ref common.ReferenceCallback) comm
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -10248,7 +10207,6 @@ func schema_k8sio_api_core_v1_SecretKeySelector(ref common.ReferenceCallback) co
 				Required: []string{"key"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -10367,7 +10325,6 @@ func schema_k8sio_api_core_v1_SecretReference(ref common.ReferenceCallback) comm
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -10733,7 +10690,6 @@ func schema_k8sio_api_core_v1_ServiceAccountTokenProjection(ref common.Reference
 				Required: []string{"path"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -10867,7 +10823,6 @@ func schema_k8sio_api_core_v1_ServiceProxyOptions(ref common.ReferenceCallback) 
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -10902,6 +10857,7 @@ func schema_k8sio_api_core_v1_ServiceSpec(ref common.ReferenceCallback) common.O
 							Description: "Route service traffic to pods with label keys and values matching this selector. If empty or not present, the service is assumed to have an external process managing its endpoints, which Kubernetes will not modify. Only applies to types ClusterIP, NodePort, and LoadBalancer. Ignored if type is ExternalName. More info: https://kubernetes.io/docs/concepts/services-networking/service/",
 							Type:        []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Type:   []string{"string"},
@@ -11174,7 +11130,6 @@ func schema_k8sio_api_core_v1_Sysctl(ref common.ReferenceCallback) common.OpenAP
 				Required: []string{"name", "value"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -11295,7 +11250,6 @@ func schema_k8sio_api_core_v1_Toleration(ref common.ReferenceCallback) common.Op
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -11331,7 +11285,6 @@ func schema_k8sio_api_core_v1_TopologySelectorLabelRequirement(ref common.Refere
 				Required: []string{"key", "values"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -11395,7 +11348,6 @@ func schema_k8sio_api_core_v1_TypedLocalObjectReference(ref common.ReferenceCall
 				Required: []string{"kind", "name"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -11609,7 +11561,6 @@ func schema_k8sio_api_core_v1_VolumeDevice(ref common.ReferenceCallback) common.
 				Required: []string{"name", "devicePath"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -11659,7 +11610,6 @@ func schema_k8sio_api_core_v1_VolumeMount(ref common.ReferenceCallback) common.O
 				Required: []string{"name", "mountPath"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -11939,7 +11889,6 @@ func schema_k8sio_api_core_v1_VsphereVirtualDiskVolumeSource(ref common.Referenc
 				Required: []string{"volumePath"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -12007,7 +11956,6 @@ func schema_apimachinery_pkg_api_resource_int64Amount(ref common.ReferenceCallba
 				Required: []string{"value", "scale"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -12218,7 +12166,6 @@ func schema_pkg_apis_meta_v1_APIResource(ref common.ReferenceCallback) common.Op
 				Required: []string{"name", "singularName", "namespaced", "kind", "verbs"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -12374,7 +12321,6 @@ func schema_pkg_apis_meta_v1_CreateOptions(ref common.ReferenceCallback) common.
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -12465,7 +12411,6 @@ func schema_pkg_apis_meta_v1_Duration(ref common.ReferenceCallback) common.OpenA
 				Required: []string{"Duration"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -12508,7 +12453,6 @@ func schema_pkg_apis_meta_v1_ExportOptions(ref common.ReferenceCallback) common.
 				Required: []string{"export", "exact"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -12550,7 +12494,6 @@ func schema_pkg_apis_meta_v1_GetOptions(ref common.ReferenceCallback) common.Ope
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -12577,7 +12520,6 @@ func schema_pkg_apis_meta_v1_GroupKind(ref common.ReferenceCallback) common.Open
 				Required: []string{"group", "kind"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -12604,7 +12546,6 @@ func schema_pkg_apis_meta_v1_GroupResource(ref common.ReferenceCallback) common.
 				Required: []string{"group", "resource"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -12631,7 +12572,6 @@ func schema_pkg_apis_meta_v1_GroupVersion(ref common.ReferenceCallback) common.O
 				Required: []string{"group", "version"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -12660,7 +12600,6 @@ func schema_pkg_apis_meta_v1_GroupVersionForDiscovery(ref common.ReferenceCallba
 				Required: []string{"groupVersion", "version"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -12693,7 +12632,6 @@ func schema_pkg_apis_meta_v1_GroupVersionKind(ref common.ReferenceCallback) comm
 				Required: []string{"group", "version", "kind"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -12726,7 +12664,6 @@ func schema_pkg_apis_meta_v1_GroupVersionResource(ref common.ReferenceCallback) 
 				Required: []string{"group", "version", "resource"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -12748,7 +12685,6 @@ func schema_pkg_apis_meta_v1_Initializer(ref common.ReferenceCallback) common.Op
 				Required: []string{"name"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -12833,6 +12769,7 @@ func schema_pkg_apis_meta_v1_LabelSelector(ref common.ReferenceCallback) common.
 							Description: "matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is \"key\", the operator is \"In\", and the values array contains only \"value\". The requirements are ANDed.",
 							Type:        []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Type:   []string{"string"},
@@ -12908,7 +12845,6 @@ func schema_pkg_apis_meta_v1_LabelSelectorRequirement(ref common.ReferenceCallba
 				Required: []string{"key", "operator"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -12992,7 +12928,6 @@ func schema_pkg_apis_meta_v1_ListMeta(ref common.ReferenceCallback) common.OpenA
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -13076,7 +13011,6 @@ func schema_pkg_apis_meta_v1_ListOptions(ref common.ReferenceCallback) common.Op
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -13172,6 +13106,7 @@ func schema_pkg_apis_meta_v1_ObjectMeta(ref common.ReferenceCallback) common.Ope
 							Description: "Map of string keys and values that can be used to organize and categorize (scope and select) objects. May match selectors of replication controllers and services. More info: http://kubernetes.io/docs/user-guide/labels",
 							Type:        []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Type:   []string{"string"},
@@ -13186,6 +13121,7 @@ func schema_pkg_apis_meta_v1_ObjectMeta(ref common.ReferenceCallback) common.Ope
 							Description: "Annotations is an unstructured key value map stored with a resource that may be set by external tools to store and retrieve arbitrary metadata. They are not queryable and should be preserved when modifying objects. More info: http://kubernetes.io/docs/user-guide/annotations",
 							Type:        []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Type:   []string{"string"},
@@ -13307,7 +13243,6 @@ func schema_pkg_apis_meta_v1_OwnerReference(ref common.ReferenceCallback) common
 				Required: []string{"apiVersion", "kind", "name", "uid"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -13317,10 +13252,8 @@ func schema_pkg_apis_meta_v1_Patch(ref common.ReferenceCallback) common.OpenAPID
 			SchemaProps: spec.SchemaProps{
 				Description: "Patch is provided to give a concrete name and type to the Kubernetes PATCH request body.",
 				Type:        []string{"object"},
-				Properties:  map[string]spec.Schema{},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -13341,7 +13274,6 @@ func schema_pkg_apis_meta_v1_Preconditions(ref common.ReferenceCallback) common.
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -13370,7 +13302,6 @@ func schema_pkg_apis_meta_v1_RootPaths(ref common.ReferenceCallback) common.Open
 				Required: []string{"paths"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -13399,7 +13330,6 @@ func schema_pkg_apis_meta_v1_ServerAddressByClientCIDR(ref common.ReferenceCallb
 				Required: []string{"clientCIDR", "serverAddress"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -13503,7 +13433,6 @@ func schema_pkg_apis_meta_v1_StatusCause(ref common.ReferenceCallback) common.Op
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -13607,7 +13536,6 @@ func schema_pkg_apis_meta_v1_Timestamp(ref common.ReferenceCallback) common.Open
 				Required: []string{"seconds", "nanos"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -13635,7 +13563,6 @@ func schema_pkg_apis_meta_v1_TypeMeta(ref common.ReferenceCallback) common.OpenA
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -13677,7 +13604,6 @@ func schema_pkg_apis_meta_v1_UpdateOptions(ref common.ReferenceCallback) common.
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -13727,7 +13653,6 @@ func schema_k8sio_apimachinery_pkg_runtime_RawExtension(ref common.ReferenceCall
 				Required: []string{"Raw"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -13753,7 +13678,6 @@ func schema_k8sio_apimachinery_pkg_runtime_TypeMeta(ref common.ReferenceCallback
 				},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -13801,7 +13725,6 @@ func schema_k8sio_apimachinery_pkg_runtime_Unknown(ref common.ReferenceCallback)
 				Required: []string{"Raw", "ContentEncoding", "ContentType"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
 
@@ -13882,6 +13805,5 @@ func schema_k8sio_apimachinery_pkg_version_Info(ref common.ReferenceCallback) co
 				Required: []string{"major", "minor", "gitVersion", "gitCommit", "gitTreeState", "buildDate", "goVersion", "compiler", "platform"},
 			},
 		},
-		Dependencies: []string{},
 	}
 }
