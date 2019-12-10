@@ -59,7 +59,7 @@ func CollectS2iMetrics(k8sclient client.Client) {
 
 	for {
 		namespacelist := new(v1.NamespaceList)
-		err = k8sclient.List(context.TODO(), client.InNamespace(""), namespacelist)
+		err = k8sclient.List(context.TODO(), namespacelist, client.InNamespace(""))
 		if err != nil {
 			continue
 		}
@@ -87,7 +87,7 @@ func CollectS2iMetrics(k8sclient client.Client) {
 // Setup s2ibuilder metrics
 func SetS2iBuilderMetrics(k8sclient client.Client, namespace v1.Namespace) error {
 	s2iBuilderList := new(devopsv1alpha1.S2iBuilderList)
-	err := k8sclient.List(context.TODO(), client.InNamespace(namespace.Name), s2iBuilderList)
+	err := k8sclient.List(context.TODO(), s2iBuilderList, client.InNamespace(namespace.Name))
 	if err != nil {
 		log.Error(err)
 		return err
@@ -99,7 +99,7 @@ func SetS2iBuilderMetrics(k8sclient client.Client, namespace v1.Namespace) error
 // Setup s2irun metrics
 func SetS2iRunMetrics(k8sclient client.Client, namespace v1.Namespace) error {
 	s2iRunList := new(devopsv1alpha1.S2iRunList)
-	err := k8sclient.List(context.TODO(), client.InNamespace(namespace.Name), s2iRunList)
+	err := k8sclient.List(context.TODO(), s2iRunList, client.InNamespace(namespace.Name))
 	if err != nil {
 		return err
 	}

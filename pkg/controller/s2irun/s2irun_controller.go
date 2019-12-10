@@ -318,10 +318,9 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 
 	// set s2irun status
 	pods := &corev1.PodList{}
-	listOption := &client.ListOptions{}
-	listOption.SetLabelSelector("job-name=" + found.Name)
-	listOption.InNamespace(found.Namespace)
-	err = r.List(context.TODO(), listOption, pods)
+	err = r.List(context.TODO(), pods, client.InNamespace(found.Namespace), client.MatchingLabels(map[string]string{
+		"job-name": found.Name,
+	}))
 	if err != nil {
 		log.Error(nil, "Error in get pod of job")
 		return reconcile.Result{}, nil
@@ -380,10 +379,10 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 
 func (r *ReconcileS2iRun) GetLogURL(job *batchv1.Job) (string, error) {
 	pods := &corev1.PodList{}
-	listOption := &client.ListOptions{}
-	listOption.SetLabelSelector("job-name=" + job.Name)
-	listOption.InNamespace(job.Namespace)
-	err := r.List(context.TODO(), listOption, pods)
+
+	err := r.List(context.TODO(), pods, client.InNamespace(job.Namespace), client.MatchingLabels(map[string]string{
+		"job-name": job.Name,
+	}))
 	if err != nil {
 		log.Error(nil, "Error in get pod of job")
 		return "", nil

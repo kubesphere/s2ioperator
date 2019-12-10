@@ -68,11 +68,11 @@ type ProxyConfig struct {
 
 // CGroupLimits holds limits used to constrain container resources.
 type CGroupLimits struct {
-	MemoryLimitBytes int64 `json:"memoryLimitBytes"`
-	CPUShares        int64 `json:"cpuShares"`
-	CPUPeriod        int64 `json:"cpuPeriod"`
-	CPUQuota         int64 `json:"cpuQuota"`
-	MemorySwap       int64 `json:"memorySwap"`
+	MemoryLimitBytes int64  `json:"memoryLimitBytes"`
+	CPUShares        int64  `json:"cpuShares"`
+	CPUPeriod        int64  `json:"cpuPeriod"`
+	CPUQuota         int64  `json:"cpuQuota"`
+	MemorySwap       int64  `json:"memorySwap"`
 	Parent           string `json:"parent"`
 }
 
