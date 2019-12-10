@@ -19,10 +19,10 @@ echo "updating kustomize image patch file for manager resource"
 
 if [ "$(uname)" == "Darwin" ]; then
     sed -i '' -e 's@image: .*@image: '"${IMG}"'@' ./config/default/manager_image_patch.yaml
-    sed -i '' -e  's/namespace: .*/namespace: '"${TEST_NS}"'/' ./config/default/kustomization.yaml
+    sed -i '' -e  's/namespace: .*/namespace: '"${TEST_NS}"'/' ./config/kustomization.yaml
 else
     sed -i  -e 's@image: .*@image: '"${IMG}"'@' ./config/default/manager_image_patch.yaml
-    sed -i  -e  's/namespace: .*/namespace: '"${TEST_NS}"'/' ./config/default/kustomization.yaml
+    sed -i  -e  's/namespace: .*/namespace: '"${TEST_NS}"'/' ./config/kustomization.yaml
 fi
 kubectl create ns  $TEST_NS
 kubectl kustomize config > $dest
