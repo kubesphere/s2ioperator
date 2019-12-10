@@ -20,13 +20,15 @@ spec:
     type: string
   group: devops.kubesphere.io
   names:
+    categories:
+    - devops
     kind: S2iBuilderTemplate
     listKind: S2iBuilderTemplateList
     plural: s2ibuildertemplates
     shortNames:
     - s2ibt
     singular: s2ibuildertemplate
-  scope: Namespaced
+  scope: Cluster
   subresources: {}
   validation:
     openAPIV3Schema:
