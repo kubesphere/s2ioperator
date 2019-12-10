@@ -11,8 +11,8 @@ pipeline {
 kind: Pod
 spec:
   containers:
-  - name: s2ioperator
-    image: magicsong/golang1.11-s2ioperator:latest
+  - name: go
+    image: kubespheredev/builder-go:v2.1.0
     command: [\'cat\']
     tty: true
     volumeMounts:
@@ -28,7 +28,7 @@ spec:
     hostPath:
       path: /usr/bin/docker
       '''
-      defaultContainer 's2ioperator'
+      defaultContainer 'go'
     }
 
   }
@@ -65,9 +65,9 @@ spec:
        }
        
         sh '''
-mkdir -p /go/src/github.com/kubesphere
-ln -s `pwd` /go/src/github.com/kubesphere/s2ioperator
-cd /go/src/github.com/kubesphere/s2ioperator
+mkdir -p /home/jenkins/go/src/github.com/kubesphere
+ln -s `pwd` /home/jenkins/go/src/github.com/kubesphere/s2ioperator
+cd /home/jenkins/go/src/github.com/kubesphere/s2ioperator
 make e2e-test'''
       }
     }
