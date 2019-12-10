@@ -25,9 +25,9 @@ resources:
 - ../rbac/auth_proxy_service.yaml
 - ../rbac/auth_proxy_role.yaml
 - ../rbac/auth_proxy_role_binding.yaml
-- ../crds/devops_v1alpha1_s2ibuilder.yaml
-- ../crds/devops_v1alpha1_s2irun.yaml
-- ../crds/devops_v1alpha1_s2ibuildertemplate.yaml
+- ../crds/devops.kubesphere.io_s2ibuilders.yaml
+- ../crds/devops.kubesphere.io_s2ibuildertemplates.yaml
+- ../crds/devops.kubesphere.io_s2iruns.yaml
 
 patches:
 - manager_image_patch.yaml
