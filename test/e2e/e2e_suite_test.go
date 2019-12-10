@@ -60,7 +60,13 @@ var _ = BeforeSuite(func() {
 })
 
 var _ = AfterSuite(func() {
-	cmd := exec.Command("kubectl", "delete", "-f", workspace+"/deploy/s2ioperator.yaml")
+	cmd := exec.Command("kubectl", "delete", "s2ib", "--all-namespaces", "--all")
+	cmd.Run()
+	cmd = exec.Command("kubectl", "delete", "s2ir", "--all-namespaces", "--all")
+	cmd.Run()
+	cmd = exec.Command("kubectl", "delete", "s2ibt", "--all")
+	cmd.Run()
+	cmd = exec.Command("kubectl", "delete", "-f", workspace+"/deploy/s2ioperator.yaml")
 	Expect(cmd.Run()).ShouldNot(HaveOccurred())
 })
 
