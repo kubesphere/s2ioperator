@@ -27,7 +27,7 @@ deploy: manifests
 
 # Generate manifests e.g. CRD, RBAC etc.
 manifests:
-	go run vendor/sigs.k8s.io/controller-tools/cmd/controller-gen/main.go paths=./apis/...
+	go run vendor/sigs.k8s.io/controller-tools/cmd/controller-gen/main.go  crd:trivialVersions=true rbac:roleName=manager-role webhook paths="./pkg/apis/...;./pkg/controller/..." output:crd:artifacts:config=config/crds
 
 # Run go fmt against code
 fmt:
@@ -42,7 +42,7 @@ client-gen:
 
 # Generate code
 generate:
-	go run vendor/sigs.k8s.io/controller-tools/cmd/controller-gen/main.go  object:headerFile=./hack/boilerplate.go.txt paths=./api/...
+	go run vendor/sigs.k8s.io/controller-tools/cmd/controller-gen/main.go  object:headerFile=./hack/boilerplate.go.txt paths=./pkg/apis/...
 	go run vendor/k8s.io/kube-openapi/cmd/openapi-gen/openapi-gen.go -O openapi_generated -i k8s.io/api/core/v1,k8s.io/apimachinery/pkg/apis/meta/v1,k8s.io/apimachinery/pkg/api/resource,k8s.io/apimachinery/pkg/runtime,k8s.io/apimachinery/pkg/util/intstr,k8s.io/apimachinery/pkg/version,github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1 -p github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1 -h hack/boilerplate.go.txt --report-filename api/api-rules/violation_exceptions.list
 
 

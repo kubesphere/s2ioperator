@@ -1,9 +1,11 @@
+
+---
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: (devel)
   creationTimestamp: null
-  labels:
-    controller-tools.k8s.io: "1.0"
   name: s2ibuildertemplates.devops.kubesphere.io
 spec:
   additionalPrinterColumns:
@@ -19,26 +21,31 @@ spec:
   group: devops.kubesphere.io
   names:
     kind: S2iBuilderTemplate
+    listKind: S2iBuilderTemplateList
     plural: s2ibuildertemplates
     shortNames:
     - s2ibt
-  scope: Cluster
+    singular: s2ibuildertemplate
+  scope: Namespaced
+  subresources: {}
   validation:
     openAPIV3Schema:
+      description: S2iBuilderTemplate is the Schema for the s2ibuildertemplates API
       properties:
         apiVersion:
           description: 'APIVersion defines the versioned schema of this representation
             of an object. Servers should convert recognized schemas to the latest
-            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
           type: string
         kind:
           description: 'Kind is a string value representing the REST resource this
             object represents. Servers may infer this from the endpoint the client
-            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
           type: string
         metadata:
           type: object
         spec:
+          description: S2iBuilderTemplateSpec defines the desired state of S2iBuilderTemplate
           properties:
             codeFramework:
               description: CodeFramework means which language this template is designed
@@ -60,6 +67,7 @@ spec:
                     type: string
                   runtimeArtifacts:
                     items:
+                      description: VolumeSpec represents a single volume mount point.
                       properties:
                         destination:
                           description: Destination is the path to mount the volume
@@ -115,8 +123,14 @@ spec:
               type: string
           type: object
         status:
+          description: S2iBuilderTemplateStatus defines the observed state of S2iBuilderTemplate
           type: object
+      type: object
   version: v1alpha1
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true
 status:
   acceptedNames:
     kind: ""
