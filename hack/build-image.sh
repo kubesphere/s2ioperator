@@ -13,6 +13,6 @@ echo "updating kustomize image patch file for manager resource"
 sed -i'' -e 's@image: .*@image: '"${IMG}"'@' ./config/default/manager_image_patch.yaml
 
 kubectl create ns 
-kustomize build config/default -o $dest
+kubectl kustomize config > $dest
 kubectl apply -f $dest
 ./hack/certs.sh --service webhook-server-service --namespace $test_namespace --secret webhook-server-secret

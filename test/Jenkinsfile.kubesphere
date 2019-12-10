@@ -6,29 +6,7 @@ pipeline {
 
   agent {
     kubernetes {
-      label 's2i'
-      yaml '''apiVersion: v1
-kind: Pod
-spec:
-  containers:
-  - name: go
-    image: runzexia/s2ioperator-test-agent:latest
-    command: [\'cat\']
-    tty: true
-    volumeMounts:
-    - name: dockersock
-      mountPath: /var/run/docker.sock
-    - name: dockerbin
-      mountPath: /usr/bin/docker
-  volumes:
-  - name: dockersock
-    hostPath:
-      path: /var/run/docker.sock
-  - name: dockerbin
-    hostPath:
-      path: /usr/bin/docker
-      '''
-      defaultContainer 'go'
+      label 'go'
     }
 
   }
@@ -36,39 +14,42 @@ spec:
   stages {
     stage('set kubeconfig'){
      steps{
-        sh 'mkdir -p ~/.kube'
-        withCredentials([kubeconfigContent(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_CONTENT')]) {
-           sh 'echo "$KUBECONFIG_CONTENT" > ~/.kube/config'
+       container('go'){
+          sh 'mkdir -p ~/.kube'
+          withCredentials([kubeconfigContent(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_CONTENT')]) {
+            sh 'echo "$KUBECONFIG_CONTENT" > ~/.kube/config'
+          }
         }
       }
     }
     stage('test') {
       steps {
+       container('go'){
+         withCredentials([usernamePassword(passwordVariable : 'DOCKER_PASSWORD' ,usernameVariable : 'DOCKER_USERNAME' ,credentialsId : "dockerhub-id" ,)]) {
+            sh 'echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin'
+         }
+         withCredentials([usernamePassword(passwordVariable : 'DOCKER_PASSWORD' ,usernameVariable : 'DOCKER_USERNAME' ,credentialsId : "sed-dockerhub-id" ,)]) {
+            sh  "sed -i.bak 's#UserShouldEnterUserName#$DOCKER_USERNAME#' ./config/samples/autoscale/*.yaml"
+            sh  "sed -i.bak 's#UserShouldEnterUserPassword#$DOCKER_PASSWORD#' ./config/samples/autoscale/*.yaml"
+         }
+         withCredentials([usernamePassword(passwordVariable : 'DOCKER_PASSWORD' ,usernameVariable : 'DOCKER_USERNAME' ,credentialsId : "sed-dockerhub-id" ,)]) {
+            sh  "sed -i.bak 's#UserShouldEnterUserName#$DOCKER_USERNAME#' ./config/samples/b2i/*.yaml"
+            sh  "sed -i.bak 's#UserShouldEnterUserPassword#$DOCKER_PASSWORD#' ./config/samples/b2i/*.yaml"
+         }
+         withCredentials([string(credentialsId: 'dockerconfig',variable: 'DOCKERCONFIG')]){
+            sh  "sed -i.bak 's#UserShouldEnterBase64DockerConfig#$DOCKERCONFIG#' ./config/samples/secret/*.yaml"
+         }
+         withCredentials([usernamePassword(passwordVariable : 'GIT_PASSWORD' ,usernameVariable : 'GIT_USERNAME' ,credentialsId : "git" ,)]) {
+            sh  "sed -i.bak 's#UserShouldEnterBase64Username#$GIT_USERNAME#' ./config/samples/git-secret/*.yaml"
+            sh  "sed -i.bak 's#UserShouldEnterBase64Password#$GIT_PASSWORD#' ./config/samples/git-secret/*.yaml"
+         }
 
-       withCredentials([usernamePassword(passwordVariable : 'DOCKER_PASSWORD' ,usernameVariable : 'DOCKER_USERNAME' ,credentialsId : "dockerhub-id" ,)]) {
-          sh 'echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin'
-       }
-       withCredentials([usernamePassword(passwordVariable : 'DOCKER_PASSWORD' ,usernameVariable : 'DOCKER_USERNAME' ,credentialsId : "sed-dockerhub-id" ,)]) {
-          sh  "sed -i.bak 's#UserShouldEnterUserName#$DOCKER_USERNAME#' ./config/samples/autoscale/*.yaml"
-          sh  "sed -i.bak 's#UserShouldEnterUserPassword#$DOCKER_PASSWORD#' ./config/samples/autoscale/*.yaml"
-       }
-       withCredentials([usernamePassword(passwordVariable : 'DOCKER_PASSWORD' ,usernameVariable : 'DOCKER_USERNAME' ,credentialsId : "sed-dockerhub-id" ,)]) {
-          sh  "sed -i.bak 's#UserShouldEnterUserName#$DOCKER_USERNAME#' ./config/samples/b2i/*.yaml"
-          sh  "sed -i.bak 's#UserShouldEnterUserPassword#$DOCKER_PASSWORD#' ./config/samples/b2i/*.yaml"
-       }
-       withCredentials([string(credentialsId: 'dockerconfig',variable: 'DOCKERCONFIG')]){
-          sh  "sed -i.bak 's#UserShouldEnterBase64DockerConfig#$DOCKERCONFIG#' ./config/samples/secret/*.yaml"
-       }
-       withCredentials([usernamePassword(passwordVariable : 'GIT_PASSWORD' ,usernameVariable : 'GIT_USERNAME' ,credentialsId : "git" ,)]) {
-          sh  "sed -i.bak 's#UserShouldEnterBase64Username#$GIT_USERNAME#' ./config/samples/git-secret/*.yaml"
-          sh  "sed -i.bak 's#UserShouldEnterBase64Password#$GIT_PASSWORD#' ./config/samples/git-secret/*.yaml"
-       }
-       
-        sh '''
-mkdir -p /home/jenkins/go/src/github.com/kubesphere
-ln -s `pwd` /home/jenkins/go/src/github.com/kubesphere/s2ioperator
-cd /home/jenkins/go/src/github.com/kubesphere/s2ioperator
-make e2e-test'''
+            sh '''
+    mkdir -p /home/jenkins/go/src/github.com/kubesphere
+    ln -s `pwd` /home/jenkins/go/src/github.com/kubesphere/s2ioperator
+    cd /home/jenkins/go/src/github.com/kubesphere/s2ioperator
+    make e2e-test'''
+        }
       }
     }
 
@@ -77,12 +58,14 @@ make e2e-test'''
         branch 'master'
       }
       steps {
+      container('go'){
         sh "cd /go/src/github.com/kubesphere/s2ioperator"
         sh "docker build -f deploy/Dockerfile -t $IMAGE_NAME bin/"
         withCredentials([usernamePassword(passwordVariable : 'DOCKER_PASSWORD' ,usernameVariable : 'DOCKER_USERNAME' ,credentialsId : "dockerhub-id" ,)]) {
           sh 'echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin'
           sh 'docker push $IMAGE_NAME'
         }
+      }
     }
   }
 }

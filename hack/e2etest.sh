@@ -25,7 +25,7 @@ else
     sed -i  -e  's/namespace: .*/namespace: '"${TEST_NS}"'/' ./config/default/kustomization.yaml
 fi
 kubectl create ns  $TEST_NS
-kustomize build config/default -o $dest
+kubectl kustomize config > $dest
 kubectl apply -f $dest
 ./hack/certs.sh --service webhook-server-service --namespace $TEST_NS --secret webhook-server-secret
 

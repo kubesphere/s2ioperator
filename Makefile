@@ -24,7 +24,7 @@ install: manifests
 # Deploy controller in the configured Kubernetes cluster in ~/.kube/config
 deploy: manifests
 	kubectl apply -f config/crds
-	kustomize build config/default | kubectl apply -f -
+	kubectl kustomize config | kubectl apply -f -
 
 # Generate manifests e.g. CRD, RBAC etc.
 manifests:
@@ -57,7 +57,7 @@ docker-build:
 debug: manager
 	./hack/build-image.sh
 release: manager test docker-build
-	kustomize build config/default -o deploy/s2ioperator.yaml
+	kubectl kustomize config > deploy/s2ioperator.yaml
 
 install-travis:
 	chmod +x ./hack/*.sh

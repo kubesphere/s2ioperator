@@ -1,9 +1,9 @@
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: (devel)
   creationTimestamp: null
-  labels:
-    controller-tools.k8s.io: "1.0"
   name: s2ibuilders.devops.kubesphere.io
 spec:
   additionalPrinterColumns:
@@ -22,28 +22,32 @@ spec:
   group: devops.kubesphere.io
   names:
     kind: S2iBuilder
+    listKind: S2iBuilderList
     plural: s2ibuilders
     shortNames:
     - s2ib
+    singular: s2ibuilder
   scope: Namespaced
   subresources:
     status: {}
   validation:
     openAPIV3Schema:
+      description: S2iBuilder is the Schema for the s2ibuilders API
       properties:
         apiVersion:
           description: 'APIVersion defines the versioned schema of this representation
             of an object. Servers should convert recognized schemas to the latest
-            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
           type: string
         kind:
           description: 'Kind is a string value representing the REST resource this
             object represents. Servers may infer this from the endpoint the client
-            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
           type: string
         metadata:
           type: object
         spec:
+          description: S2iBuilderSpec defines the desired state of S2iBuilder
           properties:
             config:
               description: 'INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
@@ -100,6 +104,31 @@ spec:
                 cgroupLimits:
                   description: CGroupLimits describes the cgroups limits that will
                     be applied to any containers run by s2i.
+                  properties:
+                    cpuPeriod:
+                      format: int64
+                      type: integer
+                    cpuQuota:
+                      format: int64
+                      type: integer
+                    cpuShares:
+                      format: int64
+                      type: integer
+                    memoryLimitBytes:
+                      format: int64
+                      type: integer
+                    memorySwap:
+                      format: int64
+                      type: integer
+                    parent:
+                      type: string
+                  required:
+                  - cpuPeriod
+                  - cpuQuota
+                  - cpuShares
+                  - memoryLimitBytes
+                  - memorySwap
+                  - parent
                   type: object
                 contextDir:
                   description: Specify a relative directory inside the application
@@ -119,6 +148,34 @@ spec:
                   type: string
                 dockerConfig:
                   description: DockerConfig describes how to access host docker daemon.
+                  properties:
+                    caFile:
+                      description: CAFile is the certificate authority file path for
+                        a TLS connection
+                      type: string
+                    certFile:
+                      description: CertFile is the certificate file path for a TLS
+                        connection
+                      type: string
+                    endPoint:
+                      description: Endpoint is the docker network endpoint or socket
+                      type: string
+                    keyFile:
+                      description: KeyFile is the key file path for a TLS connection
+                      type: string
+                    tlsVerify:
+                      description: TLSVerify indicates if TLS peer must be verified
+                      type: boolean
+                    useTLS:
+                      description: UseTLS indicates if TLS must be used
+                      type: boolean
+                  required:
+                  - caFile
+                  - certFile
+                  - endPoint
+                  - keyFile
+                  - tlsVerify
+                  - useTLS
                   type: object
                 dockerNetworkMode:
                   description: DockerNetworkMode is used to set the docker network
@@ -135,6 +192,7 @@ spec:
                   description: Environment is a map of environment variables to be
                     passed to the image.
                   items:
+                    description: EnvironmentSpec specifies a single environment variable.
                     properties:
                       name:
                         type: string
@@ -156,6 +214,11 @@ spec:
                   type: boolean
                 gitSecretRef:
                   description: GitSecretRef is the BasicAuth Secret of Git Clone
+                  properties:
+                    name:
+                      description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                        TODO: Add other useful fields. apiVersion, kind, uid?'
+                      type: string
                   type: object
                 hasOnBuild:
                   description: HasOnBuild will be set to true if the builder image
@@ -187,6 +250,13 @@ spec:
                     password:
                       type: string
                     secretRef:
+                      description: LocalObjectReference contains enough information
+                        to let you locate the referenced object inside the same namespace.
+                      properties:
+                        name:
+                          description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                            TODO: Add other useful fields. apiVersion, kind, uid?'
+                          type: string
                       type: object
                     serverAddress:
                       type: string
@@ -203,6 +273,7 @@ spec:
                     that are injected to the container that runs assemble. All files
                     we inject will be truncated after the assemble script finishes.
                   items:
+                    description: VolumeSpec represents a single volume mount point.
                     properties:
                       destination:
                         description: Destination is the path to mount the volume to
@@ -231,6 +302,8 @@ spec:
                     labels will be generated.
                   type: string
                 labels:
+                  additionalProperties:
+                    type: string
                   description: Labels specify labels and their values to be applied
                     to the resulting image. Label keys must have non-zero length.
                     The labels defined here override generated labels in case they
@@ -272,6 +345,13 @@ spec:
                     password:
                       type: string
                     secretRef:
+                      description: LocalObjectReference contains enough information
+                        to let you locate the referenced object inside the same namespace.
+                      properties:
+                        name:
+                          description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                            TODO: Add other useful fields. apiVersion, kind, uid?'
+                          type: string
                       type: object
                     serverAddress:
                       type: string
@@ -287,6 +367,13 @@ spec:
                     password:
                       type: string
                     secretRef:
+                      description: LocalObjectReference contains enough information
+                        to let you locate the referenced object inside the same namespace.
+                      properties:
+                        name:
+                          description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                            TODO: Add other useful fields. apiVersion, kind, uid?'
+                          type: string
                       type: object
                     serverAddress:
                       type: string
@@ -317,6 +404,7 @@ spec:
                     it's empty, S2I will try to get this list from io.openshift.s2i.assemble-input-files
                     label on a RuntimeImage.
                   items:
+                    description: VolumeSpec represents a single volume mount point.
                     properties:
                       destination:
                         description: Destination is the path to mount the volume to
@@ -340,6 +428,13 @@ spec:
                     password:
                       type: string
                     secretRef:
+                      description: LocalObjectReference contains enough information
+                        to let you locate the referenced object inside the same namespace.
+                      properties:
+                        name:
+                          description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                            TODO: Add other useful fields. apiVersion, kind, uid?'
+                          type: string
                       type: object
                     serverAddress:
                       type: string
@@ -439,6 +534,7 @@ spec:
               type: object
           type: object
         status:
+          description: S2iBuilderStatus defines the observed state of S2iBuilder
           properties:
             lastRunName:
               description: LastRunState return the name of the newest run of this
@@ -455,12 +551,16 @@ spec:
               type: string
             runCount:
               description: RunCount represent the sum of s2irun of this builder
-              format: int64
               type: integer
           required:
           - runCount
           type: object
+      type: object
   version: v1alpha1
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true
 status:
   acceptedNames:
     kind: ""
@@ -471,9 +571,9 @@ status:
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: (devel)
   creationTimestamp: null
-  labels:
-    controller-tools.k8s.io: "1.0"
   name: s2ibuildertemplates.devops.kubesphere.io
 spec:
   additionalPrinterColumns:
@@ -489,26 +589,31 @@ spec:
   group: devops.kubesphere.io
   names:
     kind: S2iBuilderTemplate
+    listKind: S2iBuilderTemplateList
     plural: s2ibuildertemplates
     shortNames:
     - s2ibt
-  scope: Cluster
+    singular: s2ibuildertemplate
+  scope: Namespaced
+  subresources: {}
   validation:
     openAPIV3Schema:
+      description: S2iBuilderTemplate is the Schema for the s2ibuildertemplates API
       properties:
         apiVersion:
           description: 'APIVersion defines the versioned schema of this representation
             of an object. Servers should convert recognized schemas to the latest
-            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
           type: string
         kind:
           description: 'Kind is a string value representing the REST resource this
             object represents. Servers may infer this from the endpoint the client
-            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
           type: string
         metadata:
           type: object
         spec:
+          description: S2iBuilderTemplateSpec defines the desired state of S2iBuilderTemplate
           properties:
             codeFramework:
               description: CodeFramework means which language this template is designed
@@ -530,6 +635,7 @@ spec:
                     type: string
                   runtimeArtifacts:
                     items:
+                      description: VolumeSpec represents a single volume mount point.
                       properties:
                         destination:
                           description: Destination is the path to mount the volume
@@ -585,8 +691,14 @@ spec:
               type: string
           type: object
         status:
+          description: S2iBuilderTemplateStatus defines the observed state of S2iBuilderTemplate
           type: object
+      type: object
   version: v1alpha1
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true
 status:
   acceptedNames:
     kind: ""
@@ -597,9 +709,9 @@ status:
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: (devel)
   creationTimestamp: null
-  labels:
-    controller-tools.k8s.io: "1.0"
   name: s2iruns.devops.kubesphere.io
 spec:
   additionalPrinterColumns:
@@ -621,28 +733,32 @@ spec:
   group: devops.kubesphere.io
   names:
     kind: S2iRun
+    listKind: S2iRunList
     plural: s2iruns
     shortNames:
     - s2ir
+    singular: s2irun
   scope: Namespaced
   subresources:
     status: {}
   validation:
     openAPIV3Schema:
+      description: S2iRun is the Schema for the s2iruns API
       properties:
         apiVersion:
           description: 'APIVersion defines the versioned schema of this representation
             of an object. Servers should convert recognized schemas to the latest
-            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
           type: string
         kind:
           description: 'Kind is a string value representing the REST resource this
             object represents. Servers may infer this from the endpoint the client
-            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
           type: string
         metadata:
           type: object
         spec:
+          description: S2iRunSpec defines the desired state of S2iRun
           properties:
             backoffLimit:
               description: BackoffLimit limits the restart count of each s2irun. Default
@@ -673,6 +789,7 @@ spec:
           - builderName
           type: object
         status:
+          description: S2iRunStatus defines the observed state of S2iRun
           properties:
             completionTime:
               description: Represents time when the job was completed. It is not guaranteed
@@ -690,12 +807,78 @@ spec:
             runState:
               description: RunState  indicates whether this job is done or failed
               type: string
+            s2iBuildResult:
+              description: S2i build result info.
+              properties:
+                commandPull:
+                  description: Command for pull image.
+                  type: string
+                imageCreated:
+                  description: Image created time.
+                  type: string
+                imageID:
+                  description: Image ID.
+                  type: string
+                imageName:
+                  description: ImageName is the name of artifact
+                  type: string
+                imageRepoTags:
+                  description: image tags.
+                  items:
+                    type: string
+                  type: array
+                imageSize:
+                  description: The size in bytes of the image
+                  format: int64
+                  type: integer
+              type: object
+            s2iBuildSource:
+              description: S2i build source info.
+              properties:
+                binaryName:
+                  description: Binary file Name
+                  type: string
+                binarySize:
+                  description: Binary file Size
+                  format: int64
+                  type: integer
+                builderImage:
+                  description: // BuilderImage describes which image is used for building
+                    the result images.
+                  type: string
+                commitID:
+                  description: CommitID represents an arbitrary extended object reference
+                    in Git as SHA-1
+                  type: string
+                committerEmail:
+                  description: CommitterEmail contains the e-mail of the committer
+                  type: string
+                committerName:
+                  description: CommitterName contains the name of the committer
+                  type: string
+                description:
+                  description: Description is a result image description label. The
+                    default is no description.
+                  type: string
+                revisionId:
+                  description: The RevisionId is a branch name or a SHA-1 hash of
+                    every important thing about the commit
+                  type: string
+                sourceUrl:
+                  description: SourceURL is  url of the codes such as https://github.com/a/b.git
+                  type: string
+              type: object
             startTime:
               description: StartTime represent when this run began
               format: date-time
               type: string
           type: object
+      type: object
   version: v1alpha1
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true
 status:
   acceptedNames:
     kind: ""
@@ -972,21 +1155,6 @@ metadata:
 apiVersion: v1
 kind: Service
 metadata:
-  labels:
-    control-plane: s2i-controller-manager
-    controller-tools.k8s.io: "1.0"
-  name: s2ioperator
-  namespace: kubesphere-devops-system
-spec:
-  ports:
-  - port: 443
-  selector:
-    control-plane: s2i-controller-manager
-    controller-tools.k8s.io: "1.0"
----
-apiVersion: v1
-kind: Service
-metadata:
   annotations:
     prometheus.io/port: "8080"
     prometheus.io/scheme: http
@@ -1002,6 +1170,21 @@ spec:
   - name: http
     port: 8080
     targetPort: 8080
+  selector:
+    control-plane: s2i-controller-manager
+    controller-tools.k8s.io: "1.0"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    control-plane: s2i-controller-manager
+    controller-tools.k8s.io: "1.0"
+  name: s2ioperator
+  namespace: kubesphere-devops-system
+spec:
+  ports:
+  - port: 443
   selector:
     control-plane: s2i-controller-manager
     controller-tools.k8s.io: "1.0"
@@ -1040,8 +1223,8 @@ spec:
           value: webhook-server-secret
         - name: S2IIMAGENAME
           value: kubespheredev/s2irun:v0.0.3
-        image: kubespheredev/s2ioperator:advanced-2.1.0
-        imagePullPolicy: IfNotPresent
+        image: kubespheredev/s2ioperator:v2.1.0
+        imagePullPolicy: Always
         name: manager
         ports:
         - containerPort: 8080
