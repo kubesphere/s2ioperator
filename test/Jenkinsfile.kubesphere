@@ -12,6 +12,13 @@ pipeline {
   }
 
   stages {
+    stage('install utils'){
+      steps{
+        container('go'){
+          sh 'yum install openssl openssl-devel -y'
+        }
+      }
+    }
     stage('set kubeconfig'){
      steps{
        container('go'){
