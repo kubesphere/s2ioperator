@@ -15,7 +15,7 @@ pipeline {
     stage('install utils'){
       steps{
         container('go'){
-          sh 'yum install openssl openssl-devel -y'
+          sh 'yum install openssl openssl-devel jq -y'
         }
       }
     }
