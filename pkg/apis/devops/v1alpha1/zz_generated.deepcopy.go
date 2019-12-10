@@ -340,7 +340,7 @@ func (in *S2iBuilder) DeepCopyObject() runtime.Object {
 func (in *S2iBuilderList) DeepCopyInto(out *S2iBuilderList) {
 	*out = *in
 	out.TypeMeta = in.TypeMeta
-	out.ListMeta = in.ListMeta
+	in.ListMeta.DeepCopyInto(&out.ListMeta)
 	if in.Items != nil {
 		in, out := &in.Items, &out.Items
 		*out = make([]S2iBuilder, len(*in))
@@ -452,7 +452,7 @@ func (in *S2iBuilderTemplate) DeepCopyObject() runtime.Object {
 func (in *S2iBuilderTemplateList) DeepCopyInto(out *S2iBuilderTemplateList) {
 	*out = *in
 	out.TypeMeta = in.TypeMeta
-	out.ListMeta = in.ListMeta
+	in.ListMeta.DeepCopyInto(&out.ListMeta)
 	if in.Items != nil {
 		in, out := &in.Items, &out.Items
 		*out = make([]S2iBuilderTemplate, len(*in))
@@ -662,7 +662,7 @@ func (in *S2iRun) DeepCopyObject() runtime.Object {
 func (in *S2iRunList) DeepCopyInto(out *S2iRunList) {
 	*out = *in
 	out.TypeMeta = in.TypeMeta
-	out.ListMeta = in.ListMeta
+	in.ListMeta.DeepCopyInto(&out.ListMeta)
 	if in.Items != nil {
 		in, out := &in.Items, &out.Items
 		*out = make([]S2iRun, len(*in))

@@ -7,62 +7,35 @@ module github.com/kubesphere/s2ioperator
 go 1.12
 
 require (
-	cloud.google.com/go v0.38.0 // indirect
-	github.com/appscode/jsonpatch v0.0.0-20190108182946-7c0e3b262f30 // indirect
 	github.com/docker/distribution v2.7.1+incompatible
-	github.com/emicklei/go-restful v2.9.5+incompatible // indirect
-	github.com/evanphx/json-patch v4.2.0+incompatible // indirect
-	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/go-logr/zapr v0.1.1 // indirect
 	github.com/go-openapi/jsonreference v0.19.3 // indirect
 	github.com/go-openapi/spec v0.19.3
-	github.com/gogo/protobuf v1.2.2-0.20190723190241-65acae22fc9d // indirect
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 	github.com/golang/groupcache v0.0.0-20181024230925-c65c006176ff // indirect
-	github.com/golang/protobuf v1.3.1 // indirect
-	github.com/google/go-cmp v0.3.0 // indirect
-	github.com/google/uuid v1.1.1 // indirect
-	github.com/googleapis/gnostic v0.2.0 // indirect
-	github.com/gregjones/httpcache v0.0.0-20170728041850-787624de3eb7 // indirect
-	github.com/hashicorp/golang-lru v0.5.1 // indirect
-	github.com/imdario/mergo v0.3.6 // indirect
 	github.com/json-iterator/go v1.1.8 // indirect
 	github.com/mailru/easyjson v0.7.0 // indirect
-	github.com/markbates/inflect v1.0.4 // indirect
 	github.com/onsi/ginkgo v1.8.0
 	github.com/onsi/gomega v1.5.0
 	github.com/opencontainers/go-digest v1.0.0-rc1 // indirect
-	github.com/pborman/uuid v1.2.0 // indirect
-	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
-	github.com/pkg/errors v0.8.1 // indirect
 	github.com/prometheus/client_golang v0.9.2
 	github.com/prometheus/client_model v0.0.0-20190109181635-f287a105a20e // indirect
 	github.com/prometheus/common v0.1.0 // indirect
 	github.com/prometheus/procfs v0.0.0-20190104112138-b1a0a9a36d74 // indirect
-	github.com/spf13/afero v1.2.2 // indirect
-	github.com/spf13/cobra v0.0.5 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/testify v1.4.0 // indirect
-	go.uber.org/atomic v1.3.2 // indirect
-	go.uber.org/multierr v1.1.0 // indirect
-	go.uber.org/zap v1.9.1 // indirect
 	golang.org/x/net v0.0.0-20191004110552-13f9640d40b9
-	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45 // indirect
 	golang.org/x/tools v0.0.0-20190920225731-5eefd052ad72 // indirect
-	google.golang.org/appengine v1.5.0 // indirect
-	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.2.4 // indirect
-	k8s.io/api v0.0.0-20181213150558-05914d821849
-	k8s.io/apiextensions-apiserver v0.0.0-20181213153335-0fe22c71c476 // indirect
-	k8s.io/apimachinery v0.0.0-20190831074630-461753078381
-	k8s.io/client-go v0.0.0-20190831074946-3fe2abece89e
-	k8s.io/code-generator v0.0.0-20181117043124-c2090bec4d9b
+	k8s.io/api v0.0.0-20190918155943-95b840bb6a1f
+	k8s.io/apimachinery v0.0.0-20190913080033-27d36303b655
+	k8s.io/client-go v0.0.0-20190918160344-1fbdaa4c8d90
+	k8s.io/code-generator v0.0.0-20190912054826-cd179ad6a269
 	k8s.io/gengo v0.0.0-20191120174120-e74f70b9b27e // indirect
 	k8s.io/klog v1.0.0
-	k8s.io/kube-openapi v0.0.0-20191107075043-30be4d16710a
-	sigs.k8s.io/controller-runtime v0.1.10
-	sigs.k8s.io/controller-tools v0.1.9
-	sigs.k8s.io/testing_frameworks v0.1.1 // indirect
+	k8s.io/kube-openapi v0.0.0-20190816220812-743ec37842bf
+	sigs.k8s.io/controller-runtime v0.4.0
+	sigs.k8s.io/controller-tools v0.2.4
 )
 
 replace (
@@ -220,6 +193,7 @@ replace (
 	golang.org/x/time => golang.org/x/time v0.0.0-20181108054448-85acf8d2951c
 	golang.org/x/tools => golang.org/x/tools v0.0.0-20190920225731-5eefd052ad72
 	golang.org/x/xerrors => golang.org/x/xerrors v0.0.0-20190717185122-a985d3407aa7
+	gomodules.xyz/jsonpatch/v2 => gomodules.xyz/jsonpatch/v2 v2.0.1
 	gonum.org/v1/gonum => gonum.org/v1/gonum v0.0.0-20190331200053-3d26580ed485
 	gonum.org/v1/netlib => gonum.org/v1/netlib v0.0.0-20190331212654-76723241ea4e
 	google.golang.org/api => google.golang.org/api v0.4.0
@@ -237,24 +211,24 @@ replace (
 	gopkg.in/yaml.v3 => gopkg.in/yaml.v3 v3.0.0-20190905181640-827449938966
 	gotest.tools => gotest.tools v2.2.0+incompatible
 	honnef.co/go/tools => honnef.co/go/tools v0.0.0-20190523083050-ea95bdfd59fc
-	k8s.io/api => k8s.io/api v0.0.0-20181213150558-05914d821849
-	k8s.io/apiextensions-apiserver => k8s.io/apiextensions-apiserver v0.0.0-20181213153335-0fe22c71c476
-	k8s.io/apimachinery => k8s.io/apimachinery v0.0.0-20190221213512-86fb29eff628
-	k8s.io/apiserver => k8s.io/apiserver v0.0.0-20190507070644-e9c02aff496d
-	k8s.io/client-go => k8s.io/client-go v0.0.0-20181213151034-8d9ed539ba31
-	k8s.io/code-generator => k8s.io/code-generator v0.0.0-20181117043124-c2090bec4d9b
-	k8s.io/component-base => k8s.io/component-base v0.0.0-20190831075413-37a093468564
+	k8s.io/api => k8s.io/api v0.0.0-20190918155943-95b840bb6a1f
+	k8s.io/apiextensions-apiserver => k8s.io/apiextensions-apiserver v0.0.0-20190918161926-8f644eb6e783
+	k8s.io/apimachinery => k8s.io/apimachinery v0.0.0-20190913080033-27d36303b655
+	k8s.io/apiserver => k8s.io/apiserver v0.0.0-20190918160949-bfa5e2e684ad
+	k8s.io/client-go => k8s.io/client-go v0.0.0-20190918160344-1fbdaa4c8d90
+	k8s.io/code-generator => k8s.io/code-generator v0.0.0-20190912054826-cd179ad6a269
+	k8s.io/component-base => k8s.io/component-base v0.0.0-20190918160511-547f6c5d7090
 	k8s.io/gengo => k8s.io/gengo v0.0.0-20191120174120-e74f70b9b27e
 	k8s.io/klog => k8s.io/klog v1.0.0
-	k8s.io/kube-openapi => k8s.io/kube-openapi v0.0.0-20191107075043-30be4d16710a
+	k8s.io/kube-openapi => k8s.io/kube-openapi v0.0.0-20190816220812-743ec37842bf
 	k8s.io/utils => k8s.io/utils v0.0.0-20190801114015-581e00157fb1
 	modernc.org/cc => modernc.org/cc v1.0.0
 	modernc.org/golex => modernc.org/golex v1.0.0
 	modernc.org/mathutil => modernc.org/mathutil v1.0.0
 	modernc.org/strutil => modernc.org/strutil v1.0.0
 	modernc.org/xc => modernc.org/xc v1.0.0
-	sigs.k8s.io/controller-runtime => sigs.k8s.io/controller-runtime v0.1.10
-	sigs.k8s.io/controller-tools => sigs.k8s.io/controller-tools v0.1.9
+	sigs.k8s.io/controller-runtime => sigs.k8s.io/controller-runtime v0.4.0
+	sigs.k8s.io/controller-tools => sigs.k8s.io/controller-tools v0.2.4
 	sigs.k8s.io/structured-merge-diff => sigs.k8s.io/structured-merge-diff v0.0.0-20190817042607-6149e4549fca
 	sigs.k8s.io/testing_frameworks => sigs.k8s.io/testing_frameworks v0.1.1
 	sigs.k8s.io/yaml => sigs.k8s.io/yaml v1.1.0
