@@ -370,44 +370,44 @@ func schema_pkg_apis_devops_v1alpha1_CGroupLimits(ref common.ReferenceCallback) 
 				Description: "CGroupLimits holds limits used to constrain container resources.",
 				Type:        []string{"object"},
 				Properties: map[string]spec.Schema{
-					"MemoryLimitBytes": {
+					"memoryLimitBytes": {
 						SchemaProps: spec.SchemaProps{
 							Type:   []string{"integer"},
 							Format: "int64",
 						},
 					},
-					"CPUShares": {
+					"cpuShares": {
 						SchemaProps: spec.SchemaProps{
 							Type:   []string{"integer"},
 							Format: "int64",
 						},
 					},
-					"CPUPeriod": {
+					"cpuPeriod": {
 						SchemaProps: spec.SchemaProps{
 							Type:   []string{"integer"},
 							Format: "int64",
 						},
 					},
-					"CPUQuota": {
+					"cpuQuota": {
 						SchemaProps: spec.SchemaProps{
 							Type:   []string{"integer"},
 							Format: "int64",
 						},
 					},
-					"MemorySwap": {
+					"memorySwap": {
 						SchemaProps: spec.SchemaProps{
 							Type:   []string{"integer"},
 							Format: "int64",
 						},
 					},
-					"Parent": {
+					"parent": {
 						SchemaProps: spec.SchemaProps{
 							Type:   []string{"string"},
 							Format: "",
 						},
 					},
 				},
-				Required: []string{"MemoryLimitBytes", "CPUShares", "CPUPeriod", "CPUQuota", "MemorySwap", "Parent"},
+				Required: []string{"memoryLimitBytes", "cpuShares", "cpuPeriod", "cpuQuota", "memorySwap", "parent"},
 			},
 		},
 	}
@@ -514,42 +514,42 @@ func schema_pkg_apis_devops_v1alpha1_DockerConfig(ref common.ReferenceCallback) 
 				Description: "DockerConfig contains the configuration for a Docker connection.",
 				Type:        []string{"object"},
 				Properties: map[string]spec.Schema{
-					"Endpoint": {
+					"endPoint": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Endpoint is the docker network endpoint or socket",
 							Type:        []string{"string"},
 							Format:      "",
 						},
 					},
-					"CertFile": {
+					"certFile": {
 						SchemaProps: spec.SchemaProps{
 							Description: "CertFile is the certificate file path for a TLS connection",
 							Type:        []string{"string"},
 							Format:      "",
 						},
 					},
-					"KeyFile": {
+					"keyFile": {
 						SchemaProps: spec.SchemaProps{
 							Description: "KeyFile is the key file path for a TLS connection",
 							Type:        []string{"string"},
 							Format:      "",
 						},
 					},
-					"CAFile": {
+					"caFile": {
 						SchemaProps: spec.SchemaProps{
 							Description: "CAFile is the certificate authority file path for a TLS connection",
 							Type:        []string{"string"},
 							Format:      "",
 						},
 					},
-					"UseTLS": {
+					"useTLS": {
 						SchemaProps: spec.SchemaProps{
 							Description: "UseTLS indicates if TLS must be used",
 							Type:        []string{"boolean"},
 							Format:      "",
 						},
 					},
-					"TLSVerify": {
+					"tlsVerify": {
 						SchemaProps: spec.SchemaProps{
 							Description: "TLSVerify indicates if TLS peer must be verified",
 							Type:        []string{"boolean"},
@@ -557,7 +557,7 @@ func schema_pkg_apis_devops_v1alpha1_DockerConfig(ref common.ReferenceCallback) 
 						},
 					},
 				},
-				Required: []string{"Endpoint", "CertFile", "KeyFile", "CAFile", "UseTLS", "TLSVerify"},
+				Required: []string{"endPoint", "certFile", "keyFile", "caFile", "useTLS", "tlsVerify"},
 			},
 		},
 	}
