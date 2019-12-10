@@ -1,6 +1,7 @@
 
 # Image URL to use all building/pushing image targets
 IMG ?= kubespheredev/s2ioperator:advanced-2.1.0
+export GO111MODULE=on
 
 all: test manager
 
