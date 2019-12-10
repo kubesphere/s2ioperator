@@ -12,7 +12,7 @@ kind: Pod
 spec:
   containers:
   - name: go
-    image: kubesphere/builder-go:v2.1.0
+    image: runzexia/s2ioperator-test-agent:latest
     command: [\'cat\']
     tty: true
     volumeMounts:

@@ -1,11 +1,7 @@
-FROM golang:1.11
+FROM kubesphere/builder-go:v2.1.0
 
-RUN apt-get update && apt-get install -y apt-transport-https jq openssl libltdl7 \
-    && curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - \
-    && echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | tee -a /etc/apt/sources.list.d/kubernetes.list \
-    && apt-get update \
-    && apt-get install -y kubectl \
-    && curl -O -L https://github.com/kubernetes-sigs/kustomize/releases/download/v1.0.11/kustomize_1.0.11_linux_amd64 \
-    && chmod +x kustomize_1.0.11_linux_amd64 \
-    && mv kustomize_1.0.11_linux_amd64 /usr/bin/kustomize \
+RUN curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash  && \
+    mv ./kustomize /usr/local/bin
+
+
 
