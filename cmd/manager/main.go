@@ -14,12 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package main
+package manager
 
 import (
 	"flag"
-	"github.com/kubesphere/s2ioperator/pkg/metrics"
+	"github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1"
 	"os"
+
+	"github.com/kubesphere/s2ioperator/pkg/metrics"
 
 	"github.com/kubesphere/s2ioperator/pkg/apis"
 	"github.com/kubesphere/s2ioperator/pkg/controller"
@@ -45,7 +47,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Create a new Cmd to provide shared dependencies and start components
+	// Create a newgo Cmd to provide shared dependencies and start components
 	log.Info("setting up manager")
 	mgr, err := manager.New(cfg, manager.Options{MetricsBindAddress: metricsAddr})
 	if err != nil {
@@ -68,6 +70,22 @@ func main() {
 		log.Error(err, "unable to register controllers to the manager")
 		os.Exit(1)
 	}
+
+	if err = (&v1alpha1.S2iBuilderTemplate{}).SetupWebhookWithManager(mgr); err != nil {
+		log.Error(err, "unable to create webhook", "webhook", "Captain")
+		os.Exit(1)
+	}
+
+	if err = (&v1alpha1.S2iBuilder{}).SetupWebhookWithManager(mgr); err != nil {
+		log.Error(err, "unable to create webhook", "webhook", "Captain")
+		os.Exit(1)
+	}
+
+	if err = (&v1alpha1.S2iRun{}).SetupWebhookWithManager(mgr); err != nil {
+		log.Error(err, "unable to create webhook", "webhook", "Captain")
+		os.Exit(1)
+	}
+
 
 	// Set up s2i metrics
 	log.Info("start collect s2i metrics")
