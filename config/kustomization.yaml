@@ -69,14 +69,14 @@ vars:
   objref:
     kind: Service
     version: v1
-    name: s2i-webhook-service
+    name: webhook-service
   fieldref:
     fieldpath: metadata.namespace
 - name: SERVICE_NAME
   objref:
     kind: Service
     version: v1
-    name: s2i-webhook-service
+    name: webhook-service
 
 generatorOptions:
   disableNameSuffixHash: true
