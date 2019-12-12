@@ -63,7 +63,7 @@ install-travis:
 	chmod +x ./hack/*.sh
 	./hack/install_tools.sh
 
-e2e-test: manager
+e2e-test:
 	./hack/e2etest.sh
 
 .PHONY : clean test
