@@ -46,7 +46,7 @@ func (r *S2iRun) SetupWebhookWithManager(mgr ctrl.Manager) error {
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 
 // TODO(user): change verbs to "verbs=create;update;delete" if you want to enable deletion validation.
-// +kubebuilder:webhook:verbs=create;update,path=/validate-devops-kubesphere-io-kubesphere-io-v1alpha1-s2irun,mutating=false,failurePolicy=fail,groups=devops.kubesphere.io,resources=s2iruns,versions=v1alpha1,name=vs2irun.kb.io
+// +kubebuilder:webhook:verbs=create;update,path=/validate-devops-kubesphere-io-v1alpha1-s2irun,mutating=false,failurePolicy=fail,groups=devops.kubesphere.io,resources=s2iruns,versions=v1alpha1,name=vs2irun.kb.io
 
 var _ webhook.Validator = &S2iRun{}
 

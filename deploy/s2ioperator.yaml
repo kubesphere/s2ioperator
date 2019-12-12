@@ -902,7 +902,7 @@ webhooks:
     service:
       name: webhook-service
       namespace: kubesphere-devops-system
-      path: /mutate-devops-kubesphere-io-kubesphere-io-v1alpha1-s2ibuilder
+      path: /mutate-devops-kubesphere-io-v1alpha1-s2ibuilder
   failurePolicy: Fail
   name: s2ibuilder.kb.io
   rules:
@@ -930,7 +930,7 @@ webhooks:
     service:
       name: webhook-service
       namespace: kubesphere-devops-system
-      path: /validate-devops-kubesphere-io-kubesphere-io-v1alpha1-s2ibuilder
+      path: /validate-devops-kubesphere-io-v1alpha1-s2ibuilder
   failurePolicy: Fail
   name: vs2ibuilder.kb.io
   rules:
@@ -966,7 +966,7 @@ webhooks:
     service:
       name: webhook-service
       namespace: kubesphere-devops-system
-      path: /validate-devops-kubesphere-io-kubesphere-io-v1alpha1-s2irun
+      path: /validate-devops-kubesphere-io-v1alpha1-s2irun
   failurePolicy: Fail
   name: vs2irun.kb.io
   rules:
