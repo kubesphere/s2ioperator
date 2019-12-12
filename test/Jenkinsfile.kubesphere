@@ -1,7 +1,7 @@
 pipeline {
    environment {
       KUBECONFIG = '/root/.kube/config'
-      IMAGE_NAME = 'kubespheredev/s2ioperator:2.1.0'
+      IMAGE_NAME = 'kubespheredev/s2ioperator:v2.1.0'
     }
 
   agent {
@@ -55,7 +55,11 @@ pipeline {
     mkdir -p /home/jenkins/go/src/github.com/kubesphere
     ln -s `pwd` /home/jenkins/go/src/github.com/kubesphere/s2ioperator
     cd /home/jenkins/go/src/github.com/kubesphere/s2ioperator
-    make e2e-test'''
+    make manager
+    '''
+            lock('s2ioperator')  {
+              make e2e-test
+            }
         }
       }
     }
