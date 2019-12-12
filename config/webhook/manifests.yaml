@@ -16,7 +16,7 @@ webhooks:
   name: ms2ibuilder.kb.io
   rules:
   - apiGroups:
-    - devops.kubesphere.io.kubesphere.io
+    - devops.kubesphere.io
     apiVersions:
     - v1alpha1
     operations:
@@ -42,7 +42,7 @@ webhooks:
   name: vs2ibuilder.kb.io
   rules:
   - apiGroups:
-    - devops.kubesphere.io.kubesphere.io
+    - devops.kubesphere.io
     apiVersions:
     - v1alpha1
     operations:
@@ -60,7 +60,7 @@ webhooks:
   name: vs2ibuildertemplate.kb.io
   rules:
   - apiGroups:
-    - devops.kubesphere.io.testproject.org
+    - devops.kubesphere.io
     apiVersions:
     - v1alpha1
     operations:
@@ -78,7 +78,7 @@ webhooks:
   name: vs2irun.kb.io
   rules:
   - apiGroups:
-    - devops.kubesphere.io.kubesphere.io
+    - devops.kubesphere.io
     apiVersions:
     - v1alpha1
     operations:

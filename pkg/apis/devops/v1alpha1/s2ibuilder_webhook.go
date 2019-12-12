@@ -49,7 +49,7 @@ func (r *S2iBuilder) SetupWebhookWithManager(mgr ctrl.Manager) error {
 
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 
-// +kubebuilder:webhook:path=/mutate-devops-kubesphere-io-kubesphere-io-v1alpha1-s2ibuilder,mutating=true,failurePolicy=fail,groups=devops.kubesphere.io.kubesphere.io,resources=s2ibuilders,verbs=create;update,versions=v1alpha1,name=ms2ibuilder.kb.io
+// +kubebuilder:webhook:path=/mutate-devops-kubesphere-io-kubesphere-io-v1alpha1-s2ibuilder,mutating=true,failurePolicy=fail,groups=devops.kubesphere.io,resources=s2ibuilders,verbs=create;update,versions=v1alpha1,name=ms2ibuilder.kb.io
 
 var _ webhook.Defaulter = &S2iBuilder{}
 
@@ -69,7 +69,7 @@ func (r *S2iBuilder) Default() {
 }
 
 // TODO(user): change verbs to "verbs=create;update;delete" if you want to enable deletion validation.
-// +kubebuilder:webhook:verbs=create;update,path=/validate-devops-kubesphere-io-kubesphere-io-v1alpha1-s2ibuilder,mutating=false,failurePolicy=fail,groups=devops.kubesphere.io.kubesphere.io,resources=s2ibuilders,versions=v1alpha1,name=vs2ibuilder.kb.io
+// +kubebuilder:webhook:verbs=create;update,path=/validate-devops-kubesphere-io-kubesphere-io-v1alpha1-s2ibuilder,mutating=false,failurePolicy=fail,groups=devops.kubesphere.io,resources=s2ibuilders,versions=v1alpha1,name=vs2ibuilder.kb.io
 
 var _ webhook.Validator = &S2iBuilder{}
 

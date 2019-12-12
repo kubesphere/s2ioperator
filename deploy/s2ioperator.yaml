@@ -888,6 +888,98 @@ status:
   conditions: []
   storedVersions: []
 ---
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: MutatingWebhookConfiguration
+metadata:
+  annotations:
+    certmanager.k8s.io/inject-ca-from: kubesphere-devops-system/s2i-webhook-serving-cert
+  creationTimestamp: null
+  name: mutating-webhook-configuration
+  namespace: kubesphere-devops-system
+webhooks:
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: kubesphere-devops-system
+      path: /mutate-devops-kubesphere-io-kubesphere-io-v1alpha1-s2ibuilder
+  failurePolicy: Fail
+  name: ms2ibuilder.kb.io
+  rules:
+  - apiGroups:
+    - devops.kubesphere.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - s2ibuilders
+---
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: ValidatingWebhookConfiguration
+metadata:
+  annotations:
+    certmanager.k8s.io/inject-ca-from: kubesphere-devops-system/s2i-webhook-serving-cert
+  creationTimestamp: null
+  name: validating-webhook-configuration
+  namespace: kubesphere-devops-system
+webhooks:
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: kubesphere-devops-system
+      path: /validate-devops-kubesphere-io-kubesphere-io-v1alpha1-s2ibuilder
+  failurePolicy: Fail
+  name: vs2ibuilder.kb.io
+  rules:
+  - apiGroups:
+    - devops.kubesphere.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - s2ibuilders
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: kubesphere-devops-system
+      path: /validate-devops-kubesphere-io-testproject-org-v1alpha1-s2ibuildertemplate
+  failurePolicy: Fail
+  name: vs2ibuildertemplate.kb.io
+  rules:
+  - apiGroups:
+    - devops.kubesphere.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - s2ibuildertemplates
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: kubesphere-devops-system
+      path: /validate-devops-kubesphere-io-kubesphere-io-v1alpha1-s2irun
+  failurePolicy: Fail
+  name: vs2irun.kb.io
+  rules:
+  - apiGroups:
+    - devops.kubesphere.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - s2iruns
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -1157,6 +1249,18 @@ metadata:
 apiVersion: v1
 kind: Service
 metadata:
+  name: s2i-webhook-service
+  namespace: kubesphere-devops-system
+spec:
+  ports:
+  - port: 443
+    targetPort: 443
+  selector:
+    control-plane: s2i-controller-manager
+---
+apiVersion: v1
+kind: Service
+metadata:
   annotations:
     prometheus.io/port: "8080"
     prometheus.io/scheme: http
@@ -1206,8 +1310,6 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        - name: SECRET_NAME
-          value: webhook-server-secret
         - name: S2IIMAGENAME
           value: kubespheredev/s2irun:v0.0.3
         image: kubespheredev/s2ioperator:v2.1.0
@@ -1217,9 +1319,6 @@ spec:
         - containerPort: 8080
           name: metrics
           protocol: TCP
-        - containerPort: 9876
-          name: webhook-server
-          protocol: TCP
         resources:
           limits:
             cpu: 100m
@@ -1228,7 +1327,7 @@ spec:
             cpu: 100m
             memory: 20Mi
         volumeMounts:
-        - mountPath: /tmp/cert
+        - mountPath: /tmp/k8s-webhook-server/serving-certs
           name: cert
           readOnly: true
       terminationGracePeriodSeconds: 10
@@ -1236,4 +1335,26 @@ spec:
       - name: cert
         secret:
           defaultMode: 420
-          secretName: webhook-server-secret
+          secretName: s2i-webhook-server-cert
+---
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Certificate
+metadata:
+  name: s2i-webhook-serving-cert
+  namespace: kubesphere-devops-system
+spec:
+  commonName: s2i-webhook-service.kubesphere-devops-system.svc
+  dnsNames:
+  - s2i-webhook-service.kubesphere-devops-system.svc.cluster.local
+  issuerRef:
+    kind: Issuer
+    name: s2i-selfsigned-issuer
+  secretName: s2i-webhook-server-cert
+---
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Issuer
+metadata:
+  name: s2i-selfsigned-issuer
+  namespace: kubesphere-devops-system
+spec:
+  selfSigned: {}

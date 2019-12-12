@@ -1,0 +1,15 @@
+nameReference:
+  - kind: Issuer
+    group: certmanager.k8s.io
+    fieldSpecs:
+      - kind: Certificate
+        group: certmanager.k8s.io
+        path: spec/issuerRef/name
+
+varReference:
+  - kind: Certificate
+    group: certmanager.k8s.io
+    path: spec/commonName
+  - kind: Certificate
+    group: certmanager.k8s.io
+    path: spec/dnsNames
