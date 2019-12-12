@@ -904,7 +904,7 @@ webhooks:
       namespace: kubesphere-devops-system
       path: /mutate-devops-kubesphere-io-kubesphere-io-v1alpha1-s2ibuilder
   failurePolicy: Fail
-  name: ms2ibuilder.kb.io
+  name: s2ibuilder.kb.io
   rules:
   - apiGroups:
     - devops.kubesphere.io
@@ -948,9 +948,9 @@ webhooks:
     service:
       name: webhook-service
       namespace: kubesphere-devops-system
-      path: /validate-devops-kubesphere-io-testproject-org-v1alpha1-s2ibuildertemplate
+      path: /validate-devops-kubesphere-io-v1alpha1-s2ibuildertemplate
   failurePolicy: Fail
-  name: vs2ibuildertemplate.kb.io
+  name: s2ibuildertemplate.kb.io
   rules:
   - apiGroups:
     - devops.kubesphere.io
@@ -1264,6 +1264,9 @@ spec:
   - name: http
     port: 8080
     targetPort: 8080
+  selector:
+    control-plane: s2i-controller-manager
+    controller-tools.k8s.io: "1.0"
 ---
 apiVersion: v1
 kind: Service
@@ -1343,6 +1346,7 @@ spec:
   commonName: webhook-service.kubesphere-devops-system.svc
   dnsNames:
   - webhook-service.kubesphere-devops-system.svc.cluster.local
+  - webhook-service.kubesphere-devops-system.svc
   issuerRef:
     kind: Issuer
     name: s2i-selfsigned-issuer
