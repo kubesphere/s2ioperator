@@ -58,7 +58,7 @@ pipeline {
     make manager
     '''
             lock('s2ioperator')  {
-              make e2e-test
+              sh "make e2e-test"
             }
         }
       }
