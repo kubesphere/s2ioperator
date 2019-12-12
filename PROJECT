@@ -1,3 +1,14 @@
-version: "1"
+
 domain: kubesphere.io
 repo: github.com/kubesphere/s2ioperator
+resources:
+- group: devops.kubesphere.io
+  kind: S2iBuilderTemplate
+  version: v1alpha1
+- group: devops.kubesphere.io
+  kind: S2iBuilder
+  version: v1alpha1
+- group: devops.kubesphere.io
+  kind: S2iRun
+  version: v1alpha1
+version: "2"

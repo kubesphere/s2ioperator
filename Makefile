@@ -1,6 +1,7 @@
 
 # Image URL to use all building/pushing image targets
 IMG ?= kubespheredev/s2ioperator:advanced-2.1.0
+export GO111MODULE=on
 
 all: test manager
 
@@ -23,11 +24,11 @@ install: manifests
 # Deploy controller in the configured Kubernetes cluster in ~/.kube/config
 deploy: manifests
 	kubectl apply -f config/crds
-	kustomize build config/default | kubectl apply -f -
+	kubectl kustomize config | kubectl apply -f -
 
 # Generate manifests e.g. CRD, RBAC etc.
 manifests:
-	go run vendor/sigs.k8s.io/controller-tools/cmd/controller-gen/main.go all
+	go run vendor/sigs.k8s.io/controller-tools/cmd/controller-gen/main.go  crd:trivialVersions=true rbac:roleName=manager-role webhook paths="./pkg/apis/...;./pkg/controller/..." output:crd:artifacts:config=config/crds
 
 # Run go fmt against code
 fmt:
@@ -38,11 +39,11 @@ vet:
 	go vet ./pkg/... ./cmd/...
 
 client-gen:
-	./vendor/k8s.io/code-generator/generate-groups.sh all github.com/kubesphere/s2ioperator/pkg/client github.com/kubesphere/s2ioperator/pkg/apis "devops:v1alpha1" --go-header-file ./hack/boilerplate.go.txt
+	./hack/generate_group.sh all github.com/kubesphere/s2ioperator/pkg/client github.com/kubesphere/s2ioperator/pkg/apis "devops:v1alpha1" --go-header-file ./hack/boilerplate.go.txt
 
 # Generate code
 generate:
-	go run vendor/k8s.io/code-generator/cmd/deepcopy-gen/main.go -O zz_generated.deepcopy -i github.com/kubesphere/s2ioperator/pkg/apis/... -h hack/boilerplate.go.txt
+	go run vendor/sigs.k8s.io/controller-tools/cmd/controller-gen/main.go  object:headerFile=./hack/boilerplate.go.txt paths=./pkg/apis/...
 	go run vendor/k8s.io/kube-openapi/cmd/openapi-gen/openapi-gen.go -O openapi_generated -i k8s.io/api/core/v1,k8s.io/apimachinery/pkg/apis/meta/v1,k8s.io/apimachinery/pkg/api/resource,k8s.io/apimachinery/pkg/runtime,k8s.io/apimachinery/pkg/util/intstr,k8s.io/apimachinery/pkg/version,github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1 -p github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1 -h hack/boilerplate.go.txt --report-filename api/api-rules/violation_exceptions.list
 
 
@@ -56,7 +57,7 @@ docker-build:
 debug: manager
 	./hack/build-image.sh
 release: manager test docker-build
-	kustomize build config/default -o deploy/s2ioperator.yaml
+	kubectl kustomize config > deploy/s2ioperator.yaml
 
 install-travis:
 	chmod +x ./hack/*.sh

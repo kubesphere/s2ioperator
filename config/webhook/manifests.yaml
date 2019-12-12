@@ -1,0 +1,88 @@
+
+---
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: MutatingWebhookConfiguration
+metadata:
+  creationTimestamp: null
+  name: mutating-webhook-configuration
+webhooks:
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: system
+      path: /mutate-devops-kubesphere-io-v1alpha1-s2ibuilder
+  failurePolicy: Fail
+  name: s2ibuilder.kb.io
+  rules:
+  - apiGroups:
+    - devops.kubesphere.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - s2ibuilders
+
+---
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: ValidatingWebhookConfiguration
+metadata:
+  creationTimestamp: null
+  name: validating-webhook-configuration
+webhooks:
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: system
+      path: /validate-devops-kubesphere-io-v1alpha1-s2ibuilder
+  failurePolicy: Fail
+  name: vs2ibuilder.kb.io
+  rules:
+  - apiGroups:
+    - devops.kubesphere.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - s2ibuilders
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: system
+      path: /validate-devops-kubesphere-io-v1alpha1-s2ibuildertemplate
+  failurePolicy: Fail
+  name: s2ibuildertemplate.kb.io
+  rules:
+  - apiGroups:
+    - devops.kubesphere.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - s2ibuildertemplates
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: system
+      path: /validate-devops-kubesphere-io-v1alpha1-s2irun
+  failurePolicy: Fail
+  name: vs2irun.kb.io
+  rules:
+  - apiGroups:
+    - devops.kubesphere.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - s2iruns

@@ -169,7 +169,7 @@ func (r *ReconcileS2iBuilder) Reconcile(request reconcile.Request) (reconcile.Re
 		return reconcile.Result{}, nil
 	}
 	runList := new(devopsv1alpha1.S2iRunList)
-	err = r.Client.List(context.TODO(), client.InNamespace(instance.Namespace), runList)
+	err = r.Client.List(context.TODO(), runList, client.InNamespace(instance.Namespace))
 	if err != nil {
 		if errors.IsNotFound(err) {
 			return reconcile.Result{}, nil
@@ -212,7 +212,7 @@ func (r *ReconcileS2iBuilder) Reconcile(request reconcile.Request) (reconcile.Re
 func (r *ReconcileS2iBuilder) DeleteS2iRuns(instance *devopsv1alpha1.S2iBuilder) error {
 	runList := new(devopsv1alpha1.S2iRunList)
 	var errList []error
-	err := r.Client.List(context.TODO(), client.InNamespace(instance.Namespace), runList)
+	err := r.Client.List(context.TODO(), runList, client.InNamespace(instance.Namespace))
 	if err != nil {
 		if errors.IsNotFound(err) {
 			return nil
@@ -237,9 +237,9 @@ func (r *ReconcileS2iBuilder) DeleteS2iRuns(instance *devopsv1alpha1.S2iBuilder)
 
 func (r *ReconcileS2iBuilder) DeleteWorkloadLabels(instance *devopsv1alpha1.S2iBuilder) error {
 	deployList := new(v1.DeploymentList)
-	err := r.Client.List(context.TODO(), client.InNamespace(instance.Namespace).MatchingLabels(map[string]string{
+	err := r.Client.List(context.TODO(), deployList, client.InNamespace(instance.Namespace), client.MatchingLabels(map[string]string{
 		instance.Name: instance.Name,
-	}), deployList)
+	}))
 	if err != nil && errors.IsNotFound(err) {
 		return err
 	}
@@ -252,9 +252,9 @@ func (r *ReconcileS2iBuilder) DeleteWorkloadLabels(instance *devopsv1alpha1.S2iB
 	}
 
 	statefulSetList := new(v1.StatefulSetList)
-	err = r.Client.List(context.TODO(), client.InNamespace(instance.Namespace).MatchingLabels(map[string]string{
+	err = r.Client.List(context.TODO(), statefulSetList, client.InNamespace(instance.Namespace), client.MatchingLabels(map[string]string{
 		instance.Name: instance.Name,
-	}), statefulSetList)
+	}))
 	if err != nil && errors.IsNotFound(err) {
 		return err
 	}
