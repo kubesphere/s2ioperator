@@ -1,6 +1,6 @@
 
 # Image URL to use all building/pushing image targets
-IMG ?= kubespheredev/s2ioperator:advanced-2.1.0
+IMG ?= kubespheredev/s2ioperator:v2.1.0
 export GO111MODULE=on
 
 all: test manager
@@ -48,7 +48,7 @@ generate:
 
 
 # Build the docker image
-docker-build: 
+docker-build:
 	docker build -f deploy/Dockerfile -t $(IMG) bin/
 	docker push $(IMG)
 	@echo "updating kustomize image patch file for manager resource"

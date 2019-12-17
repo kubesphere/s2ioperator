@@ -15,4 +15,4 @@ sed -i'' -e 's@image: .*@image: '"${IMG}"'@' ./config/default/manager_image_patc
 kubectl create ns 
 kubectl kustomize config > $dest
 kubectl apply -f $dest
-./hack/certs.sh --service webhook-server-service --namespace $test_namespace --secret webhook-server-secret
+./hack/certs.sh --service webhook-service --namespace $test_namespace --secret webhook-server-secret

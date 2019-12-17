@@ -891,8 +891,6 @@ status:
 apiVersion: admissionregistration.k8s.io/v1beta1
 kind: MutatingWebhookConfiguration
 metadata:
-  annotations:
-    cert-manager.io/inject-ca-from: kubesphere-devops-system/s2i-webhook-serving-cert
   creationTimestamp: null
   name: mutating-webhook-configuration
   namespace: kubesphere-devops-system
@@ -919,8 +917,6 @@ webhooks:
 apiVersion: admissionregistration.k8s.io/v1beta1
 kind: ValidatingWebhookConfiguration
 metadata:
-  annotations:
-    cert-manager.io/inject-ca-from: kubesphere-devops-system/s2i-webhook-serving-cert
   creationTimestamp: null
   name: validating-webhook-configuration
   namespace: kubesphere-devops-system
@@ -1336,26 +1332,3 @@ spec:
         secret:
           defaultMode: 420
           secretName: s2i-webhook-server-cert
----
-apiVersion: cert-manager.io/v1alpha2
-kind: Certificate
-metadata:
-  name: s2i-webhook-serving-cert
-  namespace: kubesphere-devops-system
-spec:
-  commonName: webhook-service.kubesphere-devops-system.svc
-  dnsNames:
-  - webhook-service.kubesphere-devops-system.svc.cluster.local
-  - webhook-service.kubesphere-devops-system.svc
-  issuerRef:
-    kind: Issuer
-    name: s2i-selfsigned-issuer
-  secretName: s2i-webhook-server-cert
----
-apiVersion: cert-manager.io/v1alpha2
-kind: Issuer
-metadata:
-  name: s2i-selfsigned-issuer
-  namespace: kubesphere-devops-system
-spec:
-  selfSigned: {}
