@@ -7,7 +7,7 @@ metadata:
   name: mutating-webhook-configuration
 webhooks:
 - clientConfig:
-    caBundle: Cg==
+    caBundle: <<CABUNDLE>>
     service:
       name: webhook-service
       namespace: system
@@ -33,7 +33,7 @@ metadata:
   name: validating-webhook-configuration
 webhooks:
 - clientConfig:
-    caBundle: Cg==
+    caBundle: <<CABUNDLE>>
     service:
       name: webhook-service
       namespace: system
@@ -51,7 +51,7 @@ webhooks:
     resources:
     - s2ibuilders
 - clientConfig:
-    caBundle: Cg==
+    caBundle: <<CABUNDLE>>
     service:
       name: webhook-service
       namespace: system
@@ -69,7 +69,7 @@ webhooks:
     resources:
     - s2ibuildertemplates
 - clientConfig:
-    caBundle: Cg==
+    caBundle: <<CABUNDLE>>
     service:
       name: webhook-service
       namespace: system

@@ -17,6 +17,12 @@ docker build -f deploy/Dockerfile -t ${IMG} bin/
 docker push $IMG
 echo "updating kustomize image patch file for manager resource"
 
+kubectl create ns  $TEST_NS
+
+./hack/certs.sh --service webhook-service --namespace $TEST_NS
+
+./hack/update-cert.sh
+
 if [ "$(uname)" == "Darwin" ]; then
     sed -i '' -e 's@image: .*@image: '"${IMG}"'@' ./config/default/manager_image_patch.yaml
     sed -i '' -e  's/namespace: .*/namespace: '"${TEST_NS}"'/' ./config/kustomization.yaml
@@ -24,10 +30,9 @@ else
     sed -i  -e 's@image: .*@image: '"${IMG}"'@' ./config/default/manager_image_patch.yaml
     sed -i  -e  's/namespace: .*/namespace: '"${TEST_NS}"'/' ./config/kustomization.yaml
 fi
-kubectl create ns  $TEST_NS
+
 kubectl kustomize config > $dest
 kubectl apply -f $dest
-./hack/certs.sh --service webhook-service --namespace kubesphere-devops-system --secret s2i-webhook-server-cert
 
 export TEST_NS
 go test -v ./test/e2e/

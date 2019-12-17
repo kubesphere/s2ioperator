@@ -20,7 +20,7 @@ run: generate fmt vet
 	go run ./cmd/manager/main.go
 
 # Install CRDs into a cluster
-install: manifests
+install-crd: manifests
 	kubectl apply -f config/crds
 
 # Deploy controller in the configured Kubernetes cluster in ~/.kube/config
@@ -30,7 +30,7 @@ deploy: manifests webhook
 
 # Generate manifests e.g. CRD, RBAC etc.
 manifests:
-	go run vendor/sigs.k8s.io/controller-tools/cmd/controller-gen/main.go  crd:trivialVersions=true rbac:roleName=manager-role webhook paths="./pkg/apis/...;./pkg/controller/..." output:crd:artifacts:config=config/crds
+	go run vendor/sigs.k8s.io/controller-tools/cmd/controller-gen/main.go  crd:trivialVersions=true rbac:roleName=manager-role paths="./pkg/apis/...;./pkg/controller/..." output:crd:artifacts:config=config/crds
 
 # Run go fmt against code
 fmt:
@@ -58,7 +58,8 @@ docker-build:
 
 debug: manager
 	./hack/build-image.sh
-release: manager test docker-build
+
+release: manager test docker-build webhook
 	kubectl kustomize config > deploy/s2ioperator.yaml
 
 install-travis:
@@ -70,10 +71,11 @@ e2e-test:
 
 # create the secret with CA cert and server cert/key
 ca-secret:
-	./hack/certs.sh --service webhook-service --namespace $(namespace) --secret s2i-webhook-server-cert
+	./hack/certs.sh --service webhook-service --namespace $(namespace)
 
 # update certs
-webhook: ca-secret
-	sed -i "" 's/Cg==/$(shell cat ${certsdir}/ca.pem |base64 )/g' config/webhook/manifests.yaml
+update-cert: ca-secret
+	./hack/update-cert.sh
+
 
 .PHONY : clean test

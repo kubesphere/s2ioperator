@@ -38,32 +38,43 @@ spec:
         controller-tools.k8s.io: "1.0"
     spec:
       containers:
-      - command:
-        - /manager
-        image: controller:latest
-        imagePullPolicy: Always
-        name: manager
-        env:
-          - name: POD_NAMESPACE
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.namespace
-          - name: S2IIMAGENAME
-            value: kubespheredev/s2irun:v0.0.3
-        resources:
-          limits:
-            cpu: 100m
-            memory: 500Mi
-          requests:
-            cpu: 100m
-            memory: 20Mi
-        volumeMounts:
-        - mountPath: /tmp/k8s-webhook-server/serving-certs
-          name: cert
-          readOnly: true
+        - command:
+            - /manager
+          image: controller:latest
+          imagePullPolicy: Always
+          name: manager
+          env:
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: S2IIMAGENAME
+              value: kubespheredev/s2irun:v0.0.3
+          resources:
+            limits:
+              cpu: 100m
+              memory: 500Mi
+            requests:
+              cpu: 100m
+              memory: 20Mi
+          volumeMounts:
+            - mountPath: /tmp/k8s-webhook-server/serving-certs
+              name: cert
+              readOnly: true
       terminationGracePeriodSeconds: 10
       volumes:
-      - name: cert
-        secret:
-          defaultMode: 420
-          secretName: s2i-webhook-server-cert
+        - name: cert
+          secret:
+            defaultMode: 420
+            secretName: s2i-webhook-server-cert
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: s2i-webhook-server-cert
+  namespace: kubesphere-devops-system
+type: Opaque
+data:
+  tls.key: <<KEY>>
+  tls.crt: <<CRT>>
+  ca.crt: <<CA>>
