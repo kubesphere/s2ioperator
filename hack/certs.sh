@@ -51,10 +51,15 @@ if [ ! -x "$(command -v openssl)" ]; then
 fi
 
 csrName=${service}.${namespace}
-tmpdir=$(mktemp -d)
-echo "creating certs in tmpdir ${tmpdir} "
+certsdir="config/certs"
 
-cat <<EOF >> ${tmpdir}/csr.conf
+if [ ! -d ${certsdir} ]; then
+  mkdir ${certsdir}
+fi
+
+echo "creating certs in certsdir ${certsdir} "
+
+cat <<EOF >> ${certsdir}/csr.conf
 [req]
 req_extensions = v3_req
 distinguished_name = req_distinguished_name
@@ -70,8 +75,8 @@ DNS.2 = ${service}.${namespace}
 DNS.3 = ${service}.${namespace}.svc
 EOF
 
-openssl genrsa -out ${tmpdir}/server-key.pem 2048
-openssl req -new -key ${tmpdir}/server-key.pem -subj "/CN=${service}.${namespace}.svc" -out ${tmpdir}/server.csr -config ${tmpdir}/csr.conf
+openssl genrsa -out ${certsdir}/server-key.pem 2048
+openssl req -new -key ${certsdir}/server-key.pem -subj "/CN=${service}.${namespace}.svc" -out ${certsdir}/server.csr -config ${certsdir}/csr.conf
 
 # clean-up any previously created CSR for our service. Ignore errors if not present.
 kubectl delete csr ${csrName} 2>/dev/null || true
@@ -85,7 +90,7 @@ metadata:
 spec:
   groups:
   - system:authenticated
-  request: $(cat ${tmpdir}/server.csr | base64 | tr -d '\n')
+  request: $(cat ${certsdir}/server.csr | base64 | tr -d '\n')
   usages:
   - digital signature
   - key encipherment
@@ -114,21 +119,24 @@ if [[ ${serverCert} == '' ]]; then
     echo "ERROR: After approving csr ${csrName}, the signed certificate did not appear on the resource. Giving up after 10 attempts." >&2
     exit 1
 fi
-echo ${serverCert} | openssl base64 -d -A -out ${tmpdir}/server-cert.pem
+echo ${serverCert} | openssl base64 -d -A -out ${certsdir}/server-cert.pem
 
-kubectl config view --raw -o json | jq -r '.clusters[0].cluster."certificate-authority-data"' | tr -d '"' | base64 --decode > ${tmpdir}/ca.pem
+kubectl config view --raw -o json | jq -r '.clusters[0].cluster."certificate-authority-data"' | tr -d '"' | base64 --decode > ${certsdir}/ca.pem
 # create the secret with CA cert and server cert/key
 kubectl create secret generic ${secret} \
-        --from-file=tls.key=${tmpdir}/server-key.pem \
-        --from-file=tls.crt=${tmpdir}/server-cert.pem \
-        --from-file=ca.crt=${tmpdir}/ca.pem \
+        --from-file=tls.key=${certsdir}/server-key.pem \
+        --from-file=tls.crt=${certsdir}/server-cert.pem \
+        --from-file=ca.crt=${certsdir}/ca.pem \
         --dry-run -o yaml |
     kubectl -n ${namespace} apply -f -
 
-cabundle=$(cat ${tmpdir}/ca.pem | base64)
+muWebhook=$(kubectl get mutatingwebhookconfigurations mutating-webhook-configuration -o )
+if [[ ${muWebhook} != '' ]]; then
+    cabundle=$(cat ${certsdir}/ca.pem | base64)
 
-kubectl patch mutatingwebhookconfigurations mutating-webhook-configuration --type='json' -p="[{\"op\": \"replace\", \"path\": \"/webhooks/0/clientConfig/caBundle\", \"value\":\"${cabundle}\"}]"
+    kubectl patch mutatingwebhookconfigurations mutating-webhook-configuration --type='json' -p="[{\"op\": \"replace\", \"path\": \"/webhooks/0/clientConfig/caBundle\", \"value\":\"${cabundle}\"}]"
 
-for ((i=0;i<=2;i++)); do
+    for ((i=0;i<=2;i++)); do
         kubectl patch validatingwebhookconfigurations validating-webhook-configuration --type='json' -p="[{\"op\": \"replace\", \"path\": \"/webhooks/${i}/clientConfig/caBundle\", \"value\":\"${cabundle}\"}]"
-done
+    done
+    fi

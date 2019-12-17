@@ -1237,12 +1237,6 @@ subjects:
   namespace: kubesphere-devops-system
 ---
 apiVersion: v1
-kind: Secret
-metadata:
-  name: webhook-server-secret
-  namespace: kubesphere-devops-system
----
-apiVersion: v1
 kind: Service
 metadata:
   annotations:
@@ -1260,9 +1254,6 @@ spec:
   - name: http
     port: 8080
     targetPort: 8080
-  selector:
-    control-plane: s2i-controller-manager
-    controller-tools.k8s.io: "1.0"
 ---
 apiVersion: v1
 kind: Service

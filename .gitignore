@@ -26,3 +26,4 @@ __*
 *.coverprofile*
 .DS_Store
 
+config/certs/*

@@ -1,6 +1,8 @@
 
 # Image URL to use all building/pushing image targets
 IMG ?= kubespheredev/s2ioperator:v2.1.0
+certsdir ?= config/certs
+namespace ?= kubesphere-devops-system
 export GO111MODULE=on
 
 all: test manager
@@ -22,7 +24,7 @@ install: manifests
 	kubectl apply -f config/crds
 
 # Deploy controller in the configured Kubernetes cluster in ~/.kube/config
-deploy: manifests
+deploy: manifests webhook
 	kubectl apply -f config/crds
 	kubectl kustomize config | kubectl apply -f -
 
@@ -65,5 +67,13 @@ install-travis:
 
 e2e-test:
 	./hack/e2etest.sh
+
+# create the secret with CA cert and server cert/key
+ca-secret:
+	./hack/certs.sh --service webhook-service --namespace $(namespace) --secret s2i-webhook-server-cert
+
+# update certs
+webhook: ca-secret
+	sed -i "" 's/Cg==/$(shell cat ${certsdir}/ca.pem |base64 )/g' config/webhook/manifests.yaml
 
 .PHONY : clean test

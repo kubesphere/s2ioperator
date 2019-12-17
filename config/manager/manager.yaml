@@ -67,9 +67,3 @@ spec:
         secret:
           defaultMode: 420
           secretName: s2i-webhook-server-cert
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: webhook-server-secret
-  namespace: kubesphere-devops-system
