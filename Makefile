@@ -1,8 +1,7 @@
 
 # Image URL to use all building/pushing image targets
 IMG ?= kubespheredev/s2ioperator:v2.1.0
-certsdir ?= config/certs
-namespace ?= kubesphere-devops-system
+NAMESPACE ?= kubesphere-devops-system
 export GO111MODULE=on
 
 all: test manager
@@ -24,7 +23,7 @@ install-crd: manifests
 	kubectl apply -f config/crds
 
 # Deploy controller in the configured Kubernetes cluster in ~/.kube/config
-deploy: manifests webhook
+deploy: manifests update-cert
 	kubectl apply -f config/crds
 	kubectl kustomize config | kubectl apply -f -
 
@@ -59,7 +58,7 @@ docker-build:
 debug: manager
 	./hack/build-image.sh
 
-release: manager test docker-build webhook
+release: manager test docker-build update-cert
 	kubectl kustomize config > deploy/s2ioperator.yaml
 
 install-travis:
@@ -71,7 +70,7 @@ e2e-test:
 
 # create the secret with CA cert and server cert/key
 ca-secret:
-	./hack/certs.sh --service webhook-service --namespace $(namespace)
+	./hack/certs.sh --service webhook-service --namespace $(NAMESPACE)
 
 # update certs
 update-cert: ca-secret
