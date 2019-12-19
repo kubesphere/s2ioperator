@@ -1,6 +1,7 @@
 
 # Image URL to use all building/pushing image targets
-IMG ?= kubespheredev/s2ioperator:advanced-2.1.0
+IMG ?= kubespheredev/s2ioperator:v2.1.0
+NAMESPACE ?= kubesphere-devops-system
 export GO111MODULE=on
 
 all: test manager
@@ -18,17 +19,17 @@ run: generate fmt vet
 	go run ./cmd/manager/main.go
 
 # Install CRDs into a cluster
-install: manifests
+install-crd: manifests
 	kubectl apply -f config/crds
 
 # Deploy controller in the configured Kubernetes cluster in ~/.kube/config
-deploy: manifests
+deploy: manifests update-cert
 	kubectl apply -f config/crds
 	kubectl kustomize config | kubectl apply -f -
 
 # Generate manifests e.g. CRD, RBAC etc.
 manifests:
-	go run vendor/sigs.k8s.io/controller-tools/cmd/controller-gen/main.go  crd:trivialVersions=true rbac:roleName=manager-role webhook paths="./pkg/apis/...;./pkg/controller/..." output:crd:artifacts:config=config/crds
+	go run vendor/sigs.k8s.io/controller-tools/cmd/controller-gen/main.go  crd:trivialVersions=true rbac:roleName=manager-role paths="./pkg/apis/...;./pkg/controller/..." output:crd:artifacts:config=config/crds
 
 # Run go fmt against code
 fmt:
@@ -48,7 +49,7 @@ generate:
 
 
 # Build the docker image
-docker-build: 
+docker-build:
 	docker build -f deploy/Dockerfile -t $(IMG) bin/
 	docker push $(IMG)
 	@echo "updating kustomize image patch file for manager resource"
@@ -56,7 +57,8 @@ docker-build:
 
 debug: manager
 	./hack/build-image.sh
-release: manager test docker-build
+
+release: manager test docker-build update-cert
 	kubectl kustomize config > deploy/s2ioperator.yaml
 
 install-travis:
@@ -65,5 +67,14 @@ install-travis:
 
 e2e-test:
 	./hack/e2etest.sh
+
+# create the secret with CA cert and server cert/key
+ca-secret:
+	./hack/certs.sh --service webhook-service --namespace $(NAMESPACE)
+
+# update certs
+update-cert: ca-secret
+	./hack/update-cert.sh
+
 
 .PHONY : clean test

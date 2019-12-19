@@ -86,7 +86,6 @@ func main() {
 		os.Exit(1)
 	}
 
-
 	// Set up s2i metrics
 	log.Info("start collect s2i metrics")
 	go metrics.CollectS2iMetrics(mgr.GetClient())

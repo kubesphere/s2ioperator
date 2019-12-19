@@ -70,7 +70,7 @@ pipeline {
       }
       steps {
       container('go'){
-        sh "cd /go/src/github.com/kubesphere/s2ioperator"
+        sh "cd /home/jenkins/go/src/github.com/kubesphere/s2ioperator"
         sh "docker build -f deploy/Dockerfile -t $IMAGE_NAME bin/"
         withCredentials([usernamePassword(passwordVariable : 'DOCKER_PASSWORD' ,usernameVariable : 'DOCKER_USERNAME' ,credentialsId : "dockerhub-id" ,)]) {
           sh 'echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin'
