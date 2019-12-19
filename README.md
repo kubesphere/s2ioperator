@@ -1,75 +1,50 @@
-# S2I Operator
+# Source-to-image Operator
+[![License](http://img.shields.io/badge/license-apache%20v2-blue.svg)](https://github.com/kubesphere/s2ioperator/blob/master/LICENSE)  [![Go Report Card](https://goreportcard.com/badge/github.com/kubesphere/s2ioperator)](https://goreportcard.com/report/github.com/kubesphere/s2ioperator)  [![S2I Operator release](https://img.shields.io/github/release/kubesphere/s2ioperator.svg?color=release&label=release&logo=release&logoColor=release)](https://github.com/kubesphere/s2ioperator/releases/tag/v0.0.14)
 
-## 介绍
-`S2I`( source to image )是一款由Openshift开发、自动将代码容器化的工具（<https://github.com/openshift/source-to-image>），通过预置的模板来支持多种语言和框架，诸如Java，Nodejs, python等等。S2I Operator将S2I引入到kubernetes中，相比原生命令行的使用方式，有下面几个优点：
+Source-to-image(S2I)-Operator is a Kubernetes [Custom Resource Defintion](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/) (CRD) controller that provides easy Kubernetes-style resources for declaring CI/CD-style pipelines. S2I Operator create a ready-to-run images by injecting source code into a container image and letting the container prepare that source code for execution. And create workload automaticly with ready-to-run images.
 
-   1. 对外提供API，用户可以直接调用API生成自己需要的镜像，或者进行二次开发
-   2. 每一次运行的配置文件都存储在k8s中，能够复用
-   3. 提供webhook，实现CI/CD
-   4. 提供kubectl apply的方式，对k8s使用者友好 
+## Native S2I vs S2I Operator
 
+Compare with native S2I, S2I Operator also has the following advantages on the original foundation.
 
-## 如何安装
-```bash
+1. **Provide S2I Open API**: you can directly call the API to generate their own image, or carry out secondary development.
+2. **Simple Config**: you just provide source code url, and specify the image repo which  you want to push, other configurations will setted automaticly. And all configurations are stored as different resources in Kubernetes.
+3. **Deep integration with Kubernetes**: Use containers as their building blocks. And you can use kubectl to create s2i pipelines just as you do with Kubernetes' built-in resources.
+
+## Installation
+
+#### Prerequisites
+
+1. A Kubernetes cluster. (if you don't have an existing cluster, please [create it](https://kubernetes.io/docs/setup/).
+2. Grant cluster-admin permissions to the current user.
+
+#### Install S2I Operator
+
+You can install S2I Operator in any kubernetes cluster with following commands:
+
+```shell
+# create a namespaces, such as kubesphere-devops-system
 kubectl create ns kubesphere-devops-system
+# create S2I Operator and all CRD 
 kubectl apply -f  https://github.com/kubesphere/s2ioperator/releases/download/v0.0.2/s2ioperator.yaml
 ```
-最新版的S2iOperator加入了验证功能，由于目前[controller-runtime](https://github.com/kubernetes-sigs/controller-runtime)的局限性（会在下个版本增强），需要手动添加当前集群的CA。执行完上述命令之后，执行下面的命令添加SSL证书。
-```bash
-wget https://raw.githubusercontent.com/kubesphere/s2ioperator/master/hack/certs.sh
-chmod +x certs.sh
-./certs.sh --service webhook-server-service --namespace kubesphere-devops-system --secret webhook-server-secret
+
+Now monitor the S2I Operator components show a `STATUS` of `Running`:
+
+```shell
+# please change you namespace
+kubectl -n kubesphere-devops-system get pods -w
 ```
-执行最下面一句命令，需要系统安装`openssl`，`jq`，并且拥有正确配置了k8s集群config的`kubectl`。需要有k8s的管理员权限。
-## 快速开始
 
-1. 新建一个s2ibuilder，s2ibuilder存储了所有需要的配置信息。每一次生成Docker镜像可以复用这些信息，也可以覆盖一些信息。
+## Quick Start
 
-    ```bash
-    kubectl apply -f - <<EOF
-    apiVersion: devops.kubesphere.io/v1alpha1
-    kind: S2iBuilder
-    metadata:
-        name: s2ibuilder-sample
-    spec:
-        config:
-            displayName: "For Test"
-            sourceUrl: "https://github.com/sclorg/django-ex"
-            builderImage: centos/python-35-centos7
-            imageName: kubesphere/hello-python
-            tag: v0.0.1
-            builderPullPolicy: if-not-present
-    EOF
-    ```
-    可以通过`kubectl get s2ib` 查看当前所有的S2ibuilder状态
-    ```bash
-    kubectl get s2ib
-    NAME                RUNCOUNT   LASTRUNSTATE   LASTRUNNAME
-    s2ibuilder-sample   2          Successful     s2irun-sample1
-    ```
+Here is [quick-start](https://github.com/kubesphere/s2ioperator/blob/master/docs/QUICK-START.md) to walk you through the process, with a quick overview of the core features of S2I Operator that helps you to get familiar with it.
 
-2. 开始一次运行s2irun，在builderName中指定使用的s2ibuilder
-    ```bash
-    kubectl apply -f - <<EOF
-    apiVersion: devops.kubesphere.io/v1alpha1
-    kind: S2iRun
-    metadata:
-        name: s2irun-sample
-    spec:
-        builderName: s2ibuilder-sample
-    EOF
-    ```
-    通过`kubectl get s2ir s2irun-sample`查看当前运行的状态，如果出现了错误，可以查看当前namespace下以"s2irun-sample"开头的pod日志。
-    ```bash
-    kubectl get s2ir
-    NAME             STATE        COMPLETIONTIME
-    s2irun-sample    Successful   1m
+If you want to get a better experience with S2I Operator, perhaps you can use S2I ci/cd in [Kubesphere](https://github.com/kubesphere/kubesphere).
 
-    $ kubectl logs -f s2irun-sample-xxxxx ##查看具体POD的日志
-    ```
-3. 查看Job运行的Node节点，利用命令docker image ls 查看编译好的镜像。（*查看S2iBuilder配置指南，学习如何自动将镜像导出到镜像仓库*）
-## 如何配置S2ibuilder和Sirun
-  1. [S2IBuilder 配置指南](docs/builder_config.md)
-  2. [S2IRun 配置指南](docs/run_config.md)
-   
-## 开源许可
+## Welcome to contribute
+
+We are so excited to have you!
+
+- See [CONTRIBUTING.md](https://github.com/kubesphere/kubesphere/blob/master/docs/en/guides/Development-workflow.md) for an overview of our processes
+- See [DEVELOPMENT.md](https://github.com/kubesphere/s2ioperator/blob/master/docs/DEVELOPMENT.md) for how to get started
