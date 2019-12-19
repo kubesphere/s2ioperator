@@ -1,4 +1,5 @@
 # Source-to-image Operator
+[![License](http://img.shields.io/badge/license-apache%20v2-blue.svg)](https://github.com/kubesphere/s2ioperator/blob/master/LICENSE)  [![Go Report Card](https://goreportcard.com/badge/github.com/kubesphere/s2ioperator)](https://goreportcard.com/report/github.com/kubesphere/s2ioperator)  [![S2I Operator release](https://img.shields.io/github/release/kubesphere/s2ioperator.svg?color=release&label=release&logo=release&logoColor=release)](https://github.com/kubesphere/s2ioperator/releases/tag/v0.0.14)
 
 Source-to-image(S2I)-Operator is a Kubernetes [Custom Resource Defintion](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/) (CRD) controller that provides easy Kubernetes-style resources for declaring CI/CD-style pipelines. S2I Operator create a ready-to-run images by injecting source code into a container image and letting the container prepare that source code for execution. And create workload automaticly with ready-to-run images.
 
