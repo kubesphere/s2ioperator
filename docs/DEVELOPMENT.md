@@ -2,12 +2,12 @@
 
 ## Getting started
 
-1. [Ramp up on kubernetes and CRDs](https://github.com/kubesphere/s2ioperator/blob/s2i-dev-guide/docs/DEVELOPMENT.md#ramp-up-on-kubernetes-and-crds)
-2. [Checkout your fork](https://github.com/kubesphere/s2ioperator/blob/s2i-dev-guide/docs/DEVELOPMENT.md#checkout-your-fork)
-3. [Set up your develop environment](https://github.com/kubesphere/s2ioperator/blob/s2i-dev-guide/docs/DEVELOPMENT.md#set-up-local-develop-environment)
-4. [Iterating](https://github.com/kubesphere/s2ioperator/blob/s2i-dev-guide/docs/DEVELOPMENT.md#iterating)
-5. [Test](https://github.com/kubesphere/s2ioperator/blob/s2i-dev-guide/docs/DEVELOPMENT.md#test)
-6. [Install CRD](https://github.com/kubesphere/s2ioperator/blob/s2i-dev-guide/docs/DEVELOPMENT.md#install-s2i-crd)
+1. [Ramp up on kubernetes and CRDs](DEVELOPMENT.md#ramp-up-on-kubernetes-and-crds)
+2. [Checkout your fork](DEVELOPMENT.md#checkout-your-fork)
+3. [Set up your develop environment](DEVELOPMENT.md#set-up-local-develop-environment)
+4. [Iterating](DEVELOPMENT.md#iterating)
+5. [Test](DEVELOPMENT.md#test)
+6. [Install CRD](DEVELOPMENT.md#install-s2i-crd)
 
 ### Ramp up on kubernetes and CRDs
 
@@ -69,7 +69,7 @@ If you don't have a cluster, please reference [Kubernetes doc](https://kubernete
 
 While iterating on the project, you may need to:
 
-1. Running [unit test and end-to-end](https://github.com/kubesphere/s2ioperator/blob/s2i-dev-guide/docs/DEVELOPMENT.md#test) to ensure your code are works well.
+1. Running [unit test and end-to-end](DEVELOPMENT.md#test) to ensure your code are works well.
 
 2. Update your (external) dependencies with: `./hack/update-vendor.sh`
 
@@ -121,4 +121,4 @@ Install S2I CRD with following command:
 make install-crd
 ```
 
-For more information about S2I CRD please to see [here](https://github.com/kubesphere/s2ioperator/blob/master/docs/CRD-Consepts.md).
+For more information about S2I CRD please to see [here](CRD-Consepts.md).

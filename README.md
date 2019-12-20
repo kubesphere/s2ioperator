@@ -7,7 +7,7 @@ Source-to-image(S2I)-Operator is a Kubernetes [Custom Resource Defintion](https:
 
 Compare with native S2I, S2I Operator also has the following advantages on the original foundation.
 
-1. **Provide S2I Open API**: you can directly call the API to generate their own image, or carry out secondary development.
+1. **Provide S2I Open API**: you can call S2I API directly to generate image, or carry out secondary development.
 2. **Simple Config**: you just provide source code url, and specify the image repo which  you want to push, other configurations will setted automaticly. And all configurations are stored as different resources in Kubernetes.
 3. **Deep integration with Kubernetes**: Use containers as their building blocks. And you can use kubectl to create s2i pipelines just as you do with Kubernetes' built-in resources.
 
@@ -38,7 +38,7 @@ kubectl -n kubesphere-devops-system get pods -w
 
 ## Quick Start
 
-Here is [quick-start](https://github.com/kubesphere/s2ioperator/blob/master/docs/QUICK-START.md) to walk you through the process, with a quick overview of the core features of S2I Operator that helps you to get familiar with it.
+Here is [quick-start](docs/QUICK-START.md) to walk you through the process, with a quick overview of the core features of S2I Operator that helps you to get familiar with it.
 
 If you want to get a better experience with S2I Operator, perhaps you can use S2I ci/cd in [Kubesphere](https://github.com/kubesphere/kubesphere).
 
@@ -47,4 +47,4 @@ If you want to get a better experience with S2I Operator, perhaps you can use S2
 We are so excited to have you!
 
 - See [CONTRIBUTING.md](https://github.com/kubesphere/kubesphere/blob/master/docs/en/guides/Development-workflow.md) for an overview of our processes
-- See [DEVELOPMENT.md](https://github.com/kubesphere/s2ioperator/blob/master/docs/DEVELOPMENT.md) for how to get started
+- See [DEVELOPMENT.md](docs/DEVELOPMENT.md) for how to get started
