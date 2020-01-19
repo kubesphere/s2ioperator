@@ -424,7 +424,7 @@ type S2iConfig struct {
 	OutputBuildResult bool `json:"outputBuildResult,omitempty"`
 
 	// Allowed Events
-	AllowedEvents []string  `json:"allowedEvents,omitempty"`
+	AllowedEvents []string `json:"allowedEvents,omitempty"`
 
 	// Regular expressions, ignoring names that do not match the provided regular expression
 	BranchExpression string `json:"branchExpression,omitempty"`
