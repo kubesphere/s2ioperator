@@ -15,8 +15,14 @@ limitations under the License.
 */
 package main
 
-import "flag"
+import (
+	"flag"
+	"github.com/kubesphere/s2ioperator/pkg/handler"
+	_ "github.com/kubesphere/s2ioperator/pkg/handler/builder"
+)
 
 func main() {
 	flag.Parse()
+
+	handler.Run()
 }

@@ -14,21 +14,34 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package handler
+package github
 
 import (
 	"net/http"
-
-	"github.com/golang/glog"
-	"github.com/kubesphere/s2ioperator/pkg/handler/builder"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-var handlers = []*builder.HandlerBuilder{}
-
-func Run() {
-	a := handlers
-	for _, handler := range a {
-		http.HandleFunc(handler.Pattern, handler.Func)
-	}
-	glog.Fatal(http.ListenAndServe(":8080", nil))
+type Trigger struct {
+	KubeClientSet  client.Client
+	S2iBuilderName string
+	Namespace      string
 }
+
+func NewGithubSink(client client.Client) (*Trigger) {
+	return &Trigger{
+		KubeClientSet: client,
+	}
+}
+
+func (g *Trigger) Serve(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (g *Trigger) ValidateTrigger(eventType string, payload []byte) ([]byte, error) {
+	return nil,nil
+}
+
+func (g *Trigger) Action(eventType string, payload []byte) (err error) {
+	return nil
+}
+

@@ -17,18 +17,13 @@ limitations under the License.
 package handler
 
 import (
-	"net/http"
-
-	"github.com/golang/glog"
 	"github.com/kubesphere/s2ioperator/pkg/handler/builder"
+	"github.com/kubesphere/s2ioperator/pkg/handler/github"
 )
 
-var handlers = []*builder.HandlerBuilder{}
-
-func Run() {
-	a := handlers
-	for _, handler := range a {
-		http.HandleFunc(handler.Pattern, handler.Func)
-	}
-	glog.Fatal(http.ListenAndServe(":8080", nil))
+func init() {
+	handlers = append(handlers, &builder.HandlerBuilder{
+		Pattern: "/github/",
+		Func:    github.NewGithubSink(builder.ClientSets()).Serve,
+	})
 }

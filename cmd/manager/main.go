@@ -90,6 +90,9 @@ func main() {
 	log.Info("start collect s2i metrics")
 	go metrics.CollectS2iMetrics(mgr.GetClient())
 
+	// Start webhook handler
+	//log.Info("start  webhook handler")
+
 	// Start the Cmd
 	log.Info("Starting the Cmd.")
 	if err := mgr.Start(signals.SetupSignalHandler()); err != nil {
