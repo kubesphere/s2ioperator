@@ -17,7 +17,9 @@ limitations under the License.
 package v1alpha1
 
 import (
+	"fmt"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"strings"
 )
 
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
@@ -28,6 +30,7 @@ const (
 	ResourceSingularS2iRun = "s2irun"
 	ResourcePluralS2iRun   = "s2iruns"
 )
+const MaxLabelLength = 63
 
 // S2iRunSpec defines the desired state of S2iRun
 type S2iRunSpec struct {
@@ -138,4 +141,25 @@ type S2iRunList struct {
 
 func init() {
 	SchemeBuilder.Register(&S2iRun{}, &S2iRunList{})
+}
+
+// ConfigMapName will get the configmap name to be created by s2irun
+// Use these names in the label, so the name length should not exceed 63
+func (in *S2iRun) ConfigMapName() string {
+	instanceUidSlice := strings.Split(string(in.UID), "-")
+	s := in.Name + fmt.Sprintf("-%s", instanceUidSlice[len(instanceUidSlice)-1]) + "-configmap"
+	if len(s) > MaxLabelLength {
+		return s[len(s)-MaxLabelLength:]
+	}
+	return s
+}
+// JobName will get the job name to be created by s2irun
+// Use these names in the label, so the name length should not exceed 63
+func (in *S2iRun) JobName() string {
+	instanceUidSlice := strings.Split(string(in.UID), "-")
+	s := in.Name + fmt.Sprintf("-%s", instanceUidSlice[len(instanceUidSlice)-1]) + "-job"
+	if len(s) > MaxLabelLength {
+		return s[len(s)-MaxLabelLength:]
+	}
+	return s
 }
