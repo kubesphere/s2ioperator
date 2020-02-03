@@ -19,6 +19,7 @@ package handler
 import (
 	"github.com/kubesphere/s2ioperator/pkg/handler/builder"
 	"github.com/kubesphere/s2ioperator/pkg/handler/github"
+	log "k8s.io/klog"
 )
 
 func init() {
@@ -26,4 +27,6 @@ func init() {
 		Pattern: "/github/",
 		Func:    github.NewGithubSink(builder.ClientSets()).Serve,
 	})
+
+	log.Info("registering github webhook")
 }

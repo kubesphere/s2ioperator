@@ -28,12 +28,15 @@ import (
 	log "k8s.io/klog"
 	"net/http"
 	"reflect"
+	"regexp"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"strings"
 )
 
 const (
 	s2irunNamePre    = "trigger-github-"
 	s2irunCreatorPre = "trigger-"
+	pushEvent        = "PushEvent"
 )
 
 type Trigger struct {
@@ -51,7 +54,6 @@ func NewGithubSink(client client.Client) *Trigger {
 func (g *Trigger) Serve(w http.ResponseWriter, r *http.Request) {
 	g.Namespace = r.URL.Query().Get(builder.Namespace)
 	g.S2iBuilderName = r.URL.Query().Get(builder.S2iBuilderName)
-	//&types.NamespacedName{Namespace: r.URL.Query().Get(builder.Namespace), Name: r.URL.Query().Get(builder.S2iBuilderName)}
 
 	eventType := github.WebHookType(r)
 	// Currently only accepting json payloads.
@@ -71,8 +73,12 @@ func (g *Trigger) Serve(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = g.Action(eventType, payload)
+	if err != nil {
+		log.Error(err, "Failed to handle event")
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 	w.WriteHeader(http.StatusCreated)
-	log.Info("Github handing event with S2IBuilder name %s in namespace %s", g.S2iBuilderName, g.Namespace)
+	log.Infof("Github handing event with S2IBuilder name %s in namespace %s", g.S2iBuilderName, g.Namespace)
 
 }
 
@@ -81,11 +87,14 @@ func (g *Trigger) ValidateTrigger(eventType string, payload []byte) ([]byte, err
 	namespacedName := &types.NamespacedName{Namespace: g.Namespace, Name: g.S2iBuilderName}
 	err := g.KubeClientSet.Get(context.TODO(), *namespacedName, instance)
 	if err != nil {
-		log.Error("Failed to get S2IBuilder: %s, in namespace %s", g.S2iBuilderName, g.Namespace)
+		log.Errorf("Failed to get S2IBuilder: %s, in namespace %s", g.S2iBuilderName, g.Namespace)
 		return nil, err
 	}
 
 	// Check if the event type is in the allow-list, Now just support push event.
+	if eventType != pushEvent {
+		return nil, fmt.Errorf("not support event type %s", eventType)
+	}
 	if instance.Spec.Config.AllowedEvents != nil {
 		isAllowed := false
 		for _, allowedEvent := range instance.Spec.Config.AllowedEvents {
@@ -95,22 +104,25 @@ func (g *Trigger) ValidateTrigger(eventType string, payload []byte) ([]byte, err
 			}
 		}
 		if !isAllowed {
-			return nil, fmt.Errorf("event type %s is not allowed", eventType)
+			return nil, fmt.Errorf("not support event type %s", eventType)
 		}
 	}
+	// Can not get branch name directly.
+	event, err := github.ParseWebHook(eventType, payload)
+	pushEvent := event.(github.PushEvent)
+	gitref := pushEvent.Ref
+	branchName := strings.Split(*gitref,"/tags/")[1]
+	if instance.Spec.Config.BranchExpression != "" {
+		match, err := regexp.MatchString(instance.Spec.Config.BranchExpression, branchName)
+		if err != nil {
+			log.Error("Failed to MatchString with BranchName %s by Expression %s", instance.Spec.Config.BranchExpression, branchName)
+			return nil, err
+		}
 
-	// TODO Check Branch
-	//if instance.Spec.Config.BranchExpression != "" {
-	//	match, err := regexp.MatchString(instance.Spec.Config.BranchExpression, branchName)
-	//	if err != nil {
-	//		log.Error("Failed to MatchString with BranchName %s by Expression %s", instance.Spec.Config.BranchExpression, branchName)
-	//		return nil, err
-	//	}
-	//
-	//	if !match {
-	//		return nil, fmt.Errorf("branch %s is not matched", branchName)
-	//	}
-	//}
+		if !match {
+			return nil, fmt.Errorf("branch %s is not matched", branchName)
+		}
+	}
 
 	return payload, nil
 }
@@ -119,12 +131,12 @@ func (g *Trigger) Action(eventType string, payload []byte) (err error) {
 	event, err := github.ParseWebHook(eventType, payload)
 	t := reflect.TypeOf(event)
 	switch t.Name() {
-	case "PushEvent":
+	case pushEvent:
 		err = g.actionWithPushEvent(event.(github.PushEvent))
 	case "PullRequestEvent":
 		err = g.actionWithPullRequestEvent(event.(github.PullRequestEvent))
 	default:
-		log.Info("Can not do any action with event type %s", t.Name())
+		log.Infof("Can not do any action with event type %s", t.Name())
 	}
 
 	return err

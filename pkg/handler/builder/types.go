@@ -17,6 +17,7 @@ limitations under the License.
 package builder
 
 import (
+	"flag"
 	"github.com/golang/glog"
 	"net/http"
 	"os"
@@ -45,8 +46,11 @@ type HandlerBuilder struct {
 }
 
 func init() {
-	cfg, err := config.GetConfig()
+	var metricsAddr string
+	flag.StringVar(&metricsAddr, "metrics-addr", ":8080", "The address the metric endpoint binds to.")
+	flag.Parse()
 
+	cfg, err := config.GetConfig()
 	if err != nil {
 		glog.Error(err, "unable to set up client config")
 		os.Exit(1)
@@ -54,7 +58,7 @@ func init() {
 
 	// Create a newgo Cmd to provide shared dependencies and start components
 	glog.Info("setting up manager")
-	mgr, err := manager.New(cfg, manager.Options{MetricsBindAddress: "127.0.0.1:8080"})
+	mgr, err := manager.New(cfg, manager.Options{MetricsBindAddress: metricsAddr})
 
 	KubeClientset = mgr.GetClient()
 	if err != nil {
