@@ -4,16 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"k8s.io/api/rbac/v1"
-	"net/url"
-	"os"
-	"strings"
-
 	devopsv1alpha1 "github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
+	"net/url"
+	"os"
 )
 
 const (
@@ -113,8 +111,7 @@ func (r *ReconcileS2iRun) NewConfigMap(instance *devopsv1alpha1.S2iRun, config d
 		return nil, err
 	}
 
-	instanceUidSlice := strings.Split(string(instance.UID), "-")
-	configMapName := instance.Name + fmt.Sprintf("-%s", instanceUidSlice[len(instanceUidSlice)-1]) + "-configmap"
+	configMapName := instance.ConfigMapName()
 	dataMap := make(map[string]string)
 	dataMap[ConfigDataKey] = string(data)
 	configMap := &corev1.ConfigMap{
@@ -128,10 +125,9 @@ func (r *ReconcileS2iRun) NewConfigMap(instance *devopsv1alpha1.S2iRun, config d
 }
 
 func (r *ReconcileS2iRun) GenerateNewJob(instance *devopsv1alpha1.S2iRun) (*batchv1.Job, error) {
-	instanceUidSlice := strings.Split(string(instance.UID), "-")
 	cfgString := "config-data"
-	configMapName := instance.Name + fmt.Sprintf("-%s", instanceUidSlice[len(instanceUidSlice)-1]) + "-configmap"
-	jobName := instance.Name + fmt.Sprintf("-%s", instanceUidSlice[len(instanceUidSlice)-1]) + "-job"
+	configMapName := instance.ConfigMapName()
+	jobName := instance.JobName()
 	imageName := os.Getenv("S2IIMAGENAME")
 	if imageName == "" {
 		return nil, fmt.Errorf("Failed to get s2i-image name, please set the env 'S2IIMAGENAME' ")

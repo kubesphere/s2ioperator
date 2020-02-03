@@ -56,3 +56,57 @@ func TestStorageS2iRun(t *testing.T) {
 	g.Expect(c.Delete(context.TODO(), fetched)).NotTo(gomega.HaveOccurred())
 	g.Expect(c.Get(context.TODO(), key, fetched)).To(gomega.HaveOccurred())
 }
+
+func TestS2iRunConfigName(t *testing.T) {
+	input := []*S2iRun{
+		{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: "abc",
+				UID:  "abcd-efg",
+			},
+		},
+		{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: "abcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabc",
+				UID:  "abcd-efg",
+			},
+		},
+	}
+	expect := []string{
+		"abc-efg-configmap",
+		"cabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabc-efg-configmap",
+	}
+	for k, i := range input {
+		if i.ConfigMapName() != expect[k] {
+			t.Fatalf("expect not equal %s != %s", i.ConfigMapName(), expect[k])
+		}
+	}
+
+}
+
+func TestS2iRunJobName(t *testing.T) {
+	input := []*S2iRun{
+		{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: "abc",
+				UID:  "abcd-efg",
+			},
+		},
+		{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: "abcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabc",
+				UID:  "abcd-efg",
+			},
+		},
+	}
+	expect := []string{
+		"abc-efg-job",
+		"cabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabc-efg-job",
+	}
+	for k, i := range input {
+		if i.JobName() != expect[k] {
+			t.Fatalf("expect not equal %s != %s", i.JobName(), expect[k])
+		}
+	}
+
+}
