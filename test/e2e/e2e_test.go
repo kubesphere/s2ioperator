@@ -830,6 +830,91 @@ var _ = Describe("", func() {
 			return errors.IsNotFound(testClient.Get(context.TODO(), types.NamespacedName{Name: statefulSet.Name, Namespace: statefulSet.Namespace}, statefulSet))
 		}, timeout, time.Second).Should(BeTrue())
 	})
+
+	It("Should work well when using longname yamls", func() {
+		//create a s2ibuilder
+		s2ibuilder := &devopsv1alpha1.S2iBuilder{}
+		reader, err := os.Open(workspace + "/config/samples/longname/devops_v1alpha1_s2ibuilder.yaml")
+		Expect(err).NotTo(HaveOccurred(), "Cannot read sample yamls")
+		err = yaml.NewYAMLOrJSONDecoder(reader, 10).Decode(s2ibuilder)
+		Expect(err).NotTo(HaveOccurred(), "Cannot unmarshal yamls")
+		err = testClient.Create(context.TODO(), s2ibuilder)
+		Expect(err).NotTo(HaveOccurred())
+		// Create the S2iRun object and expect the Reconcile and Deployment to be created
+		s2irun := &devopsv1alpha1.S2iRun{}
+		reader, err = os.Open(workspace + "/config/samples/longname/devops_v1alpha1_s2irun.yaml")
+		Expect(err).NotTo(HaveOccurred(), "Cannot read sample yamls")
+		err = yaml.NewYAMLOrJSONDecoder(reader, 10).Decode(s2irun)
+		Expect(err).NotTo(HaveOccurred(), "Cannot unmarshal yamls")
+		err = testClient.Create(context.TODO(), s2irun)
+		Expect(err).NotTo(HaveOccurred())
+
+		createdInstance := &devopsv1alpha1.S2iRun{}
+		Eventually(func() error {
+			return testClient.Get(context.TODO(), types.NamespacedName{Name: s2irun.Name, Namespace: s2irun.Namespace}, createdInstance)
+		}, timeout).Should(Succeed())
+
+		var cmKey = types.NamespacedName{
+			Name:      s2irun.ConfigMapName(),
+			Namespace: s2irun.Namespace}
+		var depKey = types.NamespacedName{
+			Name:      s2irun.JobName(),
+			Namespace: s2irun.Namespace}
+		//configmap
+		cm := &corev1.ConfigMap{}
+		Eventually(func() error { return testClient.Get(context.TODO(), cmKey, cm) }, timeout).
+			Should(Succeed())
+		Expect(testClient.Delete(context.TODO(), cm)).NotTo(HaveOccurred())
+		Eventually(func() error { return testClient.Get(context.TODO(), cmKey, cm) }, timeout).
+			Should(Succeed())
+
+		job := &batchv1.Job{}
+		Eventually(func() error { return testClient.Get(context.TODO(), depKey, job) }, timeout, time.Second).
+			Should(Succeed())
+
+		res := checkAnffinitTaint(job, s2ibuilder.Spec.Config.NodeAffinityKey, s2ibuilder.Spec.Config.NodeAffinityValues[0], s2ibuilder.Spec.Config.TaintKey)
+		Expect(res).To(Equal(true))
+
+		//for our example, the status must be successful
+		Eventually(func() error {
+			err = testClient.Get(context.TODO(), depKey, job)
+			if err != nil {
+				return err
+			}
+			if job.Status.Succeeded == 1 {
+				//Status of s2ibuilder should update too
+				tempBuilder := &devopsv1alpha1.S2iBuilder{}
+				err = testClient.Get(context.TODO(), types.NamespacedName{Name: s2ibuilder.Name, Namespace: s2ibuilder.Namespace}, tempBuilder)
+				if err != nil {
+					return err
+				}
+				if tempBuilder.Status.LastRunName != nil && *tempBuilder.Status.LastRunName == s2irun.Name && tempBuilder.Status.LastRunState == devopsv1alpha1.Successful && tempBuilder.Status.RunCount == 1 {
+					return nil
+				}
+			}
+			return fmt.Errorf("Failed")
+		}, time.Minute*5, time.Second*10).Should(Succeed())
+
+		Eventually(func() bool {
+			res := &devopsv1alpha1.S2iRun{}
+			err = testClient.Get(context.TODO(), types.NamespacedName{Name: s2irun.Name, Namespace: s2irun.Namespace}, res)
+			if err != nil {
+				return false
+			}
+			if strings.Contains(res.Status.S2iBuildResult.ImageName, s2ibuilder.Spec.Config.ImageName) {
+				return true
+			}
+			return false
+		}, timeout, time.Second).Should(BeTrue())
+
+		Eventually(func() error { return testClient.Delete(context.TODO(), s2ibuilder) }, timeout, time.Second).Should(Succeed())
+		Eventually(func() bool {
+			return errors.IsNotFound(testClient.Get(context.TODO(), types.NamespacedName{Name: s2irun.Name, Namespace: s2irun.Namespace}, s2irun))
+		}, timeout, time.Second).Should(BeTrue())
+		Eventually(func() bool {
+			return errors.IsNotFound(testClient.Get(context.TODO(), types.NamespacedName{Name: s2ibuilder.Name, Namespace: s2ibuilder.Namespace}, s2ibuilder))
+		}, timeout, time.Second).Should(BeTrue())
+	})
 })
 
 func checkAnffinitTaint(job *batchv1.Job, nodeAffinityKey string, nodeAffinityValue string, taintKey string) bool {
