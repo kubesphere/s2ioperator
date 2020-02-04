@@ -46,5 +46,5 @@ func Run(kubeClientset client.Client) {
 	for _, handler := range handlers {
 		http.HandleFunc(handler.Pattern, handler.Func)
 	}
-	glog.Fatal(http.ListenAndServe(":8080", nil))
+	glog.Fatal(http.ListenAndServe(":8000", nil))
 }

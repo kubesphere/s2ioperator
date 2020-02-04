@@ -51,8 +51,8 @@ func NewGithubSink(client client.Client) *Trigger {
 }
 
 func (g *Trigger) Serve(w http.ResponseWriter, r *http.Request) {
-	g.Namespace = r.URL.Query().Get(builder.Namespace)
-	g.S2iBuilderName = r.URL.Query().Get(builder.S2iBuilderName)
+	g.Namespace = builder.GetParamInPath(r.URL.Path, builder.Namespace)
+	g.S2iBuilderName = builder.GetParamInPath(r.URL.Path, builder.S2iBuilderName)
 
 	eventType := github.WebHookType(r)
 	// Currently only accepting json payloads.
@@ -70,7 +70,6 @@ func (g *Trigger) Serve(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-
 	err = g.Action(eventType, payload)
 	if err != nil {
 		log.Error(err, "Failed to handle event")
@@ -86,7 +85,7 @@ func (g *Trigger) ValidateTrigger(eventType string, payload []byte) ([]byte, err
 	namespacedName := &types.NamespacedName{Namespace: g.Namespace, Name: g.S2iBuilderName}
 	err := g.KubeClientSet.Get(context.TODO(), *namespacedName, instance)
 	if err != nil {
-		log.Errorf("Failed to get S2IBuilder: %s, in namespace %s", g.S2iBuilderName, g.Namespace)
+		log.Errorf("Failed to get S2IBuilder: %s, in namespace %s, with error: %s", g.S2iBuilderName, g.Namespace, err)
 		return nil, err
 	}
 
@@ -134,8 +133,7 @@ func (g *Trigger) Action(eventType string, payload []byte) (err error) {
 	event, err := github.ParseWebHook(eventType, payload)
 	switch eventType {
 	case pushEvent:
-		a := event.(*github.PushEvent)
-		err = g.actionWithPushEvent(*a)
+		err = g.actionWithPushEvent(*event.(*github.PushEvent))
 	case "PullRequestEvent":
 		err = g.actionWithPullRequestEvent(event.(github.PullRequestEvent))
 	default:

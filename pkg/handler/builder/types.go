@@ -18,11 +18,12 @@ package builder
 
 import (
 	"net/http"
+	"strings"
 )
 
 const (
-	Namespace      = "namespace"
-	S2iBuilderName = "builder"
+	Namespace      = "namespaces"
+	S2iBuilderName = "builders"
 )
 
 // Trigger defines the sink resource for processing incoming events.
@@ -35,4 +36,10 @@ type Trigger interface {
 type HandlerBuilder struct {
 	Pattern string
 	Func    http.HandlerFunc
+}
+
+func GetParamInPath(path, key string) string {
+	endPath := strings.Split(path, key)[1]
+	value := strings.Split(endPath, "/")[1]
+	return value
 }

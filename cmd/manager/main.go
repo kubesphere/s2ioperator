@@ -19,12 +19,13 @@ package main
 import (
 	"flag"
 	"github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1"
+	"github.com/kubesphere/s2ioperator/pkg/controller"
+	"github.com/kubesphere/s2ioperator/pkg/handler"
 	"os"
 
 	"github.com/kubesphere/s2ioperator/pkg/metrics"
 
 	"github.com/kubesphere/s2ioperator/pkg/apis"
-	"github.com/kubesphere/s2ioperator/pkg/controller"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	"sigs.k8s.io/controller-runtime/pkg/client/config"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
@@ -91,7 +92,8 @@ func main() {
 	go metrics.CollectS2iMetrics(mgr.GetClient())
 
 	// Start webhook handler
-	//log.Info("start  webhook handler")
+	log.Info("start webhook handler")
+	go handler.Run(mgr.GetClient())
 
 	// Start the Cmd
 	log.Info("Starting the Cmd.")
