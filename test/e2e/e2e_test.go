@@ -834,7 +834,7 @@ var _ = Describe("", func() {
 	It("Should work well when using longname yamls", func() {
 		//create a s2ibuilder
 		s2ibuilder := &devopsv1alpha1.S2iBuilder{}
-		reader, err := os.Open(workspace + "/config/samples/longname/devops_v1alpha1_s2ibuilder.yaml")
+		reader, err := os.Open(workspace + "/config/samples/longname/devops_v1alpha2_s2ibuilder.yaml")
 		Expect(err).NotTo(HaveOccurred(), "Cannot read sample yamls")
 		err = yaml.NewYAMLOrJSONDecoder(reader, 10).Decode(s2ibuilder)
 		Expect(err).NotTo(HaveOccurred(), "Cannot unmarshal yamls")
@@ -842,7 +842,7 @@ var _ = Describe("", func() {
 		Expect(err).NotTo(HaveOccurred())
 		// Create the S2iRun object and expect the Reconcile and Deployment to be created
 		s2irun := &devopsv1alpha1.S2iRun{}
-		reader, err = os.Open(workspace + "/config/samples/longname/devops_v1alpha1_s2irun.yaml")
+		reader, err = os.Open(workspace + "/config/samples/longname/devops_v1alpha2_s2irun.yaml")
 		Expect(err).NotTo(HaveOccurred(), "Cannot read sample yamls")
 		err = yaml.NewYAMLOrJSONDecoder(reader, 10).Decode(s2irun)
 		Expect(err).NotTo(HaveOccurred(), "Cannot unmarshal yamls")
