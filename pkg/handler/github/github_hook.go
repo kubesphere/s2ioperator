@@ -27,7 +27,6 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	log "k8s.io/klog"
 	"net/http"
-	"reflect"
 	"regexp"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"strings"
@@ -133,14 +132,14 @@ func (g *Trigger) ValidateTrigger(eventType string, payload []byte) ([]byte, err
 
 func (g *Trigger) Action(eventType string, payload []byte) (err error) {
 	event, err := github.ParseWebHook(eventType, payload)
-	t := reflect.TypeOf(event)
-	switch t.Name() {
+	switch eventType {
 	case pushEvent:
-		err = g.actionWithPushEvent(event.(github.PushEvent))
+		a := event.(*github.PushEvent)
+		err = g.actionWithPushEvent(*a)
 	case "PullRequestEvent":
 		err = g.actionWithPullRequestEvent(event.(github.PullRequestEvent))
 	default:
-		log.Infof("Can not do any action with event type %s", t.Name())
+		log.Infof("Can not do any action with event type %s", eventType)
 	}
 
 	return err
