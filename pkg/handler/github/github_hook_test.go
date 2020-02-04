@@ -76,7 +76,7 @@ func TestValidateTrigger(t *testing.T) {
 	}
 }
 
-func TestAction(t *testing.T){
+func TestAction(t *testing.T) {
 	s2ib := &devopsv1alpha1.S2iBuilder{
 		ObjectMeta: v1.ObjectMeta{
 			Name: "s2i-a",
@@ -120,13 +120,13 @@ func TestAction(t *testing.T){
 	githubSink := NewGithubSink(fakeKubeClient)
 	githubSink.S2iBuilderName = s2ib.Name
 
-	err := githubSink.Action(pushEvent,aPayLoad)
+	err := githubSink.Action(pushEvent, aPayLoad)
 	if err != nil {
 		t.Fatalf("Get err %s", err)
 	}
 	res := &devopsv1alpha1.S2iRun{}
 	namespacedName := types.NamespacedName{Namespace: "", Name: s2irunNamePre + "1cb22"}
-	err = fakeKubeClient.Get(context.TODO(),namespacedName,res)
+	err = fakeKubeClient.Get(context.TODO(), namespacedName, res)
 	if err != nil {
 		t.Fatalf("Get err %s", err)
 	}

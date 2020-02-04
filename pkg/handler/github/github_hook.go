@@ -110,7 +110,7 @@ func (g *Trigger) ValidateTrigger(eventType string, payload []byte) ([]byte, err
 	event, err := github.ParseWebHook(eventType, payload)
 	pushEvent := event.(*github.PushEvent)
 	gitref := pushEvent.Ref
-	branchName := strings.SplitAfterN(*gitref,"/",3)[2]
+	branchName := strings.SplitAfterN(*gitref, "/", 3)[2]
 	if instance.Spec.Config.BranchExpression != "" {
 		match, err := regexp.MatchString(instance.Spec.Config.BranchExpression, branchName)
 		if err != nil {
