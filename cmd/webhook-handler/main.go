@@ -17,12 +17,33 @@ package main
 
 import (
 	"flag"
+	"github.com/golang/glog"
 	"github.com/kubesphere/s2ioperator/pkg/handler"
-	"github.com/kubesphere/s2ioperator/pkg/handler/builder"
+	"os"
+	"sigs.k8s.io/controller-runtime/pkg/client/config"
+	"sigs.k8s.io/controller-runtime/pkg/manager"
 )
 
 func main() {
 	flag.Parse()
-	builder.Start()
-	handler.Run()
+	var metricsAddr string
+	flag.StringVar(&metricsAddr, "metrics-addr", ":8080", "The address the metric endpoint binds to.")
+	flag.Parse()
+
+	cfg, err := config.GetConfig()
+	if err != nil {
+		glog.Error(err, "unable to set up client config")
+		os.Exit(1)
+	}
+
+	// Create a newgo Cmd to provide shared dependencies and start components
+	glog.Info("setting up manager")
+	mgr, err := manager.New(cfg, manager.Options{MetricsBindAddress: metricsAddr})
+
+	if err != nil {
+		glog.Error(err, "Failed to get the Kubernetes client")
+		os.Exit(1)
+	}
+
+	handler.Run(mgr.GetClient())
 }

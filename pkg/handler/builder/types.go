@@ -17,21 +17,13 @@ limitations under the License.
 package builder
 
 import (
-	"flag"
-	"github.com/golang/glog"
 	"net/http"
-	"os"
-	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/client/config"
-	"sigs.k8s.io/controller-runtime/pkg/manager"
 )
 
 const (
 	Namespace      = "namespace"
 	S2iBuilderName = "builder"
 )
-
-var KubeClientset client.Client
 
 // Trigger defines the sink resource for processing incoming events.
 type Trigger interface {
@@ -43,31 +35,4 @@ type Trigger interface {
 type HandlerBuilder struct {
 	Pattern string
 	Func    http.HandlerFunc
-}
-
-func Start() {
-	var metricsAddr string
-	flag.StringVar(&metricsAddr, "metrics-addr", ":8080", "The address the metric endpoint binds to.")
-	flag.Parse()
-
-	cfg, err := config.GetConfig()
-	if err != nil {
-		glog.Error(err, "unable to set up client config")
-		os.Exit(1)
-	}
-
-	// Create a newgo Cmd to provide shared dependencies and start components
-	glog.Info("setting up manager")
-	mgr, err := manager.New(cfg, manager.Options{MetricsBindAddress: metricsAddr})
-
-	KubeClientset = mgr.GetClient()
-	if err != nil {
-		glog.Error(err, "Failed to get the Kubernetes client")
-		os.Exit(1)
-	}
-
-}
-
-func ClientSets() client.Client {
-	return KubeClientset
 }

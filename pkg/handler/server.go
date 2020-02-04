@@ -17,7 +17,11 @@ limitations under the License.
 package handler
 
 import (
+	"github.com/kubesphere/s2ioperator/pkg/handler/github"
+	"github.com/kubesphere/s2ioperator/pkg/handler/gitlab"
+	"github.com/prometheus/common/log"
 	"net/http"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	"github.com/golang/glog"
 	"github.com/kubesphere/s2ioperator/pkg/handler/builder"
@@ -25,9 +29,21 @@ import (
 
 var handlers = []*builder.HandlerBuilder{}
 
-func Run() {
-	a := handlers
-	for _, handler := range a {
+func Run(kubeClientset client.Client) {
+	// registry handler type
+	handlers = append(handlers, &builder.HandlerBuilder{
+		Pattern: "/github/",
+		Func:    github.NewGithubSink(kubeClientset).Serve,
+	})
+	log.Info("registering github webhook")
+
+	handlers = append(handlers, &builder.HandlerBuilder{
+		Pattern: "/gitlab/",
+		Func:    gitlab.NewGitlabSink(kubeClientset).Serve,
+	})
+	log.Info("registering gitlab webhook")
+
+	for _, handler := range handlers {
 		http.HandleFunc(handler.Pattern, handler.Func)
 	}
 	glog.Fatal(http.ListenAndServe(":8080", nil))
