@@ -17,6 +17,7 @@ limitations under the License.
 package handler
 
 import (
+	"github.com/kubesphere/s2ioperator/pkg/handler/general"
 	"github.com/kubesphere/s2ioperator/pkg/handler/github"
 	"github.com/kubesphere/s2ioperator/pkg/handler/gitlab"
 	"github.com/prometheus/common/log"
@@ -31,6 +32,12 @@ var handlers = []*builder.HandlerBuilder{}
 
 func Run(kubeClientset client.Client) {
 	// registry handler type
+	handlers = append(handlers, &builder.HandlerBuilder{
+		Pattern: "/general/",
+		Func:    general.NewGithubSink(kubeClientset).Serve,
+	})
+	log.Info("registering general webhook")
+
 	handlers = append(handlers, &builder.HandlerBuilder{
 		Pattern: "/github/",
 		Func:    github.NewGithubSink(kubeClientset).Serve,

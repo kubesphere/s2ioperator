@@ -24,14 +24,8 @@ import (
 const (
 	Namespace      = "namespaces"
 	S2iBuilderName = "builders"
+	letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 )
-
-// Trigger defines the sink resource for processing incoming events.
-type Trigger interface {
-	Serve(w http.ResponseWriter, r *http.Request)
-	ValidateTrigger(eventType string, payload []byte) ([]byte, error)
-	Action(eventType string, payload []byte) error
-}
 
 type HandlerBuilder struct {
 	Pattern string
