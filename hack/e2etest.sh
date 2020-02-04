@@ -30,4 +30,4 @@ kubectl apply -f $dest
 ./hack/certs.sh --service webhook-server-service --namespace $TEST_NS --secret webhook-server-secret
 
 export TEST_NS
-go test -v ./test/e2e/
+go test -timeout 20m -v ./test/e2e/
