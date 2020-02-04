@@ -9,8 +9,8 @@ spec:
   # Add fields here
    config:
      builderImage: kubespheredev/python-35-centos7
-     sourceUrl: "https://github.com/runzexia/django-ex"
-     imageName: runzexia/hello-python
+     sourceUrl: "https://github.com/soulseen/django-ex"
+     imageName: kubespheredev/s2i-test-python
      tag: latest
      builderPullPolicy: if-not-present
      gitSecretRef:
