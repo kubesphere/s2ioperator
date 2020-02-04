@@ -11,7 +11,7 @@ spec:
   # Add fields here
   config:
     displayName: "For Test"
-    imageName: runzexia/hello-java
+    imageName: kubespheredev/s2i-test-java
     tag: latest
     builderPullPolicy: if-not-present
     export: true
