@@ -45,7 +45,7 @@ type HandlerBuilder struct {
 	Func    http.HandlerFunc
 }
 
-func init() {
+func Start() {
 	var metricsAddr string
 	flag.StringVar(&metricsAddr, "metrics-addr", ":8080", "The address the metric endpoint binds to.")
 	flag.Parse()

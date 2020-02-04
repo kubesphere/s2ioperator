@@ -18,11 +18,11 @@ package main
 import (
 	"flag"
 	"github.com/kubesphere/s2ioperator/pkg/handler"
-	_ "github.com/kubesphere/s2ioperator/pkg/handler/builder"
+	"github.com/kubesphere/s2ioperator/pkg/handler/builder"
 )
 
 func main() {
 	flag.Parse()
-
+	builder.Start()
 	handler.Run()
 }

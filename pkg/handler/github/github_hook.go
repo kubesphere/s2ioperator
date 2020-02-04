@@ -36,7 +36,7 @@ import (
 const (
 	s2irunNamePre    = "trigger-github-"
 	s2irunCreatorPre = "trigger-"
-	pushEvent        = "PushEvent"
+	pushEvent        = "push"
 )
 
 type Trigger struct {
@@ -109,18 +109,22 @@ func (g *Trigger) ValidateTrigger(eventType string, payload []byte) ([]byte, err
 	}
 	// Can not get branch name directly.
 	event, err := github.ParseWebHook(eventType, payload)
-	pushEvent := event.(github.PushEvent)
+	pushEvent := event.(*github.PushEvent)
 	gitref := pushEvent.Ref
-	branchName := strings.Split(*gitref,"/tags/")[1]
+	branchName := strings.SplitAfterN(*gitref,"/",3)[2]
 	if instance.Spec.Config.BranchExpression != "" {
 		match, err := regexp.MatchString(instance.Spec.Config.BranchExpression, branchName)
 		if err != nil {
-			log.Error("Failed to MatchString with BranchName %s by Expression %s", instance.Spec.Config.BranchExpression, branchName)
+			log.Error("Failed to MatchString with Expression" + instance.Spec.Config.BranchExpression)
 			return nil, err
 		}
 
 		if !match {
 			return nil, fmt.Errorf("branch %s is not matched", branchName)
+		}
+	} else {
+		if branchName != instance.Spec.Config.RevisionId {
+			return nil, fmt.Errorf("branch %s is not matched with expired revision id", branchName)
 		}
 	}
 
