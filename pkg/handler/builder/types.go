@@ -24,7 +24,7 @@ import (
 const (
 	Namespace      = "namespaces"
 	S2iBuilderName = "builders"
-	letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	letterBytes    = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 )
 
 type HandlerBuilder struct {

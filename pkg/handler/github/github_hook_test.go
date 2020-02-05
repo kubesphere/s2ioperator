@@ -5,7 +5,6 @@ import (
 	"context"
 	devopsv1alpha1 "github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1"
 	"github.com/kubesphere/s2ioperator/pkg/client/clientset/versioned/scheme"
-	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
@@ -51,14 +50,6 @@ func TestValidateTrigger(t *testing.T) {
 
 	scheme := scheme.Scheme
 	fakeKubeClient := fake.NewFakeClientWithScheme(scheme, as2ib, bs2ib)
-	err := fakeKubeClient.Create(context.TODO(), as2ib)
-	if err != nil && !errors.IsAlreadyExists(err) {
-		t.Fatalf("Ceate resource error %s", err)
-	}
-	err = fakeKubeClient.Create(context.TODO(), bs2ib)
-	if err != nil && !errors.IsAlreadyExists(err) {
-		t.Fatalf("Ceate resource error %s", err)
-	}
 	githubSink := NewGithubSink(fakeKubeClient)
 
 	for _, v := range data {

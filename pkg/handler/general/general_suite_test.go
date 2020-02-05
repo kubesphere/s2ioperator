@@ -1,0 +1,58 @@
+package general
+
+import (
+	"github.com/golang/glog"
+	devopsv1alpha1 "github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1"
+	"github.com/kubesphere/s2ioperator/pkg/client/clientset/versioned/scheme"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
+	"k8s.io/apimachinery/pkg/apis/meta/v1"
+	"net/http"
+	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/client/fake"
+	"testing"
+)
+
+var (
+	t Trigger
+)
+
+const (
+	defaultUrl = "http://127.0.0.1:8000/general/namespaces/s2i/builders/s2i-b"
+	s2ibName   = "s2i-b"
+	namespace  = "s2i"
+)
+
+func TestS2irun(t *testing.T) {
+	RegisterFailHandler(Fail)
+	RunSpecs(t, "General webhook Suite")
+}
+
+var _ = BeforeSuite(func() {
+	s2ib := &devopsv1alpha1.S2iBuilder{
+		ObjectMeta: v1.ObjectMeta{
+			Name:      s2ibName,
+			Namespace: namespace,
+		},
+		Spec: devopsv1alpha1.S2iBuilderSpec{
+			Config: &devopsv1alpha1.S2iConfig{
+				RevisionId: "master",
+			},
+		},
+	}
+
+	scheme := scheme.Scheme
+	c := fake.NewFakeClientWithScheme(scheme, s2ib)
+	t.KubeClientSet = c
+	t.Namespace = s2ib.Namespace
+	t.S2iBuilderName = s2ib.Name
+	go StartTestHandler(c)
+})
+
+// StartTestManager adds recFn
+func StartTestHandler(kubeClientset client.Client) {
+	// registry handler type
+	http.HandleFunc("/general/", NewGithubSink(kubeClientset).Serve)
+
+	glog.Fatal(http.ListenAndServe(":8000", nil))
+}
