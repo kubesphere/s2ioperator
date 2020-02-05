@@ -43,8 +43,6 @@ func (g *Trigger) Serve(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 	w.WriteHeader(http.StatusCreated)
-	log.Infof("Github handing event with S2IBuilder name %s in namespace %s", g.S2iBuilderName, g.Namespace)
-
 }
 
 func (g *Trigger) Action() error {
@@ -55,6 +53,7 @@ func (g *Trigger) Action() error {
 		log.Error(err, "Can not create S2IRun.")
 		return err
 	}
+
 	return nil
 }
 

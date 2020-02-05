@@ -1,14 +1,11 @@
 package general
 
 import (
-	"github.com/golang/glog"
 	devopsv1alpha1 "github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1"
 	"github.com/kubesphere/s2ioperator/pkg/client/clientset/versioned/scheme"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
-	"net/http"
-	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 	"testing"
 )
@@ -46,13 +43,4 @@ var _ = BeforeSuite(func() {
 	t.KubeClientSet = c
 	t.Namespace = s2ib.Namespace
 	t.S2iBuilderName = s2ib.Name
-	go StartTestHandler(c)
 })
-
-// StartTestManager adds recFn
-func StartTestHandler(kubeClientset client.Client) {
-	// registry handler type
-	http.HandleFunc("/general/", NewGithubSink(kubeClientset).Serve)
-
-	glog.Fatal(http.ListenAndServe(":8000", nil))
-}
