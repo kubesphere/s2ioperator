@@ -62,6 +62,11 @@ spec:
                   items:
                     type: string
                   type: array
+                allowedEvents:
+                  description: Allowed Events
+                  items:
+                    type: string
+                  type: array
                 asDockerfile:
                   description: AsDockerfile indicates the path where the Dockerfile
                     should be written instead of building a new image.
@@ -77,6 +82,10 @@ spec:
                     have a tar binary available, if the image contains ONBUILD commands
                     that would be executed.
                   type: boolean
+                branchExpression:
+                  description: Regular expressions, ignoring names that do not match
+                    the provided regular expression
+                  type: string
                 buildVolumes:
                   description: BuildVolumes specifies a list of volumes to mount to
                     container running the build.

@@ -57,7 +57,7 @@ func (g *Trigger) Action() error {
 	return nil
 }
 
-var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+var letterRunes = []rune("0123456789abcdefghijklmnopqrstuvwxyz-")
 
 func RandStringRunes(n int) string {
 	b := make([]rune, n)

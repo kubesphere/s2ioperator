@@ -9,6 +9,7 @@ API rule violation: list_type_missing,github.com/kubesphere/s2ioperator/pkg/apis
 API rule violation: list_type_missing,github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1,S2iBuilderTemplateSpec,ContainerInfo
 API rule violation: list_type_missing,github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1,S2iBuilderTemplateSpec,Parameters
 API rule violation: list_type_missing,github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1,S2iConfig,AddHost
+API rule violation: list_type_missing,github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1,S2iConfig,AllowedEvents
 API rule violation: list_type_missing,github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1,S2iConfig,BuildVolumes
 API rule violation: list_type_missing,github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1,S2iConfig,DropCapabilities
 API rule violation: list_type_missing,github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1,S2iConfig,Environment

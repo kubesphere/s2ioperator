@@ -19,3 +19,24 @@ spec:
   selector:
     control-plane: s2i-controller-manager
     controller-tools.k8s.io: "1.0"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    s2i-trigger/port: "8081"
+    s2i-trigger/scheme: http
+  labels:
+    control-plane: s2i-controller-manager
+    controller-tools.k8s.io: "1.0"
+    app: s2i-trigger
+  name: s2ioperator-trigger-service
+  namespace: system
+spec:
+  ports:
+    - name: http
+      port: 8081
+      targetPort: 8081
+  selector:
+    control-plane: s2i-controller-manager
+    controller-tools.k8s.io: "1.0"
