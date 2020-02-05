@@ -4,6 +4,7 @@ metadata:
   labels:
     controller-tools.k8s.io: "1.0"
   name: s2ibuilder-sample2
+  namespace: default
 spec:
   # Add fields here
    config:

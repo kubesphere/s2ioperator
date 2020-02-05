@@ -833,7 +833,7 @@ var _ = Describe("", func() {
 		}, timeout, time.Second).Should(BeTrue())
 	})
 
-	It("Should b2i work well when using exactly the example yamls", func() {
+	It("Should s2i work well when triggered ", func() {
 		//create a s2ibuilder
 		s2ibuilder := &devopsv1alpha1.S2iBuilder{}
 
