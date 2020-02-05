@@ -3,6 +3,7 @@ package e2e_test
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"os"
 	"strings"
 	"time"
@@ -22,10 +23,11 @@ import (
 var _ = Describe("", func() {
 
 	const (
-		timeout           = time.Second * 25
-		TaintKey          = "node.kubernetes.io/ci"
-		NodeAffinityKey   = "node-role.kubernetes.io/worker"
-		NodeAffinityValue = "ci"
+		timeout               = time.Second * 25
+		TaintKey              = "node.kubernetes.io/ci"
+		NodeAffinityKey       = "node-role.kubernetes.io/worker"
+		NodeAffinityValue     = "ci"
+		defaultTriggerService = "s2ioperator-trigger-service"
 	)
 	It("Should work well when using exactly the runtimeimage example yamls", func() {
 		//create a s2ibuilder
@@ -829,6 +831,70 @@ var _ = Describe("", func() {
 		Eventually(func() bool {
 			return errors.IsNotFound(testClient.Get(context.TODO(), types.NamespacedName{Name: statefulSet.Name, Namespace: statefulSet.Namespace}, statefulSet))
 		}, timeout, time.Second).Should(BeTrue())
+	})
+
+	It("Should b2i work well when using exactly the example yamls", func() {
+		//create a s2ibuilder
+		s2ibuilder := &devopsv1alpha1.S2iBuilder{}
+
+		reader, err := os.Open(workspace + "/config/samples/devops_v1alpha2_s2ibuilder.yaml")
+		Expect(err).NotTo(HaveOccurred(), "Cannot read sample s2ibuilder yamls")
+		err = yaml.NewYAMLOrJSONDecoder(reader, 10).Decode(s2ibuilder)
+		Expect(err).NotTo(HaveOccurred(), "Cannot unmarshal s2ibuilder yamls")
+		err = testClient.Create(context.TODO(), s2ibuilder)
+		Expect(err).NotTo(HaveOccurred())
+
+		// trigger
+		triggerUrl := os.Getenv("TEST_NS") + "." + defaultTriggerService + ".cluster.local"
+		response, err := http.Get(triggerUrl)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(response.StatusCode).To(Equal(http.StatusCreated))
+
+		s2irunList := &devopsv1alpha1.S2iRunList{}
+		err = testClient.List(context.TODO(), s2irunList)
+		Expect(err).NotTo(HaveOccurred())
+
+		triggerS2irun := s2irunList.Items[0]
+		Expect(triggerS2irun.Spec.BuilderName).To(Equal(s2ibuilder.Name))
+
+		instanceUidSlice := strings.Split(string(triggerS2irun.UID), "-")
+		var depKey = types.NamespacedName{
+			Name:      triggerS2irun.Name + fmt.Sprintf("-%s", instanceUidSlice[len(instanceUidSlice)-1]) + "-job",
+			Namespace: triggerS2irun.Namespace}
+
+		job := &batchv1.Job{}
+		Eventually(func() error { return testClient.Get(context.TODO(), depKey, job) }, timeout, time.Second).
+			Should(Succeed())
+
+		//for our example, the status must be successful
+		Eventually(func() error {
+			err = testClient.Get(context.TODO(), depKey, job)
+			if err != nil {
+				return err
+			}
+			if job.Status.Succeeded == 1 {
+				//Status of s2ibuilder should update too
+				tempBuilder := &devopsv1alpha1.S2iBuilder{}
+				err = testClient.Get(context.TODO(), types.NamespacedName{Name: s2ibuilder.Name, Namespace: s2ibuilder.Namespace}, tempBuilder)
+				if err != nil {
+					return err
+				}
+				if tempBuilder.Status.LastRunName != nil && *tempBuilder.Status.LastRunName == triggerS2irun.Name && tempBuilder.Status.LastRunState == devopsv1alpha1.Successful && tempBuilder.Status.RunCount == 1 {
+					return nil
+				}
+			}
+			return fmt.Errorf("Failed")
+		}, time.Minute*10, time.Second*10).Should(Succeed())
+
+		s2irun := &devopsv1alpha1.S2iRun{}
+		Eventually(func() error { return testClient.Delete(context.TODO(), s2ibuilder) }, timeout, time.Second).Should(Succeed())
+		Eventually(func() bool {
+			return errors.IsNotFound(testClient.Get(context.TODO(), types.NamespacedName{Name: triggerS2irun.Name, Namespace: triggerS2irun.Namespace}, s2irun))
+		}, timeout, time.Second).Should(BeTrue())
+		Eventually(func() bool {
+			return errors.IsNotFound(testClient.Get(context.TODO(), types.NamespacedName{Name: s2ibuilder.Name, Namespace: s2ibuilder.Namespace}, s2ibuilder))
+		}, timeout, time.Second).Should(BeTrue())
+
 	})
 })
 
