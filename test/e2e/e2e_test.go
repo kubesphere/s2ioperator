@@ -837,7 +837,7 @@ var _ = Describe("", func() {
 		//create a s2ibuilder
 		s2ibuilder := &devopsv1alpha1.S2iBuilder{}
 
-		reader, err := os.Open(workspace + "/config/samples/devops_v1alpha2_s2ibuilder.yaml")
+		reader, err := os.Open(workspace + "/config/samples/trigger/python-s2i-builder.yaml")
 		Expect(err).NotTo(HaveOccurred(), "Cannot read sample s2ibuilder yamls")
 		err = yaml.NewYAMLOrJSONDecoder(reader, 10).Decode(s2ibuilder)
 		Expect(err).NotTo(HaveOccurred(), "Cannot unmarshal s2ibuilder yamls")
@@ -845,7 +845,7 @@ var _ = Describe("", func() {
 		Expect(err).NotTo(HaveOccurred())
 
 		// trigger
-		triggerUrl := os.Getenv("TEST_NS") + "." + defaultTriggerService + ".cluster.local"
+		triggerUrl := "http://" + defaultTriggerService + "." + os.Getenv("TEST_NS") + ".svc.cluster.local:8081/general/namespaces/" + s2ibuilder.Namespace + "/builders/" + s2ibuilder.Name
 		response, err := http.Get(triggerUrl)
 		Expect(err).NotTo(HaveOccurred())
 		Expect(response.StatusCode).To(Equal(http.StatusCreated))
