@@ -50,7 +50,7 @@ func TestValidateTrigger(t *testing.T) {
 
 	scheme := scheme.Scheme
 	fakeKubeClient := fake.NewFakeClientWithScheme(scheme, as2ib, bs2ib)
-	githubSink := NewGithubSink(fakeKubeClient)
+	githubSink := NewTrigger(fakeKubeClient)
 
 	for _, v := range data {
 		githubSink.S2iBuilderName = v.S2ib.Name
@@ -108,7 +108,7 @@ func TestAction(t *testing.T) {
 
 	scheme := scheme.Scheme
 	fakeKubeClient := fake.NewFakeClientWithScheme(scheme, s2ib)
-	githubSink := NewGithubSink(fakeKubeClient)
+	githubSink := NewTrigger(fakeKubeClient)
 	githubSink.S2iBuilderName = s2ib.Name
 
 	err := githubSink.Action(pushEvent, aPayLoad)

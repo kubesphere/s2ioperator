@@ -21,12 +21,12 @@ import (
 	"fmt"
 	"github.com/google/go-github/github"
 	devopsv1alpha1 "github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1"
-	"github.com/kubesphere/s2ioperator/pkg/handler/builder"
 	"io/ioutil"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	log "k8s.io/klog"
 	"net/http"
+	"path"
 	"regexp"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"strings"
@@ -44,15 +44,17 @@ type Trigger struct {
 	Namespace      string
 }
 
-func NewGithubSink(client client.Client) *Trigger {
+func NewTrigger(client client.Client) *Trigger {
 	return &Trigger{
 		KubeClientSet: client,
 	}
 }
 
 func (g *Trigger) Serve(w http.ResponseWriter, r *http.Request) {
-	g.Namespace = builder.GetParamInPath(r.URL.Path, builder.Namespace)
-	g.S2iBuilderName = builder.GetParamInPath(r.URL.Path, builder.S2iBuilderName)
+	//example url: host/namespace/buildername
+	dir, s2iBuilderName := path.Split(r.URL.Path)
+	g.Namespace = path.Base(dir)
+	g.S2iBuilderName = s2iBuilderName
 
 	eventType := github.WebHookType(r)
 	// Currently only accepting json payloads.

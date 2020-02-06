@@ -27,7 +27,7 @@ var _ = Describe("", func() {
 		TaintKey              = "node.kubernetes.io/ci"
 		NodeAffinityKey       = "node-role.kubernetes.io/worker"
 		NodeAffinityValue     = "ci"
-		generalTriggerUrl     = "http://s2ioperator-trigger-service.%s.svc.cluster.local:8081/general/namespaces/%s/builders/%s"
+		generalTriggerUrl     = "http://s2ioperator-trigger-service.%s.svc.cluster.local:8081/general/%s/%s"
 	)
 	It("Should work well when using exactly the runtimeimage example yamls", func() {
 		//create a s2ibuilder

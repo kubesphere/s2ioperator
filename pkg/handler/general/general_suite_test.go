@@ -15,7 +15,7 @@ var (
 )
 
 const (
-	defaultUrl = "http://127.0.0.1:8000/general/namespaces/s2i/builders/s2i-b"
+	defaultUrl = "http://127.0.0.1:8000/general/s2i/s2i-b"
 	s2ibName   = "s2i-b"
 	namespace  = "s2i"
 )

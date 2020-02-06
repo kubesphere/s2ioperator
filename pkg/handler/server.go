@@ -34,19 +34,19 @@ func Run(kubeClientset client.Client) {
 	// registry handler type
 	handlers = append(handlers, &builder.HandlerBuilder{
 		Pattern: "/general/",
-		Func:    general.NewGithubSink(kubeClientset).Serve,
+		Func:    general.NewTrigger(kubeClientset).Serve,
 	})
 	log.Info("registering general webhook")
 
 	handlers = append(handlers, &builder.HandlerBuilder{
 		Pattern: "/github/",
-		Func:    github.NewGithubSink(kubeClientset).Serve,
+		Func:    github.NewTrigger(kubeClientset).Serve,
 	})
 	log.Info("registering github webhook")
 
 	handlers = append(handlers, &builder.HandlerBuilder{
 		Pattern: "/gitlab/",
-		Func:    gitlab.NewGitlabSink(kubeClientset).Serve,
+		Func:    gitlab.NewTrigger(kubeClientset).Serve,
 	})
 	log.Info("registering gitlab webhook")
 

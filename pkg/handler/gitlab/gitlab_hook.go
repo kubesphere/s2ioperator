@@ -11,7 +11,7 @@ type Trigger struct {
 	Namespace      string
 }
 
-func NewGitlabSink(client client.Client) *Trigger {
+func NewTrigger(client client.Client) *Trigger {
 	return &Trigger{
 		KubeClientSet: client,
 	}

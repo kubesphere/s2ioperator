@@ -18,22 +18,9 @@ package builder
 
 import (
 	"net/http"
-	"strings"
-)
-
-const (
-	Namespace      = "namespaces"
-	S2iBuilderName = "builders"
-	letterBytes    = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 )
 
 type HandlerBuilder struct {
 	Pattern string
 	Func    http.HandlerFunc
-}
-
-func GetParamInPath(path, key string) string {
-	endPath := strings.Split(path, key)[1]
-	value := strings.Split(endPath, "/")[1]
-	return value
 }
