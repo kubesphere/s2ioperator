@@ -27,7 +27,7 @@ var _ = Describe("", func() {
 		TaintKey              = "node.kubernetes.io/ci"
 		NodeAffinityKey       = "node-role.kubernetes.io/worker"
 		NodeAffinityValue     = "ci"
-		defaultTriggerService = "s2ioperator-trigger-service"
+		generalTriggerUrl     = "http://s2ioperator-trigger-service.%s.svc.cluster.local:8081/general/namespaces/%s/builders/%s"
 	)
 	It("Should work well when using exactly the runtimeimage example yamls", func() {
 		//create a s2ibuilder
@@ -845,7 +845,7 @@ var _ = Describe("", func() {
 		Expect(err).NotTo(HaveOccurred())
 
 		// trigger
-		triggerUrl := "http://" + defaultTriggerService + "." + os.Getenv("TEST_NS") + ".svc.cluster.local:8081/general/namespaces/" + s2ibuilder.Namespace + "/builders/" + s2ibuilder.Name
+		triggerUrl := fmt.Sprintf(generalTriggerUrl,os.Getenv("TEST_NS"),s2ibuilder.Namespace,s2ibuilder.Name)
 		response, err := http.Get(triggerUrl)
 		Expect(err).NotTo(HaveOccurred())
 		Expect(response.StatusCode).To(Equal(http.StatusCreated))
