@@ -61,7 +61,7 @@ func Add(mgr manager.Manager) error {
 				Name:      "webhook-server-service",
 				// Selectors should select the pods that runs this webhook server.
 				Selectors: map[string]string{
-					"control-plane": "controller-manager",
+					"control-plane": "s2i-controller-manager",
 				},
 			},
 		},

@@ -4,11 +4,11 @@ metadata:
   name: s2ioperator
   namespace: kubesphere-devops-system
   labels:
-    control-plane: controller-manager
+    control-plane: s2i-controller-manager
     controller-tools.k8s.io: "1.0"
 spec:
   selector:
-    control-plane: controller-manager
+    control-plane: s2i-controller-manager
     controller-tools.k8s.io: "1.0"
   ports:
   - port: 443
@@ -19,18 +19,18 @@ metadata:
   name: s2ioperator
   namespace: kubesphere-devops-system
   labels:
-    control-plane: s2ioperator
+    control-plane: s2i-controller-manager
     controller-tools.k8s.io: "1.0"
 spec:
   selector:
     matchLabels:
-      control-plane: controller-manager
+      control-plane: s2i-controller-manager
       controller-tools.k8s.io: "1.0"
   serviceName: s2ioperator
   template:
     metadata:
       labels:
-        control-plane: controller-manager
+        control-plane: s2i-controller-manager
         controller-tools.k8s.io: "1.0"
     spec:
       containers:
