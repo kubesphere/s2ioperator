@@ -6,7 +6,6 @@ import (
 	devopsv1alpha1 "github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1"
 	"github.com/kubesphere/s2ioperator/pkg/client/clientset/versioned/scheme"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 	"testing"
 )
@@ -115,17 +114,13 @@ func TestAction(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Get err %s", err)
 	}
-	res := &devopsv1alpha1.S2iRun{}
-	namespacedName := types.NamespacedName{Namespace: "", Name: s2irunNamePre + "1cb22"}
-	err = fakeKubeClient.Get(context.TODO(), namespacedName, res)
+	res := &devopsv1alpha1.S2iRunList{}
+	err = fakeKubeClient.List(context.TODO(), res)
 	if err != nil {
 		t.Fatalf("Get err %s", err)
 	}
-	if res.Name != namespacedName.Name {
-		t.Fatalf("The name of s2irun not same with %s ", namespacedName.Name)
-	}
 
-	if res.Spec.BuilderName != s2ib.Name {
+	if res.Items[0].Spec.BuilderName != s2ib.Name {
 		t.Fatalf("The BuilderName of s2irun not same with %s ", s2ib.Name)
 	}
 
