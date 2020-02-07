@@ -153,6 +153,7 @@ func (in *S2iRun) ConfigMapName() string {
 	}
 	return s
 }
+
 // JobName will get the job name to be created by s2irun
 // Use these names in the label, so the name length should not exceed 63
 func (in *S2iRun) JobName() string {
