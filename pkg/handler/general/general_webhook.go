@@ -2,9 +2,12 @@ package general
 
 import (
 	"context"
+	"fmt"
 	guuid "github.com/google/uuid"
 	devopsv1alpha1 "github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1"
+	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/types"
 	log "k8s.io/klog"
 	"net/http"
 	"path"
@@ -44,9 +47,27 @@ func (g *Trigger) Serve(w http.ResponseWriter, r *http.Request) {
 }
 
 func (g *Trigger) Action() error {
-	s2irunName := s2irunNamePre + guuid.New().String()
-	s2irun := GenerateNewS2Irun(s2irunName, g.Namespace, g.S2iBuilderName)
-	err := g.KubeClientSet.Create(context.TODO(), s2irun)
+	s2irunName := s2irunNamePre + guuid.New().String()[:18]
+	namespaceName := types.NamespacedName{
+		Name:      s2irunName,
+		Namespace: g.Namespace}
+
+	// if generate S2IRun name repeat.
+	instance := &devopsv1alpha1.S2iRun{}
+	err := g.KubeClientSet.Get(context.TODO(), namespaceName, instance)
+	if err != nil {
+		// If object not found, continue.
+		if !errors.IsNotFound(err) {
+			return err
+		}
+	} else {
+		log.Error(err, "Generate S2IRun name repeat.")
+		return fmt.Errorf("generate S2IRun name repeat %s", s2irunName)
+	}
+
+	// create s2irun resource
+	s2irun := GenerateNewS2Irun(&namespaceName, g.S2iBuilderName)
+	err = g.KubeClientSet.Create(context.TODO(), s2irun)
 	if err != nil {
 		log.Error(err, "Can not create S2IRun.")
 		return err
@@ -55,11 +76,11 @@ func (g *Trigger) Action() error {
 	return nil
 }
 
-func GenerateNewS2Irun(s2irunName, namespace, s2ibuilderName string) *devopsv1alpha1.S2iRun {
+func GenerateNewS2Irun(namespaceName *types.NamespacedName, s2ibuilderName string) *devopsv1alpha1.S2iRun {
 	s2irun := &devopsv1alpha1.S2iRun{
 		ObjectMeta: v1.ObjectMeta{
-			Name:      s2irunName,
-			Namespace: namespace,
+			Name:      namespaceName.Name,
+			Namespace: namespaceName.Namespace,
 			Annotations: map[string]string{
 				"kubesphere.io/creator": defaultCreater,
 			},
