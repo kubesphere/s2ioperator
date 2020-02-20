@@ -3,7 +3,7 @@ kind: S2iBuilder
 metadata:
   labels:
     controller-tools.k8s.io: "1.0"
-  name: s2ibuilder-triger
+  name: s2ibuilder-trigger
   namespace: default
 spec:
   # Add fields here
@@ -19,3 +19,4 @@ spec:
       username: UserShouldEnterUserName
       password: UserShouldEnterUserPassword
     builderImage: kubespheredev/python-35-centos7
+    secretCode: "test-secretCode"

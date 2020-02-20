@@ -23,11 +23,11 @@ import (
 var _ = Describe("", func() {
 
 	const (
-		timeout               = time.Second * 25
-		TaintKey              = "node.kubernetes.io/ci"
-		NodeAffinityKey       = "node-role.kubernetes.io/worker"
-		NodeAffinityValue     = "ci"
-		generalTriggerUrl     = "http://s2ioperator-trigger-service.%s.svc.cluster.local:8081/general/%s/%s"
+		timeout           = time.Second * 25
+		TaintKey          = "node.kubernetes.io/ci"
+		NodeAffinityKey   = "node-role.kubernetes.io/worker"
+		NodeAffinityValue = "ci"
+		generalTriggerUrl = "http://s2ioperator-trigger-service.%s.svc.cluster.local:8081/general/%s/%s"
 	)
 	It("Should work well when using exactly the runtimeimage example yamls", func() {
 		//create a s2ibuilder
@@ -845,8 +845,8 @@ var _ = Describe("", func() {
 		Expect(err).NotTo(HaveOccurred())
 
 		// trigger
-		triggerUrl := fmt.Sprintf(generalTriggerUrl,os.Getenv("TEST_NS"),s2ibuilder.Namespace,s2ibuilder.Name)
-		response, err := http.Get(triggerUrl)
+		triggerUrl := fmt.Sprintf(generalTriggerUrl, os.Getenv("TEST_NS"), s2ibuilder.Namespace, s2ibuilder.Name)
+		response, err := http.Get(triggerUrl + "?secretCode=test-secretCode")
 		Expect(err).NotTo(HaveOccurred())
 		Expect(response.StatusCode).To(Equal(http.StatusCreated))
 
@@ -854,7 +854,13 @@ var _ = Describe("", func() {
 		err = testClient.List(context.TODO(), s2irunList)
 		Expect(err).NotTo(HaveOccurred())
 
-		triggerS2irun := s2irunList.Items[0]
+		var triggerS2irun devopsv1alpha1.S2iRun
+		for _, s2irun := range s2irunList.Items {
+			if s2irun.Spec.BuilderName == s2ibuilder.Name {
+				triggerS2irun = s2irun
+			}
+		}
+
 		Expect(triggerS2irun.Spec.BuilderName).To(Equal(s2ibuilder.Name))
 
 		instanceUidSlice := strings.Split(string(triggerS2irun.UID), "-")
@@ -895,6 +901,24 @@ var _ = Describe("", func() {
 			return errors.IsNotFound(testClient.Get(context.TODO(), types.NamespacedName{Name: s2ibuilder.Name, Namespace: s2ibuilder.Namespace}, s2ibuilder))
 		}, timeout, time.Second).Should(BeTrue())
 
+	})
+
+	It("Can not trigger without secret code.", func() {
+		//create a s2ibuilder
+		s2ibuilder := &devopsv1alpha1.S2iBuilder{}
+
+		reader, err := os.Open(workspace + "/config/samples/trigger/python-s2i-builder.yaml")
+		Expect(err).NotTo(HaveOccurred(), "Cannot read sample s2ibuilder yamls")
+		err = yaml.NewYAMLOrJSONDecoder(reader, 10).Decode(s2ibuilder)
+		Expect(err).NotTo(HaveOccurred(), "Cannot unmarshal s2ibuilder yamls")
+		err = testClient.Create(context.TODO(), s2ibuilder)
+		Expect(err).NotTo(HaveOccurred())
+
+		// trigger
+		triggerUrl := fmt.Sprintf(generalTriggerUrl, os.Getenv("TEST_NS"), s2ibuilder.Namespace, s2ibuilder.Name)
+		response, err := http.Get(triggerUrl)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(response.StatusCode).To(Equal(http.StatusUnauthorized))
 	})
 })
 

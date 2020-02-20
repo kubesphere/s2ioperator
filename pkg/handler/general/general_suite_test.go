@@ -34,6 +34,7 @@ var _ = BeforeSuite(func() {
 		Spec: devopsv1alpha1.S2iBuilderSpec{
 			Config: &devopsv1alpha1.S2iConfig{
 				RevisionId: "master",
+				SecretCode: "secretCode",
 			},
 		},
 	}

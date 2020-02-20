@@ -428,6 +428,9 @@ type S2iConfig struct {
 
 	// Regular expressions, ignoring names that do not match the provided regular expression
 	BranchExpression string `json:"branchExpression,omitempty"`
+
+	// SecretCode
+	SecretCode string `json:"secretCode,omitempty"`
 }
 
 type UserDefineTemplate struct {

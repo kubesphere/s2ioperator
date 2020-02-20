@@ -2,7 +2,6 @@ package general
 
 import (
 	"context"
-	"fmt"
 	guuid "github.com/google/uuid"
 	devopsv1alpha1 "github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -33,36 +32,68 @@ func NewTrigger(client client.Client) *Trigger {
 
 func (g *Trigger) Serve(w http.ResponseWriter, r *http.Request) {
 
+	reqSecretCode := r.URL.Query().Get("secretCode")
+
 	//example url: host/namespace/buildername
 	dir, s2iBuilderName := path.Split(r.URL.Path)
 	g.Namespace = path.Base(dir)
 	g.S2iBuilderName = s2iBuilderName
 
-	err := g.Action()
+	// Authentication
+	res, err := g.Authentication(reqSecretCode)
 	if err != nil {
 		log.Error(err, "Failed to handle event")
 		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	if !res {
+		log.Error(err, "Unauthorized")
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	// create resource
+	err = g.Action()
+	if err != nil {
+		log.Error(err, "Failed to handle event")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 	w.WriteHeader(http.StatusCreated)
 }
 
-func (g *Trigger) Action() error {
-	s2irunName := s2irunNamePre + guuid.New().String()[:18]
+func (g *Trigger) Authentication(reqSecretCode string) (bool, error) {
+	s2ibuilder := &devopsv1alpha1.S2iBuilder{}
 	namespaceName := types.NamespacedName{
-		Name:      s2irunName,
+		Name:      g.S2iBuilderName,
 		Namespace: g.Namespace}
-
-	// if generate S2IRun name repeat.
-	instance := &devopsv1alpha1.S2iRun{}
-	err := g.KubeClientSet.Get(context.TODO(), namespaceName, instance)
+	err := g.KubeClientSet.Get(context.TODO(), namespaceName, s2ibuilder)
 	if err != nil {
-		// If object not found, continue.
-		if !errors.IsNotFound(err) {
+		log.Error(err, "Can not get S2IBuilder.")
+		return false, err
+	}
+
+	if s2ibuilder.Spec.Config.SecretCode == reqSecretCode {
+		return true, nil
+	} else {
+		return false, nil
+	}
+}
+
+func (g *Trigger) Action() (err error) {
+	namespaceName := types.NamespacedName{
+		Namespace: g.Namespace}
+	repeat := true
+
+	// really we need check name repeat? This is a very low probability thing.
+	for repeat == true {
+		s2irunName := s2irunNamePre + guuid.New().String()[:18]
+		namespaceName.Name = s2irunName
+		repeat, err = g.CheckS2IRunName(namespaceName)
+		if err != nil {
 			return err
 		}
-	} else {
-		log.Error(err, "Generate S2IRun name repeat.")
-		return fmt.Errorf("generate S2IRun name repeat %s", s2irunName)
 	}
 
 	// create s2irun resource
@@ -74,6 +105,24 @@ func (g *Trigger) Action() error {
 	}
 
 	return nil
+}
+
+func (g *Trigger) CheckS2IRunName(namespaceName types.NamespacedName) (bool, error) {
+	// if generate S2IRun name repeat.
+	instance := &devopsv1alpha1.S2iRun{}
+	err := g.KubeClientSet.Get(context.TODO(), namespaceName, instance)
+	if err == nil {
+		log.Error(err, "Generate S2IRun name repeat.")
+		return true, nil
+	}
+
+	// If object not found, continue.
+	if errors.IsNotFound(err) {
+		return false, nil
+	} else {
+		return true, err
+	}
+
 }
 
 func GenerateNewS2Irun(namespaceName *types.NamespacedName, s2ibuilderName string) *devopsv1alpha1.S2iRun {
