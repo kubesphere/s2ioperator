@@ -19,7 +19,10 @@ package main
 import (
 	"flag"
 	"github.com/kubesphere/s2ioperator/pkg/apis"
+	"github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1"
+	"github.com/kubesphere/s2ioperator/pkg/controller"
 	"github.com/kubesphere/s2ioperator/pkg/handler"
+	"github.com/kubesphere/s2ioperator/pkg/metrics"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	"os"
 	"sigs.k8s.io/controller-runtime/pkg/client/config"
@@ -61,30 +64,30 @@ func main() {
 	}
 
 	// Setup all Controllers
-	//log.Info("Setting up controller")
-	//if err := controller.AddToManager(mgr); err != nil {
-	//	log.Error(err, "unable to register controllers to the manager")
-	//	os.Exit(1)
-	//}
-	//
-	//if err = (&v1alpha1.S2iBuilderTemplate{}).SetupWebhookWithManager(mgr); err != nil {
-	//	log.Error(err, "unable to create webhook", "webhook", "Captain")
-	//	os.Exit(1)
-	//}
-	//
-	//if err = (&v1alpha1.S2iBuilder{}).SetupWebhookWithManager(mgr); err != nil {
-	//	log.Error(err, "unable to create webhook", "webhook", "Captain")
-	//	os.Exit(1)
-	//}
-	//
-	//if err = (&v1alpha1.S2iRun{}).SetupWebhookWithManager(mgr); err != nil {
-	//	log.Error(err, "unable to create webhook", "webhook", "Captain")
-	//	os.Exit(1)
-	//}
-	//
-	//// Set up s2i metrics
-	//log.Info("start collect s2i metrics")
-	//go metrics.CollectS2iMetrics(mgr.GetClient())
+	log.Info("Setting up controller")
+	if err := controller.AddToManager(mgr); err != nil {
+		log.Error(err, "unable to register controllers to the manager")
+		os.Exit(1)
+	}
+
+	if err = (&v1alpha1.S2iBuilderTemplate{}).SetupWebhookWithManager(mgr); err != nil {
+		log.Error(err, "unable to create webhook", "webhook", "Captain")
+		os.Exit(1)
+	}
+
+	if err = (&v1alpha1.S2iBuilder{}).SetupWebhookWithManager(mgr); err != nil {
+		log.Error(err, "unable to create webhook", "webhook", "Captain")
+		os.Exit(1)
+	}
+
+	if err = (&v1alpha1.S2iRun{}).SetupWebhookWithManager(mgr); err != nil {
+		log.Error(err, "unable to create webhook", "webhook", "Captain")
+		os.Exit(1)
+	}
+
+	// Set up s2i metrics
+	log.Info("start collect s2i metrics")
+	go metrics.CollectS2iMetrics(mgr.GetClient())
 
 	// Start webhook handler
 	log.Info("start webhook handler")
