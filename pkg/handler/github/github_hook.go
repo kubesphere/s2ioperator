@@ -170,7 +170,7 @@ func (g *Trigger) actionWithPushEvent(event github.PushEvent) error {
 	}
 
 	// create s2irun resource
-	s2irun := GenerateNewS2Irun(s2irunName, g.Namespace, creater, g.S2iBuilderName, *revisionId)
+	s2irun := g.GenerateNewS2Irun(creater, *revisionId)
 	err = g.KubeClientSet.Create(context.TODO(), s2irun)
 	if err != nil {
 		log.Error(err, "Can not create S2IRun.")
@@ -179,17 +179,17 @@ func (g *Trigger) actionWithPushEvent(event github.PushEvent) error {
 	return nil
 }
 
-func GenerateNewS2Irun(s2irunName, namespace, creator, s2ibuilderName, revisionId string) *devopsv1alpha1.S2iRun {
+func (g *Trigger) GenerateNewS2Irun(creator, revisionId string) *devopsv1alpha1.S2iRun {
 	s2irun := &devopsv1alpha1.S2iRun{
 		ObjectMeta: v1.ObjectMeta{
-			Name:      s2irunName,
-			Namespace: namespace,
+			GenerateName: g.S2iBuilderName,
+			Namespace:    g.Namespace,
 			Annotations: map[string]string{
 				"kubesphere.io/creator": creator,
 			},
 		},
 		Spec: devopsv1alpha1.S2iRunSpec{
-			BuilderName:   s2ibuilderName,
+			BuilderName:   g.S2iBuilderName,
 			NewRevisionId: revisionId,
 		},
 	}

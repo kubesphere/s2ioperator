@@ -20,7 +20,7 @@ import (
 	"github.com/kubesphere/s2ioperator/pkg/handler/general"
 	"github.com/kubesphere/s2ioperator/pkg/handler/github"
 	"github.com/kubesphere/s2ioperator/pkg/handler/gitlab"
-	"github.com/prometheus/common/log"
+	log "k8s.io/klog"
 	"net/http"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
