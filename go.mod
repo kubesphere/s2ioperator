@@ -8,6 +8,8 @@ go 1.12
 
 require (
 	github.com/docker/distribution v2.7.1+incompatible
+	github.com/emicklei/go-restful v2.9.6+incompatible
+	github.com/emicklei/go-restful-openapi v1.3.0
 	github.com/go-logr/zapr v0.1.1 // indirect
 	github.com/go-openapi/jsonreference v0.19.3 // indirect
 	github.com/go-openapi/spec v0.19.3
@@ -23,7 +25,7 @@ require (
 	github.com/opencontainers/go-digest v1.0.0-rc1 // indirect
 	github.com/prometheus/client_golang v0.9.2
 	github.com/prometheus/client_model v0.0.0-20190109181635-f287a105a20e // indirect
-	github.com/prometheus/common v0.1.0
+	github.com/prometheus/common v0.1.0 // indirect
 	github.com/prometheus/procfs v0.0.0-20190104112138-b1a0a9a36d74 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/testify v1.4.0 // indirect

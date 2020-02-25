@@ -2,17 +2,16 @@ package general
 
 import (
 	"context"
+	"github.com/emicklei/go-restful"
 	devopsv1alpha1 "github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	log "k8s.io/klog"
 	"net/http"
-	"path"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 const (
-	s2irunNamePre  = "trigger-general-"
 	defaultCreater = "auto-trigger"
 )
 
@@ -28,26 +27,23 @@ func NewTrigger(client client.Client) *Trigger {
 	}
 }
 
-func (g *Trigger) Serve(w http.ResponseWriter, r *http.Request) {
+func (g *Trigger) Serve(request *restful.Request, response *restful.Response) {
 
-	reqSecretCode := r.URL.Query().Get("secretCode")
-
-	//example url: host/namespace/buildername
-	dir, s2iBuilderName := path.Split(r.URL.Path)
-	g.Namespace = path.Base(dir)
-	g.S2iBuilderName = s2iBuilderName
+	reqSecretCode := request.QueryParameter("secretCode")
+	g.S2iBuilderName = request.PathParameter("s2ibuilder")
+	g.Namespace = request.PathParameter("namespace")
 
 	// Authentication
 	res, err := g.Authentication(reqSecretCode)
 	if err != nil {
 		log.Error(err, "Failed to handle event")
-		w.WriteHeader(http.StatusInternalServerError)
+		response.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	if !res {
 		log.Error(err, "Unauthorized")
-		w.WriteHeader(http.StatusUnauthorized)
+		response.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
@@ -55,10 +51,10 @@ func (g *Trigger) Serve(w http.ResponseWriter, r *http.Request) {
 	err = g.Action()
 	if err != nil {
 		log.Error(err, "Failed to handle event")
-		w.WriteHeader(http.StatusInternalServerError)
+		response.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	w.WriteHeader(http.StatusCreated)
+	response.WriteHeader(http.StatusCreated)
 }
 
 func (g *Trigger) Authentication(reqSecretCode string) (bool, error) {

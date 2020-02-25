@@ -17,41 +17,20 @@ limitations under the License.
 package handler
 
 import (
+	"github.com/emicklei/go-restful"
 	"github.com/kubesphere/s2ioperator/pkg/handler/general"
 	"github.com/kubesphere/s2ioperator/pkg/handler/github"
-	"github.com/kubesphere/s2ioperator/pkg/handler/gitlab"
-	log "k8s.io/klog"
 	"net/http"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	"github.com/golang/glog"
-	"github.com/kubesphere/s2ioperator/pkg/handler/builder"
+	log "github.com/golang/glog"
 )
 
-var handlers = []*builder.HandlerBuilder{}
-
 func Run(kubeClientset client.Client) {
-	// registry handler type
-	handlers = append(handlers, &builder.HandlerBuilder{
-		Pattern: "/general/",
-		Func:    general.NewTrigger(kubeClientset).Serve,
-	})
-	log.Info("registering general webhook")
+	container := restful.DefaultContainer
+	container.Add(general.NewTrigger(kubeClientset).WebService())
+	container.Add(github.NewTrigger(kubeClientset).WebService())
 
-	handlers = append(handlers, &builder.HandlerBuilder{
-		Pattern: "/github/",
-		Func:    github.NewTrigger(kubeClientset).Serve,
-	})
-	log.Info("registering github webhook")
-
-	handlers = append(handlers, &builder.HandlerBuilder{
-		Pattern: "/gitlab/",
-		Func:    gitlab.NewTrigger(kubeClientset).Serve,
-	})
-	log.Info("registering gitlab webhook")
-
-	for _, handler := range handlers {
-		http.HandleFunc(handler.Pattern, handler.Func)
-	}
-	glog.Fatal(http.ListenAndServe(":8081", nil))
+	log.Info("start listening on localhost:8081")
+	log.Fatal(http.ListenAndServe(":8081", nil))
 }
