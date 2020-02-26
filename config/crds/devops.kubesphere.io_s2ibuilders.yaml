@@ -62,11 +62,6 @@ spec:
                   items:
                     type: string
                   type: array
-                allowedEvents:
-                  description: Allowed Events
-                  items:
-                    type: string
-                  type: array
                 asDockerfile:
                   description: AsDockerfile indicates the path where the Dockerfile
                     should be written instead of building a new image.
@@ -475,6 +470,9 @@ spec:
                   description: ScriptsURL is a URL describing where to fetch the S2I
                     scripts from during build process. This url can be a reference
                     within the builder image if the scheme is specified as image://
+                  type: string
+                secretCode:
+                  description: SecretCode
                   type: string
                 securityOpt:
                   description: SecurityOpt are passed as options to the docker containers

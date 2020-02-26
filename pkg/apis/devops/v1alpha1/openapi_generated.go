@@ -1731,23 +1731,16 @@ func schema_pkg_apis_devops_v1alpha1_S2iConfig(ref common.ReferenceCallback) com
 							Format:      "",
 						},
 					},
-					"allowedEvents": {
-						SchemaProps: spec.SchemaProps{
-							Description: "Allowed Events",
-							Type:        []string{"array"},
-							Items: &spec.SchemaOrArray{
-								Schema: &spec.Schema{
-									SchemaProps: spec.SchemaProps{
-										Type:   []string{"string"},
-										Format: "",
-									},
-								},
-							},
-						},
-					},
 					"branchExpression": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Regular expressions, ignoring names that do not match the provided regular expression",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"secretCode": {
+						SchemaProps: spec.SchemaProps{
+							Description: "SecretCode",
 							Type:        []string{"string"},
 							Format:      "",
 						},

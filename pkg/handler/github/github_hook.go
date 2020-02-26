@@ -54,6 +54,10 @@ func (g *Trigger) Serve(request *restful.Request, response *restful.Response) {
 	g.Namespace = request.PathParameter("namespace")
 
 	eventType := github.WebHookType(request.Request)
+	if eventType == "ping" {
+		response.WriteHeader(http.StatusOK)
+		return
+	}
 	// Currently only accepting json payloads.
 	eventPayload, err := ioutil.ReadAll(request.Request.Body)
 	if err != nil {
@@ -92,18 +96,7 @@ func (g *Trigger) ValidateTrigger(eventType string, payload []byte) ([]byte, err
 	if eventType != pushEvent {
 		return nil, fmt.Errorf("not support event type %s", eventType)
 	}
-	if instance.Spec.Config.AllowedEvents != nil {
-		isAllowed := false
-		for _, allowedEvent := range instance.Spec.Config.AllowedEvents {
-			if eventType == allowedEvent {
-				isAllowed = true
-				break
-			}
-		}
-		if !isAllowed {
-			return nil, fmt.Errorf("not support event type %s", eventType)
-		}
-	}
+
 	// Can not get branch name directly.
 	event, err := github.ParseWebHook(eventType, payload)
 	pushEvent := event.(*github.PushEvent)

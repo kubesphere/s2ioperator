@@ -9,7 +9,7 @@ import (
 func (t Trigger) WebService() *restful.WebService {
 	ws := new(restful.WebService)
 	tags := []string{"s2i_github_trigger"}
-	ws.Path("/s2i.trigger/github")
+	ws.Path("/s2itrigger/v1alpha1/github")
 
 	ws.Route(ws.POST("/namespaces/{namespace}/s2ibuilders/{s2ibuilder}").
 		To(t.Serve).
