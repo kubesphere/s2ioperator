@@ -422,6 +422,12 @@ type S2iConfig struct {
 
 	// Whether output build result to status.
 	OutputBuildResult bool `json:"outputBuildResult,omitempty"`
+
+	// Regular expressions, ignoring names that do not match the provided regular expression
+	BranchExpression string `json:"branchExpression,omitempty"`
+
+	// SecretCode
+	SecretCode string `json:"secretCode,omitempty"`
 }
 
 type UserDefineTemplate struct {

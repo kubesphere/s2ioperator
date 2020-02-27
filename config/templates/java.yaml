@@ -140,7 +140,7 @@ spec:
       required: false
       defaultValue: ""
   codeFramework: java
-  defaultBaseImage: kubespheredev/java-8-centos7:advanced-2.0.0
+  defaultBaseImage: kubespheredev/java-8-centos7:latest
   version: 0.0.1
   description: "This is a builder template for Java builds whose result can be run directly without any further application server.It's suited ideally for microservices with a flat classpath (including \"far jars\")."
   iconPath: assets/java.png

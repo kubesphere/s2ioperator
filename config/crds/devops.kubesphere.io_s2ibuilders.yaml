@@ -77,6 +77,10 @@ spec:
                     have a tar binary available, if the image contains ONBUILD commands
                     that would be executed.
                   type: boolean
+                branchExpression:
+                  description: Regular expressions, ignoring names that do not match
+                    the provided regular expression
+                  type: string
                 buildVolumes:
                   description: BuildVolumes specifies a list of volumes to mount to
                     container running the build.
@@ -466,6 +470,9 @@ spec:
                   description: ScriptsURL is a URL describing where to fetch the S2I
                     scripts from during build process. This url can be a reference
                     within the builder image if the scheme is specified as image://
+                  type: string
+                secretCode:
+                  description: SecretCode
                   type: string
                 securityOpt:
                   description: SecurityOpt are passed as options to the docker containers
