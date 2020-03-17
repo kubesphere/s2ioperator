@@ -11,6 +11,7 @@ func (t Trigger) WebService() *restful.WebService {
 	ws := new(restful.WebService)
 	ws.Path("/s2itrigger/v1alpha1/general")
 
+	// handle request with GET method
 	ws.Route(ws.GET("/namespaces/{namespace}/s2ibuilders/{s2ibuilder}").
 		To(t.Serve).
 		Doc("trigger general handler with GET").
@@ -21,6 +22,7 @@ func (t Trigger) WebService() *restful.WebService {
 			DataFormat("secretCode=%s")).
 		Metadata(restfulspec.KeyOpenAPITags, tags))
 
+	// handle request with GET method
 	ws.Route(ws.POST("/namespaces/{namespace}/s2ibuilders/{s2ibuilder}").
 		To(t.Serve).
 		Doc("trigger general handler with POST").

@@ -348,7 +348,7 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 	}
 	instance.Status.S2iBuildResult = s2iBuildResult
 
-	//set default build source info
+	//set default info in resource S2IRun's status.
 	instance.Status.S2iBuildSource.BuilderImage = builder.Spec.Config.BuilderImage
 	instance.Status.S2iBuildSource.SourceUrl = builder.Spec.Config.SourceURL
 	instance.Status.S2iBuildSource.Description = builder.Spec.Config.Description

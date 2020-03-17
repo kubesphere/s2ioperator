@@ -75,6 +75,7 @@ func (g *Trigger) Authentication(reqSecretCode string) (bool, error) {
 	}
 }
 
+// do something when handler be triggered.
 func (g *Trigger) Action() error {
 
 	// generate s2irun resource
@@ -88,6 +89,7 @@ func (g *Trigger) Action() error {
 	return nil
 }
 
+// generate S2Irun yaml.
 func (g *Trigger) GenerateNewS2Irun() *devopsv1alpha1.S2iRun {
 	s2irun := &devopsv1alpha1.S2iRun{
 		ObjectMeta: v1.ObjectMeta{

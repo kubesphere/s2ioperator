@@ -121,6 +121,7 @@ func (g *Trigger) ValidateTrigger(eventType string, payload []byte) ([]byte, err
 	return payload, nil
 }
 
+// do something when handler be triggered.
 func (g *Trigger) Action(eventType string, payload []byte) (err error) {
 	event, err := github.ParseWebHook(eventType, payload)
 	switch eventType {
