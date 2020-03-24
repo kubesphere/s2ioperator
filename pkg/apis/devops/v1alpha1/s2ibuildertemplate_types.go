@@ -55,7 +55,7 @@ func (p *Parameter) ToEnvonment() *EnvironmentSpec {
 type S2iBuilderTemplateSpec struct {
 	//DefaultBaseImage is the image that will be used by default
 	DefaultBaseImage string `json:"defaultBaseImage,omitempty"`
-	//Images are the images this template will use.
+	//ContainerInfo are the images this template will use.
 	ContainerInfo []ContainerInfo `json:"containerInfo,omitempty"`
 	//CodeFramework means which language this template is designed for and which framework is using if has framework. Like Java, NodeJS etc
 	CodeFramework CodeFramework `json:"codeFramework,omitempty"`
@@ -70,7 +70,7 @@ type S2iBuilderTemplateSpec struct {
 }
 
 type ContainerInfo struct {
-	//BaseImage are the images this template will use.
+	//BuilderImage are the images this template will use.
 	BuilderImage     string       `json:"builderImage,omitempty"`
 	RuntimeImage     string       `json:"runtimeImage,omitempty"`
 	RuntimeArtifacts []VolumeSpec `json:"runtimeArtifacts,omitempty"`
