@@ -136,5 +136,5 @@ newSourceURL: newSourceURL
 
 ## Reconcile flow
 
-
+![](s2i-operator-reconcile.svg)
 
