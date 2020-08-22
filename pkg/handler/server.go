@@ -28,7 +28,11 @@ import (
 
 func Run(kubeClientset client.Client) {
 	container := restful.DefaultContainer
+
+	//register general webhook handler, which can handle any handle request from any server.
 	container.Add(general.NewTrigger(kubeClientset).WebService())
+
+	//register  github webhook handler
 	container.Add(github.NewTrigger(kubeClientset).WebService())
 
 	log.Info("start listening on localhost:8081")
