@@ -5,10 +5,10 @@ package sliceutil
 func RemoveString(slice []string, s string, modifier func(s string) string) []string {
 	newSlice := make([]string, 0)
 	for _, item := range slice {
+                if modifier != nil && modifier(item) == s {
+                        continue
+                }
 		if item == s {
-			continue
-		}
-		if modifier != nil && modifier(item) == s {
 			continue
 		}
 		newSlice = append(newSlice, item)
@@ -25,10 +25,10 @@ func RemoveString(slice []string, s string, modifier func(s string) string) []st
 // If a modifier func is provided, it is called with the slice item before the comparation.
 func ContainsString(slice []string, s string, modifier func(s string) string) bool {
 	for _, item := range slice {
+                if modifier != nil && modifier(item) == s {
+                        return true
+                }
 		if item == s {
-			return true
-		}
-		if modifier != nil && modifier(item) == s {
 			return true
 		}
 	}
