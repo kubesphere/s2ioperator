@@ -46,5 +46,5 @@ If you want to get a better experience with S2I Operator, perhaps you can use S2
 
 We are so excited to have you!
 
-- See [CONTRIBUTING.md](https://github.com/kubesphere/kubesphere/blob/master/docs/en/guides/Development-workflow.md) for an overview of our processes
+- See [Kubesphere community guide](https://github.com/kubesphere/community) for an overview of our processes
 - See [DEVELOPMENT.md](docs/DEVELOPMENT.md) for how to get started
