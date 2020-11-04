@@ -23,7 +23,7 @@ Checkout this repository:
 
 1. Create your own fork  of [this repo](https://github.com/kubesphere/s2ioperator).
 
-2. change to your work directory, and clone it
+2. Change to your work directory, and clone it
 
    ```shell
    git clone https://github.com/${YOUR_GITHUB_USERNAME}/s2ioperator.git
@@ -36,7 +36,7 @@ Checkout this repository:
 
 #### Prerequisites
 
-- [golang](https://golang.org/dl/)  environment
+- [golang](https://golang.org/dl/) environment
 - [Kubebuilder](https://github.com/kubernetes-sigs/kubebuilder) 2.0+.
 - [docker](https://docs.docker.com/install/) version 17.03+.
 - [kustomize](https://sigs.k8s.io/kustomize/docs/INSTALL.md) v3.1.0+
@@ -49,7 +49,7 @@ Also you can install some tools by script `install_tools.sh` in `hack`:
 
 #### Build S2I Operator locally
 
-1. set environment variable `GO111MODULE=auto` , if directory of s2ioperator in your [`GOPATH`](https://github.com/golang/go/wiki/SettingGOPATH), set  `GO111MODULE=on`
+1. Set environment variable `GO111MODULE=auto` , if directory of s2ioperator in your [`GOPATH`](https://github.com/golang/go/wiki/SettingGOPATH), set `GO111MODULE=on`
 
 2. Run the following command to create a binary with the source code:
 
@@ -75,7 +75,7 @@ While iterating on the project, you may need to:
 
    Also you should running `go mod verify` to verify dependencies have expected content.
 
-3. Running `make deploy` to deploy S2I Operator and Verify it's working by looking at the pod logs.
+3. Running `make deploy` to deploy S2I Operator and verify it's working by looking at the pod logs.
 
 4. Running `make release` to release your code, and commit by git.
 
