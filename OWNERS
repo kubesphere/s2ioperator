@@ -1,7 +1,9 @@
 approvers:
     - magicsong #oncall
     - runzexia #oncall
+    - shaowenchen
 
 reviewers:
     - magicsong #oncall
     - runzexia #oncall
+    - shaowenchen
