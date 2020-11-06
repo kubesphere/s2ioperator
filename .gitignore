@@ -25,5 +25,6 @@ __*
 *.out
 *.coverprofile*
 .DS_Store
+.vscode
 
 config/certs/*
