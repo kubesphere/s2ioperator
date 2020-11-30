@@ -1,6 +1,6 @@
 
 # Image URL to use all building/pushing image targets
-IMG ?= kubespheredev/s2ioperator:v2.1.0
+IMG ?= kubespheredev/s2ioperator:latest
 NAMESPACE ?= kubesphere-devops-system
 export GO111MODULE=on
 
@@ -52,8 +52,6 @@ generate:
 docker-build:
 	docker build -f deploy/Dockerfile -t $(IMG) bin/
 	docker push $(IMG)
-	@echo "updating kustomize image patch file for manager resource"
-	sed -i '' -e 's@image: .*@image: '"${IMG}"'@' ./config/default/manager_image_patch.yaml
 
 debug: manager
 	./hack/build-image.sh
@@ -70,7 +68,7 @@ e2e-test:
 
 # create the secret with CA cert and server cert/key
 ca-secret:
-	./hack/certs.sh --service webhook-service --namespace $(NAMESPACE)
+	./hack/certs.sh --service webhook-server-service --namespace $(NAMESPACE)
 
 # update certs
 update-cert: ca-secret
