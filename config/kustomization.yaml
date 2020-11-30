@@ -46,6 +46,7 @@ patches:
   # Only one of manager_auth_proxy_patch.yaml and
   # manager_prometheus_metrics_patch.yaml should be enabled.
 - ./default/manager_prometheus_metrics_patch.yaml
+- ./default/manager_webhook_trigger.yaml
 
 generatorOptions:
   disableNameSuffixHash: true

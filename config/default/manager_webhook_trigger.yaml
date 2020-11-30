@@ -1,0 +1,16 @@
+# This patch enables Prometheus scraping for the manager pod.
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: s2ioperator
+  namespace: system
+spec:
+  template:
+    spec:
+      containers:
+      # Expose the prometheus metrics on default port
+      - name: manager
+        ports:
+        - containerPort: 8081
+          name: trigger
+          protocol: TCP
