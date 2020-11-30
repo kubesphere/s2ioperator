@@ -55,7 +55,7 @@ spec:
                 etc
               type: string
             containerInfo:
-              description: Images are the images this template will use.
+              description: ContainerInfo are the images this template will use.
               items:
                 properties:
                   buildVolumes:
@@ -65,7 +65,7 @@ spec:
                       type: string
                     type: array
                   builderImage:
-                    description: BaseImage are the images this template will use.
+                    description: BuilderImage are the images this template will use.
                     type: string
                   runtimeArtifacts:
                     items:

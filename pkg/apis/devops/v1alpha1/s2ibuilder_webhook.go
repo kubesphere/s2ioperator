@@ -69,7 +69,7 @@ func (r *S2iBuilder) Default() {
 }
 
 // TODO(user): change verbs to "verbs=create;update;delete" if you want to enable deletion validation.
-// +kubebuilder:webhook:verbs=create;update,path=/validate-devops-kubesphere-io-v1alpha1-s2ibuilder,mutating=false,failurePolicy=fail,groups=devops.kubesphere.io,resources=s2ibuilders,versions=v1alpha1,name=vs2ibuilder.kb.io
+// +kubebuilder:webhook:verbs=create;update,path=/validate-devops-kubesphere-io-v1alpha1-s2ibuilder,mutating=false,failurePolicy=fail,groups=devops.kubesphere.io,resources=s2ibuilders,versions=v1alpha1,name=validating-create-update-s2irun.kubesphere.io
 
 var _ webhook.Validator = &S2iBuilder{}
 
