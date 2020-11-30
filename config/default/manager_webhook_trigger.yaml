@@ -6,14 +6,11 @@ metadata:
   namespace: system
 spec:
   template:
-    metadata:
-      annotations:
-        prometheus.io/scrape: 'true'
     spec:
       containers:
       # Expose the prometheus metrics on default port
       - name: manager
         ports:
-        - containerPort: 8080
-          name: metrics
+        - containerPort: 8081
+          name: trigger
           protocol: TCP
