@@ -24,6 +24,7 @@ install-crd: manifests
 
 # Deploy controller in the configured Kubernetes cluster in ~/.kube/config
 deploy: manifests update-cert
+	kubectl apply -f config/templates
 	kubectl apply -f config/crds
 	kubectl kustomize config | kubectl apply -f -
 
@@ -73,6 +74,5 @@ ca-secret:
 # update certs
 update-cert: ca-secret
 	./hack/update-cert.sh
-
 
 .PHONY : clean test
