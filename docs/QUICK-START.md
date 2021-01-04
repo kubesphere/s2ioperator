@@ -1,6 +1,6 @@
 # Quick start
 
-In this example you will use S2I Operator to create a S2iBuilder and S2iRun, that simply creates a  ready-to-run image and push to DockerHub.
+In this example you will use S2I Operator to create a S2iBuilder and S2iRun, that simply creates a ready-to-run image and push to DockerHub.
 
 1. Create a secret of `docker-registry` type to authenticate with container registry to push image.
 
@@ -74,4 +74,4 @@ In this example you will use S2I Operator to create a S2iBuilder and S2iRun, tha
    s2irun-sample-d46fc027083d-job-p44rx   0/1     Completed   0          11m
    ```
 
-6. Finally, an image named `hello-world:v0.0.1` will be builded automaticly and pushed to your registry.
+6. Finally, an image named `hello-world:v0.0.1` will be builded automatically and pushed to your registry.
