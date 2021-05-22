@@ -1,3 +1,5 @@
+[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/kubesphere/s2ioperator)
+
 # Source-to-image Operator
 
 [![License](http://img.shields.io/badge/license-apache%20v2-blue.svg)](https://github.com/kubesphere/s2ioperator/blob/master/LICENSE)  [![Go Report Card](https://goreportcard.com/badge/github.com/kubesphere/s2ioperator)](https://goreportcard.com/report/github.com/kubesphere/s2ioperator)  [![S2I Operator release](https://img.shields.io/github/release/kubesphere/s2ioperator.svg?color=release&label=release&logo=release&logoColor=release)](https://github.com/kubesphere/s2ioperator/releases/tag/v0.0.14)
