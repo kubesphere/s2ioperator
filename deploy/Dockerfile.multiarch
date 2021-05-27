@@ -1,0 +1,12 @@
+FROM golang:1.12 AS builder
+
+WORKDIR /work
+COPY . .
+RUN CGO_ENABLED=0 go build -ldflags "-w" -o bin/manager \
+    github.com/kubesphere/s2ioperator/cmd/manager
+
+FROM alpine:3.10
+
+WORKDIR /
+COPY --from=builder /work/bin/manager manager
+ENTRYPOINT ["/manager"]

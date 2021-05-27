@@ -54,6 +54,9 @@ docker-build:
 	docker build -f deploy/Dockerfile -t $(IMG) bin/
 	docker push $(IMG)
 
+image-multiarch:
+	docker build . -t $(IMG) -f deploy/Dockerfile.multiarch
+
 debug: manager
 	./hack/build-image.sh
 
