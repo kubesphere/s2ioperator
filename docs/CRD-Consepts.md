@@ -1,6 +1,6 @@
 # S2I Operator
 
-In S2I, all resource and (CI/CD) steps are defined with Custom Resource Defintion(CRD). Put another way, you can operate all s2i resource by call k8s api directly. In the case of [Kubesphere](https://github.com/kubesphere/kubesphere), this makes it easy to encapsulate configuration into `s2ibuilders` and `s2ibuildertemplates`.
+In S2I, all resource and (CI/CD) steps are defined with Custom Resource Defintion(CRD). Put another way, you can operate all s2i resource by call k8s api directly. In the case of [KubeSphere](https://github.com/kubesphere/kubesphere), this makes it easy to encapsulate configuration into `s2ibuilders` and `s2ibuildertemplates`.
 
 Following CRD will be used in S2I :
 
