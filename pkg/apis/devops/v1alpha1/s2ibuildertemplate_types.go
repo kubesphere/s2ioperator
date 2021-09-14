@@ -36,7 +36,7 @@ type Parameter struct {
 	Value        string   `json:"value,omitempty"`
 }
 
-func (p *Parameter) ToEnvonment() *EnvironmentSpec {
+func (p *Parameter) ToEnvironment() *EnvironmentSpec {
 	var v string
 	if p.Value == "" && p.DefaultValue != "" {
 		v = p.DefaultValue

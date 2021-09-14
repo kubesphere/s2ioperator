@@ -34,6 +34,16 @@ spec:
       description: "Additional Maven arguments, useful for temporary adding arguments like -X or -am -pl ."
       required: false
       defaultValue: ""
+    - key: MAVEN_MIRROR_URL
+      type: string
+      description: "With Repositories you specify from which locations you want to download certain artifacts, such as dependencies and maven-plugins."
+      required: false
+      defaultValue: ""
+    - key: MAVEN_CLEAR_REPO
+      type: boolean
+      description: "If set then the Maven repository is removed after the artifact is built. This is useful for keeping the created application image small, but prevents incremental builds. The default is false"
+      required: false
+      defaultValue: ""
     - key: ARTIFACT_DIR
       type: string
       description: "Path to target/ where the jar files are created for multi module builds. These are added to ${MAVEN_ARGS}"
@@ -42,11 +52,6 @@ spec:
     - key: ARTIFACT_COPY_ARGS
       type: string
       description: "Arguments to use when copying artifacts from the output dir to the application dir. Useful to specify which artifacts will be part of the image. It defaults to -r hawt-app/* when a hawt-app dir is found on the build directory, otherwise jar files only will be included (*.jar)."
-      required: false
-      defaultValue: ""
-    - key: MAVEN_CLEAR_REPO
-      type: boolean
-      description: "If set then the Maven repository is removed after the artifact is built. This is useful for keeping the created application image small, but prevents incremental builds. The default is false"
       required: false
       defaultValue: ""
     - key: JAVA_APP_DIR
@@ -141,6 +146,6 @@ spec:
       defaultValue: ""
   codeFramework: java
   defaultBaseImage: kubespheredev/java-8-centos7:latest
-  version: 0.0.1
+  version: 0.0.2
   description: "This is a builder template for Java builds whose result can be run directly without any further application server.It's suited ideally for microservices with a flat classpath (including \"far jars\")."
   iconPath: assets/java.png
