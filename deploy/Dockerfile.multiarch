@@ -1,5 +1,7 @@
 FROM golang:1.12 AS builder
 
+RUN apt update -y && apt install -y ca-certificates libgnutls30
+
 WORKDIR /work
 COPY . .
 RUN CGO_ENABLED=0 go build -ldflags "-w" -o bin/manager \
