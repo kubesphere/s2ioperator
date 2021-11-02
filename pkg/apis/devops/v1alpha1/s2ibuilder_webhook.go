@@ -20,6 +20,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
+
 	"github.com/kubesphere/s2ioperator/pkg/errors"
 	"github.com/kubesphere/s2ioperator/pkg/util/reflectutils"
 	k8serror "k8s.io/apimachinery/pkg/api/errors"
@@ -27,9 +29,7 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	errorutil "k8s.io/apimachinery/pkg/util/errors"
 	ctrl "sigs.k8s.io/controller-runtime"
-	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
-	"strings"
 )
 
 const (
@@ -38,7 +38,7 @@ const (
 )
 
 // log is for logging in this package.
-var s2ibuilderlog = logf.Log.WithName("s2ibuilder-resource")
+var s2ibuilderlog = ctrl.Log.WithName("s2ibuilder-resource")
 
 func (r *S2iBuilder) SetupWebhookWithManager(mgr ctrl.Manager) error {
 	kclient = mgr.GetClient()

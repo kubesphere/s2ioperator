@@ -18,25 +18,32 @@ package main
 
 import (
 	"flag"
+	"os"
+
 	"github.com/kubesphere/s2ioperator/pkg/apis"
 	"github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1"
 	"github.com/kubesphere/s2ioperator/pkg/controller"
 	"github.com/kubesphere/s2ioperator/pkg/handler"
 	"github.com/kubesphere/s2ioperator/pkg/metrics"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
-	"os"
+	"k8s.io/klog/klogr"
+	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client/config"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/manager/signals"
-	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
 )
+
+func init() {
+	// At startup, the default logger in controller runtime is a nil logger.
+	// We set it to klogr that is implemented by klog.
+	ctrl.SetLogger(klogr.New())
+}
 
 func main() {
 	var metricsAddr string
 	flag.StringVar(&metricsAddr, "metrics-addr", ":8080", "The address the metric endpoint binds to.")
 	flag.Parse()
-	logf.SetLogger(logf.ZapLogger(false))
-	log := logf.Log.WithName("entrypoint")
+	log := ctrl.Log.WithName("entrypoint")
 
 	// Get a config to talk to the apiserver
 	log.Info("setting up client for manager")
@@ -48,7 +55,13 @@ func main() {
 
 	// Create a newgo Cmd to provide shared dependencies and start components
 	log.Info("setting up manager")
-	mgr, err := manager.New(cfg, manager.Options{MetricsBindAddress: metricsAddr})
+	mgr, err := manager.New(cfg, manager.Options{
+		MetricsBindAddress: metricsAddr,
+		// We have to set the port to 443 for consistency, because the default port value has been changed
+		// from 443 to 9443 after controller-runtime 0.7.0
+		// Please see also https://github.com/kubernetes-sigs/controller-runtime/releases/tag/v0.7.0
+		Port: 443,
+	})
 	if err != nil {
 		log.Error(err, "unable to set up overall controller manager")
 		os.Exit(1)

@@ -18,16 +18,17 @@ package s2ibuilder
 
 import (
 	"context"
-	"github.com/kubesphere/s2ioperator/pkg/util/sliceutil"
-	"k8s.io/api/apps/v1"
 	"reflect"
+
+	"github.com/kubesphere/s2ioperator/pkg/util/sliceutil"
+	v1 "k8s.io/api/apps/v1"
 
 	devopsv1alpha1 "github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/apimachinery/pkg/types"
 	errorutil "k8s.io/apimachinery/pkg/util/errors"
+	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/event"
@@ -35,11 +36,10 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
-	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 )
 
-var log = logf.Log.WithName("s2ibuilder-controller")
+var log = ctrl.Log.WithName("s2ibuilder-controller")
 
 const s2iBuilderFinalizerName = "s2ibuilders.finalizers.kubesphere.io"
 
@@ -74,16 +74,15 @@ func add(mgr manager.Manager, r reconcile.Reconciler) error {
 	}
 
 	//watch s2irun
-	mapFn := handler.ToRequestsFunc(
-		func(a handler.MapObject) []reconcile.Request {
-			run := a.Object.(*devopsv1alpha1.S2iRun)
-			return []reconcile.Request{
-				{NamespacedName: types.NamespacedName{
-					Name:      run.Spec.BuilderName,
-					Namespace: a.Meta.GetNamespace(),
-				}},
-			}
-		})
+	var mapFn handler.MapFunc = func(o client.Object) []reconcile.Request {
+		run := o.(*devopsv1alpha1.S2iRun)
+		return []reconcile.Request{
+			{NamespacedName: client.ObjectKey{
+				Name:      run.Spec.BuilderName,
+				Namespace: o.GetNamespace(),
+			}},
+		}
+	}
 
 	// 'UpdateFunc' and 'CreateFunc' used to judge if a event about the object is
 	// what we want. If that is true, the event will be processed by the reconciler.
@@ -103,9 +102,7 @@ func add(mgr manager.Manager, r reconcile.Reconciler) error {
 			return true
 		},
 	}
-	err = c.Watch(&source.Kind{Type: &devopsv1alpha1.S2iRun{}}, &handler.EnqueueRequestsFromMapFunc{
-		ToRequests: mapFn,
-	}, p)
+	err = c.Watch(&source.Kind{Type: &devopsv1alpha1.S2iRun{}}, handler.EnqueueRequestsFromMapFunc(mapFn), p)
 
 	if err != nil {
 		return err
@@ -127,7 +124,7 @@ type ReconcileS2iBuilder struct {
 // +kubebuilder:rbac:groups=devops.kubesphere.io,resources=s2ibuilders,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=devops.kubesphere.io,resources=s2ibuilders/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups="",resources=events,verbs=create;patch
-func (r *ReconcileS2iBuilder) Reconcile(request reconcile.Request) (reconcile.Result, error) {
+func (r *ReconcileS2iBuilder) Reconcile(ctx context.Context, request reconcile.Request) (reconcile.Result, error) {
 	// Fetch the S2iBuilder instance
 	log.Info("Reconciler of s2ibuilder called", "NamespaceName", request.NamespacedName)
 	instance := &devopsv1alpha1.S2iBuilder{}

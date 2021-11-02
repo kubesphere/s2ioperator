@@ -19,20 +19,20 @@ package v1alpha1
 import (
 	"context"
 	"fmt"
+	"reflect"
+
 	"github.com/kubesphere/s2ioperator/pkg/errors"
 	k8serror "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
-	"reflect"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 )
 
 // log is for logging in this package.
 var (
-	s2irunlog = logf.Log.WithName("s2irun-resource")
+	s2irunlog = ctrl.Log.WithName("s2irun-resource")
 	kclient   client.Client
 )
 

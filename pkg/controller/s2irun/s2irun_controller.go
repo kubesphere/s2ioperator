@@ -20,31 +20,32 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	v12 "k8s.io/api/rbac/v1"
 	"reflect"
 	"time"
+
+	v12 "k8s.io/api/rbac/v1"
 
 	devopsv1alpha1 "github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1"
 	loghandler "github.com/kubesphere/s2ioperator/pkg/handler/log"
 	"github.com/kubesphere/s2ioperator/pkg/util/reflectutils"
-	"k8s.io/api/apps/v1"
+	v1 "k8s.io/api/apps/v1"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
 	k8serror "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/errors"
+	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
-	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 )
 
-var log = logf.Log.WithName("s2irun-controller")
+var log = ctrl.Log.WithName("s2irun-controller")
 
 const (
 	S2iRunBuilderLabel       = "labels.devops.kubesphere.io/builder-name"
@@ -129,7 +130,8 @@ type ReconcileS2iRun struct {
 // +kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=rolebindings,verbs=get;list;watch;create
 // +kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=roles,verbs=get;list;watch;create
 // +kubebuilder:rbac:groups=core,resources=namespaces,verbs=get;list;watch
-func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result, error) {
+
+func (r *ReconcileS2iRun) Reconcile(ctx context.Context, request reconcile.Request) (reconcile.Result, error) {
 	// Fetch the S2iRun instance
 	log.Info("Reconciler of s2irun called", "Name", request.Name)
 	instance := &devopsv1alpha1.S2iRun{}

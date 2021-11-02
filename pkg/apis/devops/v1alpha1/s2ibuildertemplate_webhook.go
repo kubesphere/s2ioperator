@@ -18,17 +18,17 @@ package v1alpha1
 
 import (
 	"fmt"
+
 	"github.com/docker/distribution/reference"
 	"github.com/kubesphere/s2ioperator/pkg/errors"
 	"github.com/kubesphere/s2ioperator/pkg/util/reflectutils"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
-	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 )
 
 // log is for logging in this package.
-var s2ibuildertemplatelog = logf.Log.WithName("s2ibuildertemplate-resource")
+var s2ibuildertemplatelog = ctrl.Log.WithName("s2ibuildertemplate-resource")
 
 func (r *S2iBuilderTemplate) SetupWebhookWithManager(mgr ctrl.Manager) error {
 	kclient = mgr.GetClient()

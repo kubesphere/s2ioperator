@@ -17,12 +17,10 @@ package e2eutil
 import (
 	"context"
 	"fmt"
-	"testing"
 	"time"
 
 	appsv1 "k8s.io/api/apps/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
-	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -47,31 +45,4 @@ func WaitForController(c client.Client, namespace, name string, retryInterval, t
 		return false, nil
 	})
 	return err
-}
-
-func WaitForDeletion(t *testing.T, dynclient client.Client, obj runtime.Object, retryInterval, timeout time.Duration) error {
-	key, err := client.ObjectKeyFromObject(obj)
-	if err != nil {
-		return err
-	}
-
-	kind := obj.GetObjectKind().GroupVersionKind().Kind
-	ctx, cancel := context.WithTimeout(context.Background(), timeout)
-	defer cancel()
-	err = wait.Poll(retryInterval, timeout, func() (done bool, err error) {
-		err = dynclient.Get(ctx, key, obj)
-		if apierrors.IsNotFound(err) {
-			return true, nil
-		}
-		if err != nil {
-			return false, err
-		}
-		t.Logf("Waiting for %s %s to be deleted\n", kind, key)
-		return false, nil
-	})
-	if err != nil {
-		return err
-	}
-	t.Logf("%s %s was deleted\n", kind, key)
-	return nil
 }
