@@ -62,7 +62,7 @@ generate: controller-gen openapi-gen
 	$(OPENAPI_GEN) -O openapi_generated -i k8s.io/api/core/v1,k8s.io/apimachinery/pkg/apis/meta/v1,k8s.io/apimachinery/pkg/api/resource,k8s.io/apimachinery/pkg/runtime,k8s.io/apimachinery/pkg/util/intstr,k8s.io/apimachinery/pkg/version,github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1 -p github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1 -h hack/boilerplate.go.txt --report-filename api/api-rules/violation_exceptions.list
 
 # Build the docker image
-docker-build:
+docker-build: manager
 	docker build -f deploy/Dockerfile -t $(IMG) bin/
 	docker push $(IMG)
 
