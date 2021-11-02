@@ -18,6 +18,7 @@ limitations under the License.
 package v1alpha1
 
 import (
+	"context"
 	time "time"
 
 	devopsv1alpha1 "github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1"
@@ -59,13 +60,13 @@ func NewFilteredS2iBuilderTemplateInformer(client versioned.Interface, resyncPer
 				if tweakListOptions != nil {
 					tweakListOptions(&options)
 				}
-				return client.DevopsV1alpha1().S2iBuilderTemplates().List(options)
+				return client.DevopsV1alpha1().S2iBuilderTemplates().List(context.TODO(), options)
 			},
 			WatchFunc: func(options v1.ListOptions) (watch.Interface, error) {
 				if tweakListOptions != nil {
 					tweakListOptions(&options)
 				}
-				return client.DevopsV1alpha1().S2iBuilderTemplates().Watch(options)
+				return client.DevopsV1alpha1().S2iBuilderTemplates().Watch(context.TODO(), options)
 			},
 		},
 		&devopsv1alpha1.S2iBuilderTemplate{},

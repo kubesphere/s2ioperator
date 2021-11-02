@@ -1,6 +1,7 @@
 package s2irun
 
 import (
+	"context"
 	stdlog "log"
 	"os"
 	"path/filepath"
@@ -67,8 +68,8 @@ var _ = AfterSuite(func() {
 // writes the request to requests after Reconcile is finished.
 func SetupTestReconcile(inner reconcile.Reconciler) (reconcile.Reconciler, chan reconcile.Request) {
 	requests := make(chan reconcile.Request)
-	fn := reconcile.Func(func(req reconcile.Request) (reconcile.Result, error) {
-		result, err := inner.Reconcile(req)
+	fn := reconcile.Func(func(ctx context.Context, req reconcile.Request) (reconcile.Result, error) {
+		result, err := inner.Reconcile(ctx, req)
 		requests <- req
 		return result, err
 	})
@@ -81,7 +82,7 @@ func StartTestManager(mgr manager.Manager) (chan struct{}, *sync.WaitGroup) {
 	wg := &sync.WaitGroup{}
 	go func() {
 		wg.Add(1)
-		Expect(mgr.Start(stop)).NotTo(HaveOccurred())
+		Expect(mgr.Start(context.Background())).NotTo(HaveOccurred())
 		wg.Done()
 	}()
 	return stop, wg
