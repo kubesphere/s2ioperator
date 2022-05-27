@@ -1,7 +1,8 @@
 
 # Image URL to use all building/pushing image targets
-IMG ?= kubespheredev/s2ioperator:latest
+IMG ?= kubespheredev/s2ioperator:dev
 NAMESPACE ?= kubesphere-devops-system
+CONTAINER_CLI?=docker
 export GO111MODULE=on
 
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
@@ -25,7 +26,7 @@ test: fmt vet
 
 # Build manager binary
 manager: generate fmt manifests vet
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-w" -o bin/manager github.com/kubesphere/s2ioperator/cmd/manager
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-w" cmd/manager/*.go -o bin/manager
 
 # Run against the configured Kubernetes cluster in ~/.kube/config
 run: generate fmt vet
@@ -63,11 +64,11 @@ generate: controller-gen openapi-gen
 
 # Build the docker image
 docker-build: manager
-	docker build -f deploy/Dockerfile -t $(IMG) bin/
-	docker push $(IMG)
+	$(CONTAINER_CLI) build -f deploy/Dockerfile -t $(IMG) bin/
+	$(CONTAINER_CLI) push $(IMG)
 
 image-multiarch:
-	docker build . -t $(IMG) -f deploy/Dockerfile.multiarch
+	$(CONTAINER_CLI) build . -t $(IMG) -f deploy/Dockerfile.multiarch
 
 debug: manager
 	./hack/build-image.sh

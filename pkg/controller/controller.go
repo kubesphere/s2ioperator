@@ -17,6 +17,7 @@ limitations under the License.
 package controller
 
 import (
+	"github.com/kubesphere/s2ioperator/pkg/controller/s2ibuildertemplate"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 )
 
@@ -30,5 +31,9 @@ func AddToManager(m manager.Manager) error {
 			return err
 		}
 	}
-	return nil
+
+	s2iBuilderTemplate := &s2ibuildertemplate.S2iBuilderTemplateReconciler{
+		Client: m.GetClient(),
+	}
+	return s2iBuilderTemplate.SetupWithManager(m)
 }

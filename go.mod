@@ -18,13 +18,13 @@ require (
 	github.com/onsi/gomega v1.10.2
 	github.com/opencontainers/go-digest v1.0.0-rc1 // indirect
 	github.com/prometheus/client_golang v1.7.1
-	golang.org/x/net v0.0.0-20200707034311-ab3426394381
+	golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4
 	k8s.io/api v0.19.2
 	k8s.io/apimachinery v0.19.2
 	k8s.io/client-go v0.19.2
 	k8s.io/code-generator v0.19.2
 	k8s.io/klog v1.0.0
-	k8s.io/kube-openapi v0.0.0-20200805222855-6aeccd4b50c6
+	k8s.io/kube-openapi v0.0.0-20220413171646-5e7f5fdc6da6
 	sigs.k8s.io/controller-runtime v0.7.1
 	sigs.k8s.io/controller-tools v0.2.4
 )
