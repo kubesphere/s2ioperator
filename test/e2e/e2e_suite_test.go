@@ -12,10 +12,10 @@ import (
 	"time"
 
 	"github.com/kubesphere/s2ioperator/pkg/apis"
-	corev1 "k8s.io/api/core/v1"
 	"github.com/kubesphere/s2ioperator/pkg/util/e2eutil"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	corev1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
 	"sigs.k8s.io/controller-runtime/pkg/client"

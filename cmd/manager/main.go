@@ -83,11 +83,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err = (&v1alpha1.S2iBuilderTemplate{}).SetupWebhookWithManager(mgr); err != nil {
-		log.Error(err, "unable to create webhook", "webhook", "Captain")
-		os.Exit(1)
-	}
-
 	if err = (&v1alpha1.S2iBuilder{}).SetupWebhookWithManager(mgr); err != nil {
 		log.Error(err, "unable to create webhook", "webhook", "Captain")
 		os.Exit(1)

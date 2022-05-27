@@ -19,6 +19,7 @@ package v1alpha1
 import (
 	"context"
 	"fmt"
+	"github.com/kubesphere/s2ioperator/pkg/util/docker"
 	"reflect"
 
 	"github.com/kubesphere/s2ioperator/pkg/errors"
@@ -75,7 +76,7 @@ func (r *S2iRun) ValidateCreate() error {
 
 	if r.Spec.NewTag != "" {
 		validateImageName := fmt.Sprintf("validate:%s", r.Spec.NewTag)
-		if err := validateDockerReference(validateImageName); err != nil {
+		if err := docker.ValidateDockerReference(validateImageName); err != nil {
 			return err
 		}
 	}
@@ -108,7 +109,7 @@ func (r *S2iRun) ValidateUpdate(old runtime.Object) error {
 
 	if r.Spec.NewTag != "" {
 		validateImageName := fmt.Sprintf("validate:%s", r.Spec.NewTag)
-		if err := validateDockerReference(validateImageName); err != nil {
+		if err := docker.ValidateDockerReference(validateImageName); err != nil {
 			return err
 		}
 	}

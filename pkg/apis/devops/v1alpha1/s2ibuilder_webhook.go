@@ -20,6 +20,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/kubesphere/s2ioperator/pkg/util/docker"
 	"strings"
 
 	"github.com/kubesphere/s2ioperator/pkg/errors"
@@ -194,7 +195,7 @@ func validateConfig(config *S2iConfig, fromTemplate bool) []error {
 		}
 	}
 	if config.BuilderImage != "" {
-		if err := validateDockerReference(config.BuilderImage); err != nil {
+		if err := docker.ValidateDockerReference(config.BuilderImage); err != nil {
 			allErrs = append(allErrs, errors.NewFieldInvalidValueWithReason("builderImage", err.Error()))
 		}
 	}
