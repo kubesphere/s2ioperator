@@ -23,6 +23,7 @@ import (
 	"reflect"
 	"time"
 
+	"github.com/kubesphere/s2ioperator/pkg/config"
 	v12 "k8s.io/api/rbac/v1"
 
 	devopsv1alpha1 "github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1"
@@ -55,7 +56,6 @@ const (
 	RegularRoleName          = "s2i-regular-role"
 	RegularRoleBinding       = "s2i-regular-rolebinding"
 	DefaultRevisionId        = "master"
-	JobTemplateYaml          = "/etc/data/job-template.yaml"
 )
 
 /**
@@ -65,13 +65,17 @@ const (
 
 // Add creates a new S2iRun Controller and adds it to the Manager with default RBAC. The Manager will set fields on the Controller
 // and Start it when the Manager is Started.
-func Add(mgr manager.Manager) error {
-	return add(mgr, newReconciler(mgr))
+func Add(mgr manager.Manager, cfg *config.Config) error {
+	return add(mgr, newReconciler(mgr, cfg))
 }
 
 // newReconciler returns a new reconcile.Reconciler
-func newReconciler(mgr manager.Manager) reconcile.Reconciler {
-	return &ReconcileS2iRun{Client: mgr.GetClient(), scheme: mgr.GetScheme()}
+func newReconciler(mgr manager.Manager, cfg *config.Config) reconcile.Reconciler {
+	return &ReconcileS2iRun{
+		Client: mgr.GetClient(),
+		scheme: mgr.GetScheme(),
+		cfg:    cfg,
+	}
 }
 
 // add adds a new Controller to mgr with r as the reconcile.Reconciler
@@ -112,6 +116,7 @@ var _ reconcile.Reconciler = &ReconcileS2iRun{}
 type ReconcileS2iRun struct {
 	client.Client
 	scheme *runtime.Scheme
+	cfg    *config.Config
 }
 
 // Reconcile reads that state of the cluster for a S2iRun object and makes changes based on the state read
@@ -258,7 +263,7 @@ func (r *ReconcileS2iRun) Reconcile(ctx context.Context, request reconcile.Reque
 	}
 
 	//job set up
-	job, err := r.GenerateNewJob(instance, JobTemplateYaml)
+	job, err := r.GenerateNewJob(instance, r.cfg.S2IRunJobTemplate)
 	if err != nil {
 		log.Error(err, "Failed to initialize a job")
 		return reconcile.Result{}, err

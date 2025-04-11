@@ -138,7 +138,6 @@ type JobTemplateData struct {
 	SpecTemplateSpecServiceAccountName string
 	ContainerS2IRunImage               string
 	SpecBackoffLimit                   int32
-	SpecTTLSecondsAfterFinished        int32
 	ConfigMapName                      string
 }
 
@@ -158,18 +157,13 @@ func (r *ReconcileS2iRun) getJobTemplateData(instance *devopsv1alpha1.S2iRun) (*
 		SpecTemplateSpecServiceAccountName: RegularServiceAccount,
 		ContainerS2IRunImage:               imageName,
 		SpecBackoffLimit:                   instance.Spec.BackoffLimit,
-		SpecTTLSecondsAfterFinished:        instance.Spec.SecondsAfterFinished,
 		ConfigMapName:                      configMapName,
 	}
 	return data, nil
 }
 
-func (r *ReconcileS2iRun) GenerateNewJob(instance *devopsv1alpha1.S2iRun, templatePath string) (*batchv1.Job, error) {
+func (r *ReconcileS2iRun) GenerateNewJob(instance *devopsv1alpha1.S2iRun, templateContent []byte) (*batchv1.Job, error) {
 	templateData, err := r.getJobTemplateData(instance)
-	if err != nil {
-		return nil, err
-	}
-	templateContent, err := os.ReadFile(templatePath)
 	if err != nil {
 		return nil, err
 	}
@@ -185,6 +179,12 @@ func (r *ReconcileS2iRun) GenerateNewJob(instance *devopsv1alpha1.S2iRun, templa
 	var job batchv1.Job
 	decoder := yaml.NewYAMLOrJSONDecoder(&buf, 4096)
 	err = decoder.Decode(&job)
+	if err != nil {
+		return nil, err
+	}
+	if instance.Spec.SecondsAfterFinished > 0 {
+		job.Spec.TTLSecondsAfterFinished = &instance.Spec.SecondsAfterFinished
+	}
 	return &job, err
 }
 

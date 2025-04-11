@@ -22,6 +22,7 @@ import (
 
 	"github.com/kubesphere/s2ioperator/pkg/apis"
 	"github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1"
+	s2iconfig "github.com/kubesphere/s2ioperator/pkg/config"
 	"github.com/kubesphere/s2ioperator/pkg/controller"
 	"github.com/kubesphere/s2ioperator/pkg/handler"
 	"github.com/kubesphere/s2ioperator/pkg/metrics"
@@ -41,9 +42,20 @@ func init() {
 
 func main() {
 	var metricsAddr string
+	var s2iRunJobTemplatePath string // checkout config/templates/s2irun-template.yaml for example
 	flag.StringVar(&metricsAddr, "metrics-addr", ":8080", "The address the metric endpoint binds to.")
+	flag.StringVar(&s2iRunJobTemplatePath, "s2irun-job-template", "/etc/template/job.yaml", "the s2irun job template file path")
 	flag.Parse()
 	log := ctrl.Log.WithName("entrypoint")
+
+	jobTemplateData, err := os.ReadFile(s2iRunJobTemplatePath)
+	if err != nil {
+		log.Error(err, "failed to read s2irun template file", "filename", s2iRunJobTemplatePath)
+		os.Exit(1)
+	}
+	s2iConfig := &s2iconfig.Config{
+		S2IRunJobTemplate: jobTemplateData,
+	}
 
 	// Get a config to talk to the apiserver
 	log.Info("setting up client for manager")
@@ -78,7 +90,7 @@ func main() {
 
 	// Setup all Controllers
 	log.Info("Setting up controller")
-	if err := controller.AddToManager(mgr); err != nil {
+	if err := controller.AddToManager(mgr, s2iConfig); err != nil {
 		log.Error(err, "unable to register controllers to the manager")
 		os.Exit(1)
 	}

@@ -1,0 +1,72 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: s2irun-template
+data:
+  job.yaml: |
+    apiVersion: batch/v1
+    kind: Job
+    metadata:
+      name: {{.ObjectMetaName}}
+      namespace: {{.ObjectMetaNamespace}}
+    spec:
+      backoffLimit: {{.SpecBackoffLimit}}
+      template:
+        metadata:
+          labels:
+            job-name: {{.SpecTemplateObjectMetaLabelJobName}}
+        spec:
+          affinity:
+            nodeAffinity:
+              preferredDuringSchedulingIgnoredDuringExecution:
+                - preference:
+                    matchExpressions:
+                      - key: node-role.kubernetes.io/worker
+                        operator: In
+                        values:
+                          - ci
+                  weight: 1
+          containers:
+            - env:
+                - name: S2I_CONFIG_PATH
+                  value: /etc/data/config.json
+                - name: POD_NAMESPACE
+                  valueFrom:
+                    fieldRef:
+                      apiVersion: v1
+                      fieldPath: metadata.namespace
+                - name: POD_NAME
+                  valueFrom:
+                    fieldRef:
+                      apiVersion: v1
+                      fieldPath: metadata.name
+              image: {{.ContainerS2IRunImage}}
+              imagePullPolicy: IfNotPresent
+              name: s2irun
+              volumeMounts:
+                - mountPath: /etc/data
+                  name: config-data
+                  readOnly: true
+                - mountPath: /var/run/docker.sock
+                  name: docker-sock
+          serviceAccountName: {{.SpecTemplateSpecServiceAccountName}}
+          restartPolicy: Never
+          tolerations:
+            - effect: NoSchedule
+              key: node.kubernetes.io/ci
+              operator: Exists
+            - effect: PreferNoSchedule
+              key: node.kubernetes.io/ci
+              operator: Exists
+          volumes:
+            - configMap:
+                defaultMode: 420
+                items:
+                  - key: data
+                    path: config.json
+                name: {{.ConfigMapName}}
+              name: config-data
+            - hostPath:
+                path: /var/run/docker.sock
+                type: ""
+              name: docker-sock
