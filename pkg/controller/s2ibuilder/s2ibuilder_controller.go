@@ -20,6 +20,7 @@ import (
 	"context"
 	"reflect"
 
+	"github.com/kubesphere/s2ioperator/pkg/config"
 	"github.com/kubesphere/s2ioperator/pkg/util/sliceutil"
 	v1 "k8s.io/api/apps/v1"
 
@@ -50,7 +51,7 @@ const s2iBuilderFinalizerName = "s2ibuilders.finalizers.kubesphere.io"
 
 // Add creates a new S2iBuilder Controller and adds it to the Manager with default RBAC. The Manager will set fields on the Controller
 // and Start it when the Manager is Started.
-func Add(mgr manager.Manager) error {
+func Add(mgr manager.Manager, cfg *config.Config) error {
 	return add(mgr, newReconciler(mgr))
 }
 

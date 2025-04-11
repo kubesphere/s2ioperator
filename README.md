@@ -16,28 +16,9 @@ Compare with native S2I, S2I Operator also has the following advantages on the o
 
 ## Installation
 
-#### Prerequisites
-
-1. A Kubernetes cluster. (if you don't have an existing cluster, please [create it](https://kubernetes.io/docs/setup/).
-2. Grant cluster-admin permissions to the current user.
-
-#### Install S2I Operator
-
-You can install S2I Operator in any kubernetes cluster with following commands:
-
-```shell
-# create a namespaces, such as kubesphere-devops-system
-kubectl create ns kubesphere-devops-system
-# create S2I Operator and all CRD 
-kubectl apply -f  https://github.com/kubesphere/s2ioperator/releases/download/v0.0.2/s2ioperator.yaml
-```
-
-Now monitor the S2I Operator components show a `STATUS` of `Running`:
-
-```shell
-# please change you namespace
-kubectl -n kubesphere-devops-system get pods -w
-```
+For better experience, please install S2I Operator via following steps:
+1. Refer to https://kubesphere.io and install latest KubeSphere on your cluster.
+2. Login KubeSphere console, open the 'KubeSphere Marketplace', and install the `Image Builder` extension.
 
 ## Quick Start
 
