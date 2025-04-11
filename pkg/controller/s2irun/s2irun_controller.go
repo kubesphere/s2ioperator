@@ -55,6 +55,7 @@ const (
 	RegularRoleName          = "s2i-regular-role"
 	RegularRoleBinding       = "s2i-regular-rolebinding"
 	DefaultRevisionId        = "master"
+	JobTemplateYaml          = "/etc/data/job-template.yaml"
 )
 
 /**
@@ -257,7 +258,7 @@ func (r *ReconcileS2iRun) Reconcile(ctx context.Context, request reconcile.Reque
 	}
 
 	//job set up
-	job, err := r.GenerateNewJob(instance)
+	job, err := r.GenerateNewJob(instance, JobTemplateYaml)
 	if err != nil {
 		log.Error(err, "Failed to initialize a job")
 		return reconcile.Result{}, err
