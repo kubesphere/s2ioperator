@@ -1,13 +1,17 @@
 package s2irun
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
-	"k8s.io/api/rbac/v1"
 	"net/url"
 	"os"
 	"strings"
+	"text/template"
+
+	"k8s.io/api/rbac/v1"
+	"k8s.io/apimachinery/pkg/util/yaml"
 
 	devopsv1alpha1 "github.com/kubesphere/s2ioperator/pkg/apis/devops/v1alpha1"
 	batchv1 "k8s.io/api/batch/v1"
@@ -127,9 +131,19 @@ func (r *ReconcileS2iRun) NewConfigMap(instance *devopsv1alpha1.S2iRun, config d
 	return configMap, nil
 }
 
-func (r *ReconcileS2iRun) GenerateNewJob(instance *devopsv1alpha1.S2iRun) (*batchv1.Job, error) {
+type JobTemplateData struct {
+	ObjectMetaName                     string
+	ObjectMetaNamespace                string
+	SpecTemplateObjectMetaLabelJobName string
+	SpecTemplateSpecServiceAccountName string
+	ContainerS2IRunImage               string
+	SpecBackoffLimit                   int32
+	SpecTTLSecondsAfterFinished        int32
+	ConfigMapName                      string
+}
+
+func (r *ReconcileS2iRun) getJobTemplateData(instance *devopsv1alpha1.S2iRun) (*JobTemplateData, error) {
 	instanceUidSlice := strings.Split(string(instance.UID), "-")
-	cfgString := "config-data"
 	configMapName := instance.Name + fmt.Sprintf("-%s", instanceUidSlice[len(instanceUidSlice)-1]) + "-configmap"
 	jobName := instance.Name + fmt.Sprintf("-%s", instanceUidSlice[len(instanceUidSlice)-1]) + "-job"
 	imageName := os.Getenv("S2IIMAGENAME")
@@ -137,95 +151,44 @@ func (r *ReconcileS2iRun) GenerateNewJob(instance *devopsv1alpha1.S2iRun) (*batc
 		return nil, fmt.Errorf("Failed to get s2i-image name, please set the env 'S2IIMAGENAME' ")
 	}
 
-	job := &batchv1.Job{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      jobName,
-			Namespace: instance.ObjectMeta.Namespace,
-		},
-		Spec: batchv1.JobSpec{
-			Template: corev1.PodTemplateSpec{
-				ObjectMeta: metav1.ObjectMeta{
-					Labels: map[string]string{"job-name": jobName},
-				},
-				Spec: corev1.PodSpec{
-					ServiceAccountName: RegularServiceAccount,
-					Containers: []corev1.Container{
-						{
-							Name:            "s2irun",
-							Image:           imageName,
-							ImagePullPolicy: corev1.PullIfNotPresent,
-							Env: []corev1.EnvVar{
-								{
-									Name:  "S2I_CONFIG_PATH",
-									Value: "/etc/data/config.json",
-								},
-								{
-									Name: "POD_NAMESPACE",
-									ValueFrom: &corev1.EnvVarSource{
-										FieldRef: &corev1.ObjectFieldSelector{
-											FieldPath: "metadata.namespace",
-										},
-									},
-								},
-								{
-									Name: "POD_NAME",
-									ValueFrom: &corev1.EnvVarSource{
-										FieldRef: &corev1.ObjectFieldSelector{
-											FieldPath: "metadata.name",
-										},
-									},
-								},
-							},
-							VolumeMounts: []corev1.VolumeMount{
-								{
-									Name:      cfgString,
-									ReadOnly:  true,
-									MountPath: "/etc/data",
-								},
-								{
-									Name:      "docker-sock",
-									MountPath: "/var/run/docker.sock",
-								},
-							},
-						},
-					},
-					RestartPolicy: corev1.RestartPolicyNever,
-					Volumes: []corev1.Volume{
-						{
-							Name: cfgString,
-							VolumeSource: corev1.VolumeSource{
-								ConfigMap: &corev1.ConfigMapVolumeSource{
-									LocalObjectReference: corev1.LocalObjectReference{
-										Name: configMapName,
-									},
-									Items: []corev1.KeyToPath{
-										{
-											Key:  ConfigDataKey,
-											Path: "config.json",
-										},
-									},
-								},
-							},
-						},
-						{
-							Name: "docker-sock",
-							VolumeSource: corev1.VolumeSource{
-								HostPath: &corev1.HostPathVolumeSource{Path: "/var/run/docker.sock"},
-							},
-						},
-					},
-				},
-			},
-			BackoffLimit: &instance.Spec.BackoffLimit,
-		},
+	data := &JobTemplateData{
+		ObjectMetaName:                     jobName,
+		ObjectMetaNamespace:                instance.ObjectMeta.Namespace,
+		SpecTemplateObjectMetaLabelJobName: jobName,
+		SpecTemplateSpecServiceAccountName: RegularServiceAccount,
+		ContainerS2IRunImage:               imageName,
+		SpecBackoffLimit:                   instance.Spec.BackoffLimit,
+		SpecTTLSecondsAfterFinished:        instance.Spec.SecondsAfterFinished,
+		ConfigMapName:                      configMapName,
 	}
-	if instance.Spec.SecondsAfterFinished > 0 {
-		job.Spec.TTLSecondsAfterFinished = &instance.Spec.SecondsAfterFinished
-	}
-	return job, nil
+	return data, nil
 }
 
-//setDockerSecret setS2iConfig docker secret
+func (r *ReconcileS2iRun) GenerateNewJob(instance *devopsv1alpha1.S2iRun, templatePath string) (*batchv1.Job, error) {
+	templateData, err := r.getJobTemplateData(instance)
+	if err != nil {
+		return nil, err
+	}
+	templateContent, err := os.ReadFile(templatePath)
+	if err != nil {
+		return nil, err
+	}
+	tmpl, err := template.New("job").Parse(string(templateContent))
+	if err != nil {
+		return nil, err
+	}
+	var buf bytes.Buffer
+	err = tmpl.Execute(&buf, templateData)
+	if err != nil {
+		return nil, err
+	}
+	var job batchv1.Job
+	decoder := yaml.NewYAMLOrJSONDecoder(&buf, 4096)
+	err = decoder.Decode(&job)
+	return &job, err
+}
+
+// setDockerSecret setS2iConfig docker secret
 func (r *ReconcileS2iRun) setDockerSecret(instance *devopsv1alpha1.S2iRun, config *devopsv1alpha1.S2iConfig) error {
 	if config.PushAuthentication != nil && config.PushAuthentication.SecretRef != nil {
 		secret := &corev1.Secret{}
@@ -411,7 +374,7 @@ func setConfigMapLabelAnnotations(instance *devopsv1alpha1.S2iRun, config devops
 	}
 }
 
-//setGitSecret set GitClone Secret
+// setGitSecret set GitClone Secret
 func (r *ReconcileS2iRun) setGitSecret(instance *devopsv1alpha1.S2iRun, config *devopsv1alpha1.S2iConfig) error {
 	if config.GitSecretRef != nil {
 		secret := &corev1.Secret{}
