@@ -47,14 +47,9 @@ func main() {
 	flag.StringVar(&s2iRunJobTemplatePath, "s2irun-job-template", "/etc/template/job.yaml", "the s2irun job template file path")
 	flag.Parse()
 	log := ctrl.Log.WithName("entrypoint")
-
-	jobTemplateData, err := os.ReadFile(s2iRunJobTemplatePath)
-	if err != nil {
-		log.Error(err, "failed to read s2irun template file", "filename", s2iRunJobTemplatePath)
-		os.Exit(1)
-	}
+	
 	s2iConfig := &s2iconfig.Config{
-		S2IRunJobTemplate: jobTemplateData,
+		S2IRunJobTemplate: s2iRunJobTemplatePath,
 	}
 
 	// Get a config to talk to the apiserver

@@ -162,8 +162,12 @@ func (r *ReconcileS2iRun) getJobTemplateData(instance *devopsv1alpha1.S2iRun) (*
 	return data, nil
 }
 
-func (r *ReconcileS2iRun) GenerateNewJob(instance *devopsv1alpha1.S2iRun, templateContent []byte) (*batchv1.Job, error) {
+func (r *ReconcileS2iRun) GenerateNewJob(instance *devopsv1alpha1.S2iRun, templatePath string) (*batchv1.Job, error) {
 	templateData, err := r.getJobTemplateData(instance)
+	if err != nil {
+		return nil, err
+	}
+	templateContent, err := os.ReadFile(templatePath)
 	if err != nil {
 		return nil, err
 	}
