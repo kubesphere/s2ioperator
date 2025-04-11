@@ -1,5 +1,5 @@
 package config
 
 type Config struct {
-	S2IRunJobTemplate []byte // the template file content
+	S2IRunJobTemplate string // template file path
 }
